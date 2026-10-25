@@ -1,0 +1,109 @@
+---
+// The depth bands graphic on The Problem page: a column of water getting darker
+// as it goes deeper, with the twilight zone (50–300 m) highlighted.
+// Band text lives in src/data/problem.ts. Band heights are for looks, not to scale.
+import { depthBands } from '../data/problem';
+---
+
+<figure class="depth">
+  <ol class="depth-bands" aria-label="Ocean depth bands">
+    {depthBands.map((band) => (
+      <li class={`band band--${band.zone}`}>
+        <p class="band-depth">{band.depth}</p>
+        <p class="band-text">
+          {band.name && <strong>{band.name}.</strong>} {band.text}
+        </p>
+      </li>
+    ))}
+  </ol>
+</figure>
+
+<style>
+  .depth {
+    margin: 0;
+  }
+
+  .depth-bands {
+    display: grid;
+    /* Sunlit is thin, the twilight zone is the tall middle, deep fades out */
+    grid-template-rows: minmax(9rem, 1fr) minmax(20rem, 3fr) minmax(11rem, 1.4fr);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .band {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(10rem, 1fr) 2fr;
+    align-items: start;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    border-top: 1px dashed color-mix(in srgb, var(--color-text) 25%, transparent);
+  }
+
+  .band:first-child {
+    border-top: 0;
+  }
+
+  /* The water gets darker with depth */
+  .band--sunlit {
+    background: linear-gradient(to bottom, #2f6f8f, #1d4c68);
+  }
+
+  .band--twilight {
+    background: linear-gradient(to bottom, #143a54, #0a1f33);
+    /* Cyan edge marks the zone Talosaur works in */
+    box-shadow: inset 4px 0 0 var(--color-accent);
+  }
+
+  .band--deep {
+    background: linear-gradient(to bottom, #081a2b, var(--color-bg));
+  }
+
+  .band-depth {
+    margin: 0;
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    font-weight: 800;
+    font-size: clamp(2rem, 1.2rem + 3vw, 4rem);
+    line-height: 0.95;
+    white-space: nowrap;
+  }
+
+  .band--twilight .band-depth {
+    color: var(--color-accent);
+    font-size: clamp(2.75rem, 1.5rem + 5vw, 6rem);
+  }
+
+  .band-text {
+    max-width: 26rem;
+    margin: 0.4rem 0 0;
+    font-size: var(--text-lg);
+    line-height: 1.4;
+  }
+
+  .band--deep .band-text,
+  .band--deep .band-depth {
+    color: var(--color-muted);
+  }
+
+  /* Phone: depth above text */
+  @media (max-width: 700px) {
+    .depth-bands {
+      grid-template-rows: minmax(8rem, auto) minmax(16rem, auto) minmax(9rem, auto);
+    }
+
+    .band {
+      grid-template-columns: 1fr;
+      gap: var(--space-xs);
+      padding: var(--space-md);
+    }
+
+    .band-text {
+      font-size: var(--text-base);
+    }
+  }
+</style>

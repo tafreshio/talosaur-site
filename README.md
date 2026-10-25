@@ -30,6 +30,7 @@ npm run build
 | Home page video hero | `src/components/HeroVideo.astro` |
 | Home page cards, buttons and featured heading | `src/data/home.ts` |
 | News posts | `src/content/news/` (one `.md` file per post) |
+| The Problem page text, big numbers and depth bands | `src/data/problem.ts` |
 | Photos | `public/images/` |
 | Videos | `public/videos/` |
 | Page wrapper (head, header, footer) used by every page | `src/layouts/BaseLayout.astro` |

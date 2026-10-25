@@ -1,0 +1,123 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import StatCallout from '../components/StatCallout.astro';
+import DepthBands from '../components/DepthBands.astro';
+import { problemIntro, stats, statsSource, reasons } from '../data/problem';
+import { isPlaceholder } from '../data/site';
+---
+
+<BaseLayout title="The Problem" description={problemIntro}>
+  <PageHeader
+    title="The Problem"
+    heading="The gap in the water column"
+    href="/the-problem"
+    intro={problemIntro}
+  />
+
+  <!-- Section 01: big numbers -->
+  <section class="container section">
+    <SectionHeader number={1} />
+    <div class="stats">
+      {stats.map((stat, i) => <StatCallout {...stat} index={i + 1} />)}
+    </div>
+    <p class:list={['label', 'source', { 'source--placeholder': isPlaceholder(statsSource) }]}>
+      Source: {statsSource}
+    </p>
+  </section>
+
+  <!-- Section 02: why it's hard to study -->
+  <section class="container section">
+    <SectionHeader number={2} />
+    <ol class="reasons">
+      {reasons.map((reason, i) => (
+        <li class="reason">
+          <p class="label reason-num">{String(i + 1).padStart(2, '0')}</p>
+          <h2 class="reason-title">{reason.title}</h2>
+          <p class="reason-text">{reason.text}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- Section 03: depth bands graphic -->
+  <section class="container section">
+    <SectionHeader number={3} />
+    <DepthBands />
+  </section>
+</BaseLayout>
+
+<style>
+  .section {
+    padding-top: var(--space-2xl);
+  }
+
+  /* ---------- Stats ---------- */
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .source {
+    margin: var(--space-lg) 0 0;
+  }
+
+  .source--placeholder {
+    color: var(--color-muted);
+  }
+
+  /* ---------- Reasons ---------- */
+
+  .reasons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .reason {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .reason-num {
+    margin: 0;
+    color: var(--color-accent);
+  }
+
+  .reason-title {
+    font-size: var(--text-xl);
+  }
+
+  .reason-text {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: var(--text-lg);
+    line-height: 1.5;
+  }
+
+  /* ---------- Tablet and phone ---------- */
+
+  @media (max-width: 1023px) {
+    .stats {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .stats,
+    .reasons {
+      grid-template-columns: 1fr;
+    }
+
+    .reason-text {
+      font-size: var(--text-base);
+    }
+  }
+</style>

@@ -4,19 +4,20 @@
 import { mainNav } from '../data/site';
 
 interface Props {
-  title: string;
-  href: string;   // the page's address, used to look up its nav number
+  title: string;     // the page name, shown in the small label ("02 · The Problem")
+  heading?: string;  // the big headline, if different from the page name
+  href: string;      // the page's address, used to look up its nav number
   intro?: string;
 }
 
-const { title, href, intro } = Astro.props;
+const { title, heading = title, href, intro } = Astro.props;
 const navIndex = mainNav.findIndex((item) => item.href === href);
 const number = navIndex >= 0 ? String(navIndex + 1).padStart(2, '0') : null;
 ---
 
 <header class="container page-header">
   {number && <p class="label page-num">{number} · {title}</p>}
-  <h1 class="page-title">{title}</h1>
+  <h1 class="page-title">{heading}</h1>
   {intro && <p class="page-intro">{intro}</p>}
 </header>
 
@@ -31,6 +32,7 @@ const number = navIndex >= 0 ? String(navIndex + 1).padStart(2, '0') : null;
   }
 
   .page-title {
+    max-width: 16ch;
     font-size: var(--text-hero);
   }
 

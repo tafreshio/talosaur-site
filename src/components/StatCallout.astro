@@ -1,0 +1,59 @@
+---
+// One big number with a short caption underneath, Colossal-style.
+interface Props {
+  value: string;   // e.g. '50–300 m'
+  unit?: string;   // smaller text after the number, e.g. 'a day'
+  caption: string;
+  index?: number;  // small "01", "02"... label
+}
+
+const { value, unit, caption, index } = Astro.props;
+---
+
+<div class="stat">
+  {index !== undefined && <p class="label stat-num">{String(index).padStart(2, '0')}</p>}
+  <p class="stat-value">
+    {value}{unit && <span class="stat-unit"> {unit}</span>}
+  </p>
+  <p class="stat-caption">{caption}</p>
+</div>
+
+<style>
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-accent);
+  }
+
+  .stat-num {
+    margin: 0;
+  }
+
+  .stat-value {
+    margin: 0;
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    font-weight: 800;
+    font-size: clamp(3rem, 1rem + 4.2vw, 6rem);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    color: var(--color-accent);
+    white-space: nowrap;
+  }
+
+  .stat-unit {
+    font-size: 0.35em;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+
+  .stat-caption {
+    max-width: 24rem;
+    margin: 0;
+    color: var(--color-muted);
+  }
+</style>
