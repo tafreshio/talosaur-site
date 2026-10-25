@@ -32,7 +32,7 @@ const year = new Date().getFullYear();
           {socialLinks.map((link) => (
             <li>
               {link.href
-                ? <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
+                ? <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label} <span class="ext" aria-hidden="true">↗</span></a>
                 : <span title="Link coming soon">{link.label}</span>}
             </li>
           ))}
@@ -45,6 +45,7 @@ const year = new Date().getFullYear();
 
     <div class="footer-bottom">
       <span>&copy; {year} Talosaur</span>
+      <a class="back-to-top" href="#top">Back to top <span aria-hidden="true">↑</span></a>
       {footerLegal.map((link) => (
         <a href={link.href}>{link.label}</a>
       ))}
@@ -137,8 +138,17 @@ const year = new Date().getFullYear();
     color: var(--color-accent);
   }
 
+  .ext {
+    font-size: 0.8em;
+  }
+
+  .back-to-top {
+    order: 1; /* sits just before the right-aligned tagline */
+  }
+
   /* Push the tagline to the right on wide screens */
   .footer-bottom span:last-child {
+    order: 2;
     margin-left: auto;
   }
 

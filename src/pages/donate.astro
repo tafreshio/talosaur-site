@@ -22,7 +22,7 @@ const financeHref = contactHref(financeContact);
 
   <section class="container">
     <SectionHeader number={1} title="Ways to help" />
-    <ol class="ways">
+    <ol class="ways" data-reveal-group>
       {waysToHelp.map((way, i) => (
         <li class="way">
           <p class="label way-num">{String(i + 1).padStart(2, '0')}</p>
@@ -34,7 +34,7 @@ const financeHref = contactHref(financeContact);
   </section>
 
   <section class="container contact">
-    <div class="contact-box">
+    <div class="contact-box" data-reveal>
       {financeHref ? (
         <a class="button" href={financeHref}>Contact our finance team <span aria-hidden="true">→</span></a>
       ) : (

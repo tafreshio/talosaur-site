@@ -11,7 +11,7 @@ import { isPlaceholder } from '../data/site';
   <PageHeader title="Who we are" href="/who-we-are" intro={teamIntro} />
 
   <section class="container">
-    <ul class="team-grid">
+    <ul class="team-grid" data-reveal-group>
       {team.map((member) => (
         <li class="member">
           <Photo

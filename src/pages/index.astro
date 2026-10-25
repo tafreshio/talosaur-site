@@ -16,8 +16,8 @@ const latestNews = (await getSortedNews()).slice(0, 4);
   <!-- Section 01: headline and intro -->
   <section id="intro" class="container section intro">
     <SectionHeader number={1} />
-    <h1 class="intro-title">Life at 50–300&nbsp;m is barely watched.</h1>
-    <div class="intro-body">
+    <h1 class="intro-title" data-reveal>Life at 50–300&nbsp;m is barely watched.</h1>
+    <div class="intro-body" data-reveal>
       <p class="intro-text">
         The ocean's twilight zone is too deep for divers and too costly to visit often.
         Talosaur is a Texas-based student team building a low-cost underwater robot that
@@ -30,7 +30,7 @@ const latestNews = (await getSortedNews()).slice(0, 4);
   <!-- Section 02: three cards -->
   <section class="container section">
     <SectionHeader number={2} />
-    <div class="card-grid">
+    <div class="card-grid" data-reveal-group>
       {heroCards.map((card, i) => <Card {...card} index={i + 1} />)}
     </div>
   </section>
@@ -38,7 +38,7 @@ const latestNews = (await getSortedNews()).slice(0, 4);
   <!-- Section 03: featured content -->
   <section class="container section">
     <SectionHeader number={3} title={featuredHeading} centered />
-    <div class="card-grid card-grid--featured">
+    <div class="card-grid card-grid--featured" data-reveal-group>
       {featuredCards.map((card) => <Card {...card} ratio="3 / 4" />)}
     </div>
   </section>
@@ -46,7 +46,7 @@ const latestNews = (await getSortedNews()).slice(0, 4);
   <!-- Section 04: How can we help? -->
   <section class="container section">
     <SectionHeader number={4} title="How can we help?" />
-    <div class="help-buttons">
+    <div class="help-buttons" data-reveal-group>
       {helpButtons.map((button) => (
         <a class="help-button" href={button.href}>
           <span>{button.label}</span>
@@ -59,10 +59,14 @@ const latestNews = (await getSortedNews()).slice(0, 4);
   <!-- Section 05: latest news -->
   <section class="container section">
     <SectionHeader number={5} title="Latest news" />
-    <ol class="news-grid">
+    <ol class="news-grid" data-reveal-group>
       {latestNews.map((entry) => (
         <li class="news-card">
-          <p class="label news-date">{formatNewsDate(entry)}</p>
+          <p class="label news-date">
+            {entry.data.date
+              ? <time datetime={entry.data.date.toISOString().slice(0, 10)}>{formatNewsDate(entry)}</time>
+              : formatNewsDate(entry)}
+          </p>
           <h3 class="news-title">
             <a href={`/news#${entry.id}`}>{entry.data.title}</a>
           </h3>
@@ -75,7 +79,7 @@ const latestNews = (await getSortedNews()).slice(0, 4);
   <!-- Section 06: You may also be interested in -->
   <section class="container section">
     <SectionHeader number={6} title="You may also be interested in" />
-    <div class="card-grid">
+    <div class="card-grid" data-reveal-group>
       {interestedCards.map((card) => <Card {...card} />)}
     </div>
   </section>
@@ -188,13 +192,19 @@ const latestNews = (await getSortedNews()).slice(0, 4);
     background: color-mix(in srgb, var(--color-surface) 80%, var(--color-accent));
   }
 
+  .news-card:hover .news-title {
+    color: var(--color-accent);
+  }
+
   .news-date {
     margin: 0;
     color: var(--color-accent);
   }
 
   .news-title {
+    margin-top: auto; /* title sits at the bottom of the card */
     font-size: var(--text-lg);
+    transition: color var(--duration) var(--ease);
     font-family: var(--font-body);
     font-stretch: normal;
     font-weight: 600;

@@ -9,7 +9,7 @@ interface Props {
 const { number, title, centered = false } = Astro.props;
 ---
 
-<header class:list={['section-header', { 'section-header--center': centered }]}>
+<header class:list={['section-header', { 'section-header--center': centered }]} data-reveal>
   <p class="label section-num">Section {String(number).padStart(2, '0')}</p>
   {title && <h2 class="section-title">{title}</h2>}
 </header>

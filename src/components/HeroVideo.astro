@@ -45,11 +45,10 @@ const hasVideo = existsSync(join(process.cwd(), 'public', videoSrc));
 
   <div class="container hero-content">
     <p class="hero-wordmark">Talosaur</p>
+    <a class="hero-scroll label" href="#intro">
+      Scroll <span aria-hidden="true">↓</span>
+    </a>
   </div>
-
-  <a class="hero-scroll label" href="#intro">
-    Scroll <span aria-hidden="true">↓</span>
-  </a>
 </section>
 
 <script>
@@ -124,7 +123,12 @@ const hasVideo = existsSync(join(process.cwd(), 'public', videoSrc));
   }
 
   .hero-content {
-    padding-bottom: clamp(4rem, 12svh, 9rem);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding-bottom: clamp(2rem, 6svh, 4rem);
   }
 
   /* Giant wordmark in the lower part of the video */
@@ -138,15 +142,25 @@ const hasVideo = existsSync(join(process.cwd(), 'public', videoSrc));
     letter-spacing: -0.02em;
     text-transform: uppercase;
     color: var(--color-text);
+    animation: rise 1.2s var(--ease) both;
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.3em);
+    }
   }
 
   .hero-scroll {
-    position: absolute;
-    left: 50%;
-    bottom: var(--space-md);
-    transform: translateX(-50%);
+    padding-bottom: 0.35em;
     color: var(--color-text);
     text-decoration: none;
+    animation: rise 1.2s 400ms var(--ease) both;
+  }
+
+  .hero-scroll:hover {
+    color: var(--color-accent);
   }
 
   .hero-scroll span {

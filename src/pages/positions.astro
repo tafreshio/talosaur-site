@@ -14,7 +14,7 @@ import { positions, positionsHeadline, positionsIntro, applicationFormUrl } from
   </PageHeader>
 
   <section class="container">
-    <ol class="roles">
+    <ol class="roles" data-reveal-group>
       {positions.map((role, i) => (
         <li class="role">
           <p class="label role-num">{String(i + 1).padStart(2, '0')}</p>

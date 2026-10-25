@@ -15,7 +15,7 @@ const navIndex = mainNav.findIndex((item) => item.href === href);
 const number = navIndex >= 0 ? String(navIndex + 1).padStart(2, '0') : null;
 ---
 
-<header class="container page-header">
+<header class="container page-header" data-reveal-group>
   {number && <p class="label page-num">{number} · {title}</p>}
   <h1 class="page-title">{heading}</h1>
   {intro && <p class="page-intro">{intro}</p>}
@@ -25,7 +25,25 @@ const number = navIndex >= 0 ? String(navIndex + 1).padStart(2, '0') : null;
 
 <style>
   .page-header {
+    position: relative;
     padding-block: var(--space-2xl) var(--space-xl);
+  }
+
+  /* Faint cyan glow behind the title, like light reaching down from the surface */
+  .page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: calc(50% - 50vw); /* stretch to the screen edges so the glow never has a visible box edge */
+    z-index: -1;
+    width: 100vw;
+    height: 100%;
+    background: radial-gradient(
+      50rem 20rem at 12% 0%,
+      color-mix(in srgb, var(--color-accent) 12%, transparent),
+      transparent 100%
+    );
+    pointer-events: none;
   }
 
   .page-num {

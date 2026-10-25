@@ -20,6 +20,10 @@ const {
 } = Astro.props;
 
 const fullTitle = title ? `${title} | Talosaur` : 'Talosaur';
+
+// Full addresses for the social-share preview (uses the "site" setting in astro.config.mjs)
+const pageUrl = new URL(Astro.url.pathname, Astro.site);
+const shareImage = new URL('/images/og-image.jpg', Astro.site);
 ---
 
 <!doctype html>
@@ -29,9 +33,23 @@ const fullTitle = title ? `${title} | Talosaur` : 'Talosaur';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#06121f" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
     <title>{fullTitle}</title>
+
+    <!-- Icons. PLACEHOLDER: swap favicon.svg, favicon.png and apple-touch-icon.png for the real logo -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- How the page looks when shared on social media or in chat apps -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Talosaur" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={shareImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
 
     <!-- Google Fonts: Archivo (headlines), Inter (body), IBM Plex Mono (labels) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -40,12 +58,39 @@ const fullTitle = title ? `${title} | Talosaur` : 'Talosaur';
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap"
     />
+
+    <!-- Marks that JavaScript is running, so the scroll-in animations only hide things when they can reveal them -->
+    <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
-  <body>
+  <body id="top">
+    <a class="skip-link" href="#main">Skip to content</a>
     <Header overlay={headerOverlay} />
-    <main>
+    <main id="main">
       <slot />
     </main>
     <Footer />
+
+    <script>
+      // Scroll-in animation: anything with a data-reveal attribute fades up when it comes into view.
+      // Elements inside a data-reveal-group fade in one after another.
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const targets = document.querySelectorAll<HTMLElement>('[data-reveal]');
+
+      if (reduceMotion || !('IntersectionObserver' in window)) {
+        targets.forEach((el) => el.classList.add('is-visible'));
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px' },
+        );
+        targets.forEach((el) => observer.observe(el));
+      }
+    </script>
   </body>
 </html>

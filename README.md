@@ -16,7 +16,8 @@ Edits show up in the browser as soon as you save a file. Stop the server with `C
 To check that the site builds without errors before publishing:
 
 ```sh
-npm run build
+npm run build    # builds the finished site into the dist/ folder
+npm run check    # looks for mistakes in the code (typos in data files, missing fields)
 ```
 
 ## Where things live
@@ -111,7 +112,25 @@ ffmpeg -i original.mov -an -vf "scale=1920:-2" -c:v libx264 -crf 26 -preset slow
 ffmpeg -i hero.mp4 -frames:v 1 -q:v 3 hero-poster.jpg
 ```
 
-Still to come in this README: deploying.
+## Deploy (put the site online)
+
+The site is static, so free hosting works. Both options below rebuild and republish the site automatically every time you push to GitHub.
+
+**Vercel**
+1. Push this project to a GitHub repository.
+2. Go to [vercel.com](https://vercel.com), sign in with GitHub, and click **Add New → Project**.
+3. Pick the repository. Vercel detects Astro on its own: leave the build command (`npm run build`) and output folder (`dist`) as they are.
+4. Click **Deploy**. You get an address like `talosaur.vercel.app`. To use your own domain, open the project's **Settings → Domains**.
+
+**Netlify**
+1. Push this project to a GitHub repository.
+2. Go to [netlify.com](https://netlify.com), sign in with GitHub, and click **Add new site → Import an existing project**.
+3. Pick the repository. Netlify detects Astro: build command `npm run build`, publish directory `dist`.
+4. Click **Deploy**. Your own domain goes under **Domain management**.
+
+**After the site has an address:** put it in `astro.config.mjs` (the `site` line) so link previews on social media point to the right place. Then push again.
+
+**Updating the live site:** edit, run `npm run build` to make sure it still builds, commit, push. The host rebuilds in about a minute.
 
 ## Placeholders
 
