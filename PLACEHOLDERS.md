@@ -4,7 +4,6 @@ Everything on the site that still needs real content, and the file where you fil
 
 | Placeholder | Where it shows | File to edit |
 |---|---|---|
-| `[team email]` | Footer, "Can we help?" column | `src/data/site.ts` (`teamEmail`) |
 | Instagram link | Footer, "Connect with us" | `src/data/site.ts` (`socialLinks`) |
 | LinkedIn link | Footer, "Connect with us" | `src/data/site.ts` (`socialLinks`) |
 | YouTube link | Footer, "Connect with us" | `src/data/site.ts` (`socialLinks`) |
@@ -20,3 +19,9 @@ Everything on the site that still needs real content, and the file where you fil
 | News photos (none yet; each entry can have one) | News page | Add `image: name.jpg` to the entry and put the photo in `public/images/news/` |
 | "Project kicks off" news entry: `[Date]` and `[One line on how Talosaur started.]` | News page and Home "Latest news" | `src/content/news/project-kicks-off.md` |
 | `[Add a source for these numbers.]` (cost figures) | The Problem, under the big numbers | `src/data/problem.ts` (`statsSource`) |
+| Team: `[Name]` (3 people) and `[Major, year]` (all 4) | Who we are | `src/data/team.ts` |
+| Team LinkedIn links (optional, hidden until filled in) | Who we are | `src/data/team.ts` (`linkedin`) |
+| 4 team photos: `fernando-guzman.jpg`, `ocean-engineer.jpg`, `electrical-engineer.jpg`, `cad-lead.jpg` | Who we are | Add to `public/images/team/` (rename to match a person's name if you also change `photo` in `team.ts`) |
+| `[X]` hours a week | Positions intro | `src/data/positions.ts` (`positionsIntro`) |
+| `[finance email or form]` | Donate, "Contact our finance team" button (greyed out until filled in) | `src/data/site.ts` (`financeContact`) |
+| `[team email]` | Work with us page (also the footer) | `src/data/site.ts` (`teamEmail`) |

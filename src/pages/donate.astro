@@ -1,0 +1,115 @@
+---
+// Donate: ways to help plus a contact button. No online payments.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import { financeContact, contactHref } from '../data/site';
+
+const intro =
+  'Talosaur is student-built and runs on a tight budget. Your support funds parts, testing and field trips, and helps us bring affordable ocean exploration to more people.';
+
+const waysToHelp = [
+  { title: 'Fund research', text: 'Support a specific study or field test' },
+  { title: 'Sponsor a project', text: 'Back a build like Turtle or our eDNA sampler' },
+  { title: 'Give in kind', text: 'Parts, equipment, pool or boat time' },
+];
+
+const financeHref = contactHref(financeContact);
+---
+
+<BaseLayout title="Donate" description={intro}>
+  <PageHeader title="Donate" heading="Support our research" href="/donate" intro={intro} />
+
+  <section class="container">
+    <SectionHeader number={1} title="Ways to help" />
+    <ol class="ways">
+      {waysToHelp.map((way, i) => (
+        <li class="way">
+          <p class="label way-num">{String(i + 1).padStart(2, '0')}</p>
+          <h3 class="way-title">{way.title}</h3>
+          <p class="way-text">{way.text}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="container contact">
+    <div class="contact-box">
+      {financeHref ? (
+        <a class="button" href={financeHref}>Contact our finance team <span aria-hidden="true">→</span></a>
+      ) : (
+        <span class="button button--disabled" aria-disabled="true">Contact our finance team</span>
+      )}
+      {!financeHref && <p class="label">Link: {financeContact}</p>}
+      <p class="contact-note">No online payments on the site for now; every donation starts with a conversation.</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .ways {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-sm);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .way {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    min-height: 14rem;
+    padding: var(--space-md);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+  }
+
+  .way-num {
+    margin: 0;
+    color: var(--color-accent);
+  }
+
+  .way-title {
+    margin-top: auto; /* pushes the title and text to the bottom of the box */
+    font-size: var(--text-xl);
+  }
+
+  .way-text {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  .contact {
+    padding-top: var(--space-xl);
+  }
+
+  .contact-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .button--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .contact-note {
+    max-width: 38rem;
+    margin: var(--space-sm) 0 0;
+    color: var(--color-muted);
+  }
+
+  @media (max-width: 760px) {
+    .ways {
+      grid-template-columns: 1fr;
+    }
+
+    .way {
+      min-height: 0;
+    }
+  }
+</style>

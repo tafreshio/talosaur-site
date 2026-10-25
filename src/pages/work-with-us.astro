@@ -1,0 +1,92 @@
+---
+// Work with us: the contact page. Email and location come from src/data/site.ts.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { teamEmail, location, contactHref } from '../data/site';
+
+const intro =
+  "Do you work with marine life between 50 and 300 meters, in research, conservation, fisheries or offshore energy? We'd love a 20-minute conversation about how you study it today.";
+
+const emailHref = contactHref(teamEmail);
+---
+
+<BaseLayout title="Work with us" description={intro}>
+  <PageHeader title="Work with us" heading="Get in touch" href="/work-with-us" intro={intro} />
+
+  <section class="container">
+    <dl class="contact-list">
+      <div class="contact-row">
+        <dt class="label">Email</dt>
+        <dd>
+          {emailHref ? (
+            <a class="contact-value contact-email" href={emailHref}>{teamEmail} <span aria-hidden="true">→</span></a>
+          ) : (
+            <span class="contact-value contact-placeholder">{teamEmail}</span>
+          )}
+        </dd>
+      </div>
+      <div class="contact-row">
+        <dt class="label">Location</dt>
+        <dd><span class="contact-value">{location}</span></dd>
+      </div>
+    </dl>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact-list {
+    margin: 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .contact-row {
+    display: grid;
+    grid-template-columns: 12rem 1fr;
+    align-items: baseline;
+    gap: var(--space-sm) var(--space-lg);
+    padding-block: var(--space-lg);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .contact-row dd {
+    margin: 0;
+    min-width: 0;
+  }
+
+  /* Big, Colossal-style contact details */
+  .contact-value {
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    font-weight: 800;
+    font-size: clamp(2rem, 1rem + 4vw, 4.5rem);
+    line-height: 1;
+    text-transform: uppercase;
+    overflow-wrap: anywhere; /* long email addresses wrap instead of overflowing */
+  }
+
+  .contact-email {
+    color: var(--color-accent);
+    text-decoration: none;
+    text-transform: none;
+  }
+
+  .contact-email span {
+    display: inline-block;
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .contact-email:hover span {
+    transform: translateX(6px);
+  }
+
+  .contact-placeholder {
+    color: var(--color-muted);
+    text-transform: none;
+  }
+
+  @media (max-width: 700px) {
+    .contact-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

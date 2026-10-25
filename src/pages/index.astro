@@ -113,26 +113,6 @@ const latestNews = (await getSortedNews()).slice(0, 4);
     line-height: 1.5;
   }
 
-  .button {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.9rem 1.6rem;
-    border-radius: 999px;
-    background: var(--color-accent);
-    color: var(--color-accent-ink);
-    font-weight: 600;
-    text-decoration: none;
-  }
-
-  .button span {
-    transition: transform var(--duration) var(--ease);
-  }
-
-  .button:hover span {
-    transform: translateX(4px);
-  }
-
   /* ---------- Card grids (sections 02, 03, 06) ---------- */
 
   .card-grid {

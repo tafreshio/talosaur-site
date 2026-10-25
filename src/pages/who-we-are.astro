@@ -1,0 +1,100 @@
+---
+// Who we are: team cards. Team members are listed in src/data/team.ts.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Photo from '../components/Photo.astro';
+import { team, teamIntro } from '../data/team';
+import { isPlaceholder } from '../data/site';
+---
+
+<BaseLayout title="Who we are" description={teamIntro}>
+  <PageHeader title="Who we are" href="/who-we-are" intro={teamIntro} />
+
+  <section class="container">
+    <ul class="team-grid">
+      {team.map((member) => (
+        <li class="member">
+          <Photo
+            file={`team/${member.photo}`}
+            label={isPlaceholder(member.name) ? member.role : member.name}
+            ratio="4 / 5"
+          />
+          <h2 class="member-name">{member.name}</h2>
+          <p class="member-role">{member.role}</p>
+          <p class="member-major">{member.majorYear}</p>
+          {member.linkedin && (
+            <a class="member-linkedin label" href={member.linkedin} target="_blank" rel="noopener noreferrer">
+              LinkedIn <span aria-hidden="true">↗</span>
+            </a>
+          )}
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>
+
+<style>
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-xl) var(--space-md);
+    margin: 0;
+    padding: var(--space-lg) 0 0;
+    border-top: 1px solid var(--color-line);
+    list-style: none;
+  }
+
+  .member {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .member-name {
+    margin-top: var(--space-sm);
+    font-size: clamp(1.5rem, 1.1rem + 1vw, 2rem);
+  }
+
+  .member-role {
+    margin: var(--space-xs) 0 0;
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+
+  .member-major {
+    margin: 0.15rem 0 0;
+    color: var(--color-muted);
+  }
+
+  .member-linkedin {
+    align-self: flex-start;
+    margin-top: var(--space-sm);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .member-linkedin:hover {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 1023px) {
+    .team-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Phone: keep two across so each photo doesn't fill the whole screen */
+  @media (max-width: 480px) {
+    .team-grid {
+      gap: var(--space-lg) var(--space-sm);
+    }
+
+    .member-name {
+      font-size: 1.25rem;
+    }
+
+    .member-role,
+    .member-major {
+      font-size: var(--text-sm);
+    }
+  }
+</style>

@@ -31,6 +31,9 @@ npm run build
 | Home page cards, buttons and featured heading | `src/data/home.ts` |
 | News posts | `src/content/news/` (one `.md` file per post) |
 | The Problem page text, big numbers and depth bands | `src/data/problem.ts` |
+| Team members | `src/data/team.ts` |
+| Open positions and the application form link | `src/data/positions.ts` |
+| Team email, finance contact, location | `src/data/site.ts` |
 | Photos | `public/images/` |
 | Videos | `public/videos/` |
 | Page wrapper (head, header, footer) used by every page | `src/layouts/BaseLayout.astro` |
@@ -42,6 +45,14 @@ npm run build
 open `src/data/site.ts` and edit the text between the quotes. Social links left as `''` show as plain text until filled in.
 
 **Change a color or font:** open `src/styles/global.css` and change the value next to the variable (for example `--color-accent`).
+
+## Edit team members
+
+Open `src/data/team.ts`. Each person is one `{ ... }` block with their name, role, major and year, photo filename and LinkedIn link. To add someone, copy a block and edit it; to remove someone, delete their block. The order in the file is the order on the page. Leave `linkedin: ''` empty to hide the LinkedIn link. Put their photo (portrait, about 800 × 1000 px) in `public/images/team/` with the filename you wrote in `photo`.
+
+## Edit open positions
+
+Open `src/data/positions.ts`. Each role is one `{ ... }` block with a title, "What you'd do" and "Helpful skills". Copy a block to add a role, delete it to close one. The **Apply now** button at the top of the page opens the Google Form saved in `applicationFormUrl`; change that line if the form ever moves. If you add or rename a role, also update the "Position applying for" dropdown in the Google Form so they match.
 
 ## Swap a photo
 
@@ -100,7 +111,7 @@ ffmpeg -i original.mov -an -vf "scale=1920:-2" -c:v libx264 -crf 26 -preset slow
 ffmpeg -i hero.mp4 -frames:v 1 -q:v 3 hero-poster.jpg
 ```
 
-Still to come in this README: editing team members and positions, and deploying.
+Still to come in this README: deploying.
 
 ## Placeholders
 

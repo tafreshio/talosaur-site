@@ -19,6 +19,8 @@ const number = navIndex >= 0 ? String(navIndex + 1).padStart(2, '0') : null;
   {number && <p class="label page-num">{number} · {title}</p>}
   <h1 class="page-title">{heading}</h1>
   {intro && <p class="page-intro">{intro}</p>}
+  <!-- Anything placed inside <PageHeader>...</PageHeader> (e.g. a button) shows here -->
+  {Astro.slots.has('default') && <div class="page-actions"><slot /></div>}
 </header>
 
 <style>
@@ -34,6 +36,10 @@ const number = navIndex >= 0 ? String(navIndex + 1).padStart(2, '0') : null;
   .page-title {
     max-width: 16ch;
     font-size: var(--text-hero);
+  }
+
+  .page-actions {
+    margin-top: var(--space-lg);
   }
 
   .page-intro {

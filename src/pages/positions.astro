@@ -1,0 +1,108 @@
+---
+// Positions: open roles plus one "Apply now" button that opens the Google Form. Roles are listed in src/data/positions.ts.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { positions, positionsHeadline, positionsIntro, applicationFormUrl } from '../data/positions';
+---
+
+<BaseLayout title="Positions" description={positionsIntro}>
+  <PageHeader title="Positions" heading={positionsHeadline} href="/positions" intro={positionsIntro}>
+    <a class="button" href={applicationFormUrl} target="_blank" rel="noopener noreferrer">
+      Apply now <span aria-hidden="true">→</span>
+      <span class="visually-hidden">(opens the application form in a new tab)</span>
+    </a>
+  </PageHeader>
+
+  <section class="container">
+    <ol class="roles">
+      {positions.map((role, i) => (
+        <li class="role">
+          <p class="label role-num">{String(i + 1).padStart(2, '0')}</p>
+          <h2 class="role-title">{role.title}</h2>
+          <dl class="role-details">
+            <div>
+              <dt class="label">What you'd do</dt>
+              <dd>{role.whatYoullDo}</dd>
+            </div>
+            <div>
+              <dt class="label">Helpful skills</dt>
+              <dd>{role.skills}</dd>
+            </div>
+          </dl>
+        </li>
+      ))}
+    </ol>
+  </section>
+</BaseLayout>
+
+<style>
+  .roles {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  /* Each role is a row: number | title | details */
+  .role {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1.2fr) minmax(0, 2fr);
+    align-items: start;
+    gap: var(--space-md) var(--space-lg);
+    padding-block: var(--space-lg);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .role-num {
+    margin: 0.5rem 0 0;
+    color: var(--color-accent);
+  }
+
+  .role-title {
+    font-size: var(--text-xl);
+  }
+
+  .role-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin: 0;
+  }
+
+  .role-details dt {
+    margin-bottom: 0.3rem;
+  }
+
+  .role-details dd {
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 1023px) {
+    .role {
+      grid-template-columns: 3rem 1fr;
+    }
+
+    .role-details {
+      grid-column: 2 / -1;
+      grid-row: 2;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .role {
+      grid-template-columns: 1fr;
+      gap: var(--space-sm);
+    }
+
+    .role-num {
+      margin: 0;
+    }
+
+    .role-details {
+      grid-column: auto;
+      grid-row: auto;
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
