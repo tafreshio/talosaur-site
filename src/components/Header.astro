@@ -2,12 +2,19 @@
 // Shared top navigation. Used on every page through BaseLayout.astro.
 import { mainNav } from '../data/site';
 
+interface Props {
+  // true = transparent header that sits on top of a full-screen hero (Home page)
+  overlay?: boolean;
+}
+
+const { overlay = false } = Astro.props;
+
 // Which page are we on? Used to highlight the current link.
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-<header class="site-header">
+<header class:list={['site-header', { 'site-header--overlay': overlay }]}>
   <div class="container header-inner">
     <!-- PLACEHOLDER: text wordmark until we have a logo file -->
     <a href="/" class="logo" aria-label="Talosaur home">Talosaur</a>
@@ -61,6 +68,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
     if (e.key === 'Escape') setOpen(false);
   });
   window.matchMedia('(min-width: 1024px)').addEventListener('change', () => setOpen(false));
+
+  // Overlay header: becomes frosted once the page is scrolled.
+  if (header?.classList.contains('site-header--overlay')) {
+    const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 10);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
 </script>
 
 <style>
@@ -81,6 +95,25 @@ const pad = (n: number) => String(n).padStart(2, '0');
     background: color-mix(in srgb, var(--color-bg) 85%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    transition: opacity var(--duration) var(--ease);
+  }
+
+  /* Overlay version: see-through until you scroll */
+  .site-header--overlay {
+    border-bottom-color: transparent;
+    transition: border-color var(--duration) var(--ease);
+  }
+
+  .site-header--overlay::before {
+    opacity: 0;
+  }
+
+  .site-header--overlay.is-scrolled {
+    border-bottom-color: var(--color-line);
+  }
+
+  .site-header--overlay.is-scrolled::before {
+    opacity: 1;
   }
 
   .header-inner {

@@ -9,10 +9,13 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  // true = the header floats transparently over the top of the page (used with a full-screen hero)
+  headerOverlay?: boolean;
 }
 
 const {
   title,
+  headerOverlay = false,
   description = 'Talosaur is a Texas-based student team building a low-cost underwater robot that finds, follows and films marine life in the ocean\'s twilight zone.',
 } = Astro.props;
 
@@ -39,7 +42,7 @@ const fullTitle = title ? `${title} | Talosaur` : 'Talosaur';
     />
   </head>
   <body>
-    <Header />
+    <Header overlay={headerOverlay} />
     <main>
       <slot />
     </main>

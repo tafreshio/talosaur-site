@@ -10,6 +10,8 @@ Everything on the site that still needs real content, and the file where you fil
 | YouTube link | Footer, "Connect with us" | `src/data/site.ts` (`socialLinks`) |
 | Logo (text "TALOSAUR" for now) | Header and big footer wordmark | `src/components/Header.astro`, `src/components/Footer.astro` |
 | Favicon (Astro default icon) | Browser tab | `public/favicon.svg`, `public/favicon.ico` |
-| Image credits page | Footer bottom row link (`/image-credits`) | Page not built yet |
-| Privacy page | Footer bottom row link (`/privacy`) | Page not built yet |
-| Home page content (temporary stand-in) | Home | `src/pages/index.astro` |
+| Hero background video | Home, full-screen top section | Add `public/videos/hero.mp4` (see README for format) |
+| Hero still image (plain blue gradient for now) | Home hero, shown while the video loads and to people with reduced motion on | Replace `public/images/hero-poster.jpg` |
+| `[List each photo or video on the site and who took it.]` | Image credits page | `src/pages/image-credits.astro` |
+| `[Privacy policy: ...]` | Privacy page | `src/pages/privacy.astro` |
+| Rest of the Home page (cards, featured content, latest news...) | Home, below the hero | `src/pages/index.astro` (not built yet) |

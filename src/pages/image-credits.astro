@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Image credits">
+  <section class="container simple-page">
+    <p class="label">Image credits</p>
+    <h1>Image credits</h1>
+    <!-- PLACEHOLDER: list each photo or video and who took it -->
+    <p>[List each photo or video on the site and who took it.]</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .simple-page {
+    padding-block: var(--space-2xl) 0;
+  }
+
+  h1 {
+    margin-block: var(--space-sm) var(--space-lg);
+    font-size: var(--text-2xl);
+  }
+
+  p:not(.label) {
+    max-width: 60ch;
+    color: var(--color-muted);
+  }
+</style>

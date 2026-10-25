@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Privacy">
+  <section class="container simple-page">
+    <p class="label">Privacy</p>
+    <h1>Privacy</h1>
+    <!-- PLACEHOLDER: privacy policy text -->
+    <p>[Privacy policy: what information the site collects, if any, and how to contact us about it.]</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .simple-page {
+    padding-block: var(--space-2xl) 0;
+  }
+
+  h1 {
+    margin-block: var(--space-sm) var(--space-lg);
+    font-size: var(--text-2xl);
+  }
+
+  p:not(.label) {
+    max-width: 60ch;
+    color: var(--color-muted);
+  }
+</style>

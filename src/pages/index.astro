@@ -1,11 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroVideo from '../components/HeroVideo.astro';
 ---
 
-<BaseLayout>
-  <!-- TEMPORARY: stand-in content so the header and footer can be previewed. Replaced when the Home page is built. -->
-  <section class="container" style="padding-block: var(--space-2xl);">
-    <p class="label">Section 00</p>
-    <h1 style="font-size: var(--text-hero); margin-top: var(--space-sm);">Life at 50–300 m is barely watched.</h1>
-  </section>
+<BaseLayout headerOverlay>
+  <HeroVideo />
+  <!-- Next: three cards, featured content, "How can we help?", latest news, "You may also be interested in" -->
 </BaseLayout>

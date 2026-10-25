@@ -1,0 +1,179 @@
+---
+// Full-screen video hero at the top of the Home page.
+//
+// To swap the media, replace these files (keep the same names):
+//   public/videos/hero.mp4       the background video
+//   public/images/hero-poster.jpg  a still from the video, shown while it loads
+//                                  and to visitors who have "reduce motion" turned on
+//
+// If hero.mp4 is missing, only the poster shows, with a placeholder tag.
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+const videoSrc = '/videos/hero.mp4';
+const posterSrc = '/images/hero-poster.jpg';
+
+// Checked when the site is built, so adding the file is all it takes.
+const hasVideo = existsSync(join(process.cwd(), 'public', videoSrc));
+---
+
+<section class="hero">
+  <div class="hero-media" aria-hidden="true">
+    <!-- The still image. Always here, underneath the video. -->
+    <img class="hero-poster" src={posterSrc} alt="" fetchpriority="high" />
+
+    {hasVideo && (
+      <video
+        class="hero-video"
+        src={videoSrc}
+        poster={posterSrc}
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+      ></video>
+    )}
+  </div>
+
+  {!hasVideo && (
+    <p class="hero-placeholder-tag label">
+      Placeholder: hero video (public/videos/hero.mp4) and still image (public/images/hero-poster.jpg)
+    </p>
+  )}
+
+  <div class="container hero-content">
+    <p class="label hero-label">Section 01</p>
+    <h1 class="hero-title">Life at 50–300&nbsp;m is barely watched.</h1>
+    <p class="hero-text">
+      The ocean's twilight zone is too deep for divers and too costly to visit often.
+      Talosaur is a Texas-based student team building a low-cost underwater robot that
+      finds, follows and films marine life there.
+    </p>
+    <a class="hero-button" href="/the-problem">
+      Read more <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</section>
+
+<script>
+  // Reduced motion: remove the video entirely so it never plays (or downloads).
+  // The poster image underneath stays visible.
+  const video = document.querySelector<HTMLVideoElement>('.hero-video');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  if (video && reduceMotion.matches) {
+    video.pause();
+    video.removeAttribute('src');
+    video.load();
+    video.remove();
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    /* Fill the screen. The header floats on top, so pull the hero up underneath it. */
+    min-height: 100vh;
+    min-height: 100svh; /* "small viewport height": ignores phone browser toolbars */
+    margin-top: calc(-1 * var(--header-height));
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .hero-media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  /* Poster and video both cover the whole hero, cropping the edges if needed */
+  .hero-poster,
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Dark fade at the bottom so the white text is always readable */
+  .hero-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to top, var(--color-bg) 0%, color-mix(in srgb, var(--color-bg) 60%, transparent) 35%, transparent 70%),
+      linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 50%, transparent) 0%, transparent 20%);
+  }
+
+  /* Belt and braces: if the script hasn't run yet, still hide the video */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-video {
+      display: none;
+    }
+  }
+
+  .hero-placeholder-tag {
+    position: absolute;
+    right: var(--gutter);
+    top: calc(var(--header-height) + var(--space-sm));
+    max-width: calc(100% - 2 * var(--gutter));
+    margin: 0;
+    padding: 0.4rem 0.7rem;
+    border: 1px dashed var(--color-muted);
+    background: color-mix(in srgb, var(--color-bg) 70%, transparent);
+  }
+
+  .hero-content {
+    padding-top: calc(var(--header-height) + var(--space-lg));
+    padding-bottom: var(--space-xl);
+  }
+
+  .hero-label {
+    margin: 0 0 var(--space-sm);
+    color: var(--color-accent);
+  }
+
+  .hero-title {
+    max-width: 14ch;
+    /* Grows with screen width, but never so tall that the button falls off a short screen */
+    font-size: min(var(--text-hero), 11svh);
+  }
+
+  .hero-text {
+    max-width: 38rem;
+    margin: var(--space-md) 0 var(--space-md);
+    font-size: var(--text-lg);
+    line-height: 1.5;
+  }
+
+  .hero-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 1.6rem;
+    border-radius: 999px;
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .hero-button span {
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .hero-button:hover span {
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 600px) {
+    .hero-text {
+      font-size: var(--text-base);
+    }
+  }
+</style>

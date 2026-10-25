@@ -27,6 +27,9 @@ npm run build
 | Top navigation and footer links, team email, social links | `src/data/site.ts` |
 | Top navigation design | `src/components/Header.astro` |
 | Footer design | `src/components/Footer.astro` |
+| Home page video hero | `src/components/HeroVideo.astro` |
+| Photos | `public/images/` |
+| Videos | `public/videos/` |
 | Page wrapper (head, header, footer) used by every page | `src/layouts/BaseLayout.astro` |
 | Pages | `src/pages/` (one file per page) |
 
@@ -37,7 +40,41 @@ open `src/data/site.ts` and edit the text between the quotes. Social links left 
 
 **Change a color or font:** open `src/styles/global.css` and change the value next to the variable (for example `--color-accent`).
 
-Still to come in this README: adding a news post, swapping a photo, editing team members and positions, and deploying.
+## Swap the Home page video
+
+The full-screen video at the top of the Home page uses two files. Replace them and keep the exact same names:
+
+| File | What it is |
+|---|---|
+| `public/videos/hero.mp4` | The background video |
+| `public/images/hero-poster.jpg` | A still frame from the video. It shows while the video loads, and instead of the video for visitors who have "reduce motion" turned on in their phone or computer settings |
+
+Until `hero.mp4` exists, the site shows the still image with a small "Placeholder" tag. Once you add the file, the video appears the next time the site is built (automatically when you deploy, or restart `npm run dev` on your computer).
+
+**Video file checklist**
+
+- **Format:** MP4 (H.264 video). This plays on every browser, including iPhones.
+- **Size on screen:** 1920 × 1080 (landscape, 16:9).
+- **Length:** 10 to 20 seconds. It loops, so pick a clip where the end flows back into the start.
+- **No sound.** Browsers only autoplay muted video, and the site never plays audio. Remove the audio track to save space.
+- **File size:** aim for under 5 MB (10 MB at most). Big files load slowly on phones.
+- **Framing:** on phones the left and right sides get cropped, so keep the subject near the center. The headline sits over the bottom-left, so keep that area fairly dark and calm.
+
+**Poster image checklist:** JPG, 1920 × 1080, under 300 KB, ideally the first frame of the video.
+
+**Compressing a video** with the free tool [ffmpeg](https://ffmpeg.org) (`brew install ffmpeg` on a Mac):
+
+```sh
+ffmpeg -i original.mov -an -vf "scale=1920:-2" -c:v libx264 -crf 26 -preset slow -pix_fmt yuv420p -movflags +faststart hero.mp4
+```
+
+`-an` removes the sound, `-crf 26` sets the quality (higher number = smaller file, try 23 to 30), and `-movflags +faststart` lets it start playing before it fully downloads. To grab the first frame as the poster:
+
+```sh
+ffmpeg -i hero.mp4 -frames:v 1 -q:v 3 hero-poster.jpg
+```
+
+Still to come in this README: adding a news post, editing team members and positions, and deploying.
 
 ## Placeholders
 
