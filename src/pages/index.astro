@@ -69,6 +69,7 @@ const latestNews = (await getSortedNews()).slice(0, 4);
         </li>
       ))}
     </ol>
+    <a class="all-news" href="/news">All news <span aria-hidden="true">→</span></a>
   </section>
 
   <!-- Section 06: You may also be interested in -->
@@ -231,6 +232,23 @@ const latestNews = (await getSortedNews()).slice(0, 4);
     content: '';
     position: absolute;
     inset: 0;
+  }
+
+  .all-news {
+    display: inline-block;
+    margin-top: var(--space-md);
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .all-news span {
+    display: inline-block;
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .all-news:hover span {
+    transform: translateX(4px);
   }
 
   /* ---------- Tablet ---------- */

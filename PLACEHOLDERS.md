@@ -17,5 +17,5 @@ Everything on the site that still needs real content, and the file where you fil
 | `[Live stream link]` | Home, "Talosaur Live" card (not clickable until filled in) | `src/data/home.ts` |
 | `[Featured content heading]` (not given in the Content doc) | Home, Section 03 | `src/data/home.ts` (`featuredHeading`) |
 | 9 Home card photos: `home-turtle.jpg`, `home-edna.jpg`, `home-live.jpg`, `home-team.jpg`, `home-positions.jpg`, `home-build-log.jpg`, `home-twilight-zone.jpg`, `home-meet-the-team.jpg`, `home-get-in-touch.jpg` | Home, Sections 02, 03 and 06 | Add each file to `public/images/` with that exact name |
-| News entries (placeholder copies of the Content doc's four updates) | Home "Latest news", and the News page once built | `src/content/news/` |
-| "Project kicks off" news entry: `[Date]` and `[One line on how Talosaur started.]` | Home "Latest news" | `src/content/news/project-kicks-off.md` |
+| News photos (none yet; each entry can have one) | News page | Add `image: name.jpg` to the entry and put the photo in `public/images/news/` |
+| "Project kicks off" news entry: `[Date]` and `[One line on how Talosaur started.]` | News page and Home "Latest news" | `src/content/news/project-kicks-off.md` |

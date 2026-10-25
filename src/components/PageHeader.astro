@@ -1,0 +1,43 @@
+---
+// Big title at the top of inner pages, e.g. "03 · News".
+// The number matches the page's position in the top navigation.
+import { mainNav } from '../data/site';
+
+interface Props {
+  title: string;
+  href: string;   // the page's address, used to look up its nav number
+  intro?: string;
+}
+
+const { title, href, intro } = Astro.props;
+const navIndex = mainNav.findIndex((item) => item.href === href);
+const number = navIndex >= 0 ? String(navIndex + 1).padStart(2, '0') : null;
+---
+
+<header class="container page-header">
+  {number && <p class="label page-num">{number} · {title}</p>}
+  <h1 class="page-title">{title}</h1>
+  {intro && <p class="page-intro">{intro}</p>}
+</header>
+
+<style>
+  .page-header {
+    padding-block: var(--space-2xl) var(--space-xl);
+  }
+
+  .page-num {
+    margin: 0 0 var(--space-sm);
+    color: var(--color-accent);
+  }
+
+  .page-title {
+    font-size: var(--text-hero);
+  }
+
+  .page-intro {
+    max-width: 38rem;
+    margin: var(--space-lg) 0 0;
+    font-size: var(--text-lg);
+    line-height: 1.5;
+  }
+</style>

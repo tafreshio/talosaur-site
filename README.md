@@ -63,7 +63,7 @@ One or two sentences about what happened.
 - For something planned but not done yet, swap the `date:` line for `upcoming: true` and `dateLabel: Coming soon`. Upcoming posts show at the top.
 - Optional photo: add `image: first-dive.jpg` and put the photo in `public/images/news/`.
 
-The Home page automatically shows the four newest posts.
+The News page (`src/pages/news.astro`) lists every post, and the Home page automatically shows the four newest, each linking to that post on the News page.
 
 ## Swap the Home page video
 
