@@ -1,6 +1,7 @@
 ---
 // Shared top navigation. Used on every page through BaseLayout.astro.
 import { mainNav } from '../data/site';
+import { url, withoutBase } from '../lib/url';
 
 interface Props {
   // true = transparent header that sits on top of a full-screen hero (Home page)
@@ -10,14 +11,15 @@ interface Props {
 const { overlay = false } = Astro.props;
 
 // Which page are we on? Used to highlight the current link.
-const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+// withoutBase turns '/talosaur-site/news/' into '/news' so it matches the addresses in site.ts.
+const currentPath = withoutBase(Astro.url.pathname);
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
 <header class:list={['site-header', { 'site-header--overlay': overlay }]}>
   <div class="container header-inner">
     <!-- PLACEHOLDER: text wordmark until we have a logo file -->
-    <a href="/" class="logo" aria-label="Talosaur home">Talosaur</a>
+    <a href={url('/')} class="logo" aria-label="Talosaur home">Talosaur</a>
 
     <button
       class="menu-toggle"
@@ -34,7 +36,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         {mainNav.map((item, i) => (
           <li>
             <a
-              href={item.href}
+              href={url(item.href)}
               class:list={['nav-link', { 'nav-link--cta': item.label === 'Donate' }]}
               aria-current={currentPath === item.href ? 'page' : undefined}
             >

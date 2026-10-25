@@ -5,6 +5,7 @@
 // Every card has the same shape, so a row of cards always lines up. If the photo file
 // is missing from public/images/, a quiet dark panel of the same shape takes its place.
 import { imageExists } from '../lib/images';
+import { url } from '../lib/url';
 
 interface Props {
   title: string;
@@ -25,7 +26,7 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
 
 <article class="card">
   <div class="card-media" style={`aspect-ratio: ${ratio};`}>
-    {hasPhoto && <img src={`/images/${photo}`} alt={photoLabel} loading="lazy" decoding="async" />}
+    {hasPhoto && <img src={url(`/images/${photo}`)} alt={photoLabel} loading="lazy" decoding="async" />}
   </div>
 
   <div class="card-body">
@@ -42,7 +43,7 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
         title
       ) : (
         <a
-          href={href}
+          href={url(href)}
           class="card-link"
           {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
         >{title}</a>

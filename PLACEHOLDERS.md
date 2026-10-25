@@ -16,5 +16,4 @@ README's "Add or swap a photo" table says which file is which so they can be swa
 | `[Add a source for these numbers.]` (cost figures) | The Problem, under the big numbers | `src/data/problem.ts` (`statsSource`) |
 | `[Date]` and `[One line on how Talosaur started.]` | "Project kicks off" news entry | `src/content/news/project-kicks-off.md` |
 | `[Credits for any third-party footage or photos...]` | Image credits page | `src/pages/image-credits.astro` |
-| Site address (`https://talosaur.example`) | Social-share previews only; set it after deploying | `astro.config.mjs` (`site`) |
 | Logo: text "TALOSAUR" and a simple "T" favicon | Header, footer, hero, browser tab | `src/components/Header.astro`, `Footer.astro`, `HeroVideo.astro`, `public/favicon.*` |

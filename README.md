@@ -2,14 +2,18 @@
 
 The Talosaur team website, built with [Astro](https://astro.build). It is a static site: no server or database, just pages.
 
+**Live site:** https://tafreshio.github.io/talosaur-site/ (published automatically from the `main` branch, see "Deploy" below).
+
 ## Run the site on your computer
 
 You need [Node.js](https://nodejs.org) installed (version 22 or newer).
 
 ```sh
 npm install      # first time only: downloads Astro
-npm run dev      # starts the site at http://localhost:4321
+npm run dev      # starts the site at http://localhost:4321/talosaur-site/
 ```
+
+The address ends in `/talosaur-site/` because that is the folder the site lives in on GitHub Pages (see "Deploy" below). `http://localhost:4321/` on its own shows a "not found" page.
 
 Edits show up in the browser as soon as you save a file. Stop the server with `Ctrl + C`.
 
@@ -17,6 +21,7 @@ To check that the site builds without errors before publishing:
 
 ```sh
 npm run build    # builds the finished site into the dist/ folder
+npm run preview  # serves that finished site so you can click through it before publishing
 npm run check    # looks for mistakes in the code (typos in data files, missing fields)
 ```
 
@@ -38,6 +43,9 @@ npm run check    # looks for mistakes in the code (typos in data files, missing 
 | Photos | `public/images/` |
 | Videos | `public/videos/` |
 | Page wrapper (head, header, footer) used by every page | `src/layouts/BaseLayout.astro` |
+| Site address and the `/talosaur-site` folder (`site`, `base`) | `astro.config.mjs` |
+| Helper that adds `/talosaur-site` to links and image paths | `src/lib/url.ts` |
+| Automatic deploy to GitHub Pages | `.github/workflows/deploy.yml` |
 | Pages | `src/pages/` (one file per page) |
 
 ## Common edits
@@ -98,6 +106,8 @@ One or two sentences about what happened.
 - For something planned but not done yet, swap the `date:` line for `upcoming: true` and `dateLabel: Coming soon`. Upcoming posts show at the top.
 - Optional photo: add `image: first-dive.jpg` and put the photo in `public/images/news/`.
 
+- Linking to another page from inside a post? Include the site folder: write `[the problem](/talosaur-site/the-problem)`, not `/the-problem`. (Links in data files and pages get the folder added automatically; links typed inside Markdown posts don't.)
+
 The News page (`src/pages/news.astro`) lists every post, and the Home page automatically shows the four newest, each linking to that post on the News page.
 
 ## Swap the Home page video
@@ -136,23 +146,43 @@ ffmpeg -i hero.mp4 -frames:v 1 -q:v 3 hero-poster.jpg
 
 ## Deploy (put the site online)
 
-The site is static, so free hosting works. Both options below rebuild and republish the site automatically every time you push to GitHub.
+The site is hosted for free on **GitHub Pages** at **https://tafreshio.github.io/talosaur-site/**.
 
-**Vercel**
-1. Push this project to a GitHub repository.
-2. Go to [vercel.com](https://vercel.com), sign in with GitHub, and click **Add New → Project**.
-3. Pick the repository. Vercel detects Astro on its own: leave the build command (`npm run build`) and output folder (`dist`) as they are.
-4. Click **Deploy**. You get an address like `talosaur.vercel.app`. To use your own domain, open the project's **Settings → Domains**.
+### How deploys work
 
-**Netlify**
-1. Push this project to a GitHub repository.
-2. Go to [netlify.com](https://netlify.com), sign in with GitHub, and click **Add new site → Import an existing project**.
-3. Pick the repository. Netlify detects Astro: build command `npm run build`, publish directory `dist`.
-4. Click **Deploy**. Your own domain goes under **Domain management**.
+You don't upload anything by hand. Every push to the `main` branch publishes the site:
 
-**After the site has an address:** put it in `astro.config.mjs` (the `site` line) so link previews on social media point to the right place. Then push again.
+1. You push to `main` on GitHub.
+2. GitHub Actions runs the workflow in `.github/workflows/deploy.yml` (copied from [Astro's official GitHub Pages guide](https://docs.astro.build/en/guides/deploy/github/)). It installs the packages, runs `npm run build`, and uploads the finished `dist/` folder.
+3. A second step publishes that upload to GitHub Pages. The live site updates about a minute after you push.
 
-**Updating the live site:** edit, run `npm run build` to make sure it still builds, commit, push. The host rebuilds in about a minute.
+**Watch a deploy:** open the repository on GitHub and click the **Actions** tab. A green check means it's live; a red X means the build failed and the old version of the site stays up. Click the red run to see the error. You can also re-run the deploy from there with **Run workflow**.
+
+**Before you push**, run `npm run build` (and `npm run preview` to click around). If it fails on your computer, it will fail on GitHub too.
+
+**One-time setting (already done):** in the repository's **Settings → Pages**, **Source** is set to **GitHub Actions**. If deploys ever stop appearing, check that first.
+
+### Why every address starts with /talosaur-site
+
+GitHub Pages puts this site in a folder named after the repository, so pages live at `/talosaur-site/news`, images at `/talosaur-site/images/...`, and so on. Two settings in `astro.config.mjs` handle this:
+
+- `site: 'https://tafreshio.github.io'` is the domain, used for the full links in social-share previews.
+- `base: '/talosaur-site'` is the folder.
+
+In the code, internal links and image paths are written without the folder (for example `'/news'` in `src/data/site.ts`) and passed through `url()` from `src/lib/url.ts`, which adds `/talosaur-site` in front. **If you add a new link or image in a page or component, wrap it in `url()`** or it will point at the wrong place once it's online. Outside links (`https://...`) and email links don't need it.
+
+### Using a custom domain later
+
+If the team buys a domain (say `talosaur.org`), the site can move to it without changing any pages:
+
+1. **Tell GitHub:** repository **Settings → Pages → Custom domain**, enter the domain and save. Tick **Enforce HTTPS** once it's available.
+2. **Point the domain at GitHub:** in your domain provider's DNS settings, add the records from GitHub's guide, [Managing a custom domain for your GitHub Pages site](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site). (For a root domain that's four `A` records; for `www.` it's a `CNAME` to `tafreshio.github.io`.)
+3. **Add `public/CNAME`:** a file named `CNAME` (no extension) in `public/`, containing just the domain on one line, for example `talosaur.org`.
+4. **Edit `astro.config.mjs`:** change `site` to `'https://talosaur.org'` and **delete the `base` line**. Because every link goes through `url()`, the `/talosaur-site` folder disappears from all of them automatically.
+5. **Fix Markdown links:** search `src/content/news/` for `/talosaur-site` and remove it from any links typed in posts.
+6. Run `npm run dev` (the site is now at `http://localhost:4321/`), then `npm run build`, commit and push.
+
+DNS changes can take a few hours to reach everyone. Until then the old `github.io` address keeps working and GitHub redirects it to the new domain.
 
 ## Placeholders
 

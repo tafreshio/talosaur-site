@@ -4,6 +4,7 @@
 //   <BaseLayout title="News"> ...page content... </BaseLayout>
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { url } from '../lib/url';
 import '../styles/global.css';
 
 interface Props {
@@ -21,9 +22,10 @@ const {
 
 const fullTitle = title ? `${title} | Talosaur` : 'Talosaur';
 
-// Full addresses for the social-share preview (uses the "site" setting in astro.config.mjs)
+// Full addresses for the social-share preview (uses "site" and "base" in astro.config.mjs).
+// Astro.url.pathname already includes the base; the image path gets it from url().
 const pageUrl = new URL(Astro.url.pathname, Astro.site);
-const shareImage = new URL('/images/og-image.jpg', Astro.site);
+const shareImage = new URL(url('/images/og-image.jpg'), Astro.site);
 ---
 
 <!doctype html>
@@ -36,9 +38,9 @@ const shareImage = new URL('/images/og-image.jpg', Astro.site);
     <title>{fullTitle}</title>
 
     <!-- Icons. PLACEHOLDER: swap favicon.svg, favicon.png and apple-touch-icon.png for the real logo -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
+    <link rel="icon" type="image/png" sizes="64x64" href={url('/favicon.png')} />
+    <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
 
     <!-- How the page looks when shared on social media or in chat apps -->
     <meta property="og:type" content="website" />

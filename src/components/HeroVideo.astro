@@ -10,12 +10,17 @@
 // If hero.mp4 is missing, only the poster shows, with a placeholder tag.
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { url } from '../lib/url';
 
-const videoSrc = '/videos/hero.mp4';
-const posterSrc = '/images/hero-poster.jpg';
+const videoFile = 'videos/hero.mp4';         // where the file sits inside public/
+const posterFile = 'images/hero-poster.jpg';
+
+// Web addresses (with the /talosaur-site base added by url())
+const videoSrc = url(`/${videoFile}`);
+const posterSrc = url(`/${posterFile}`);
 
 // Checked when the site is built, so adding the file is all it takes.
-const hasVideo = existsSync(join(process.cwd(), 'public', videoSrc));
+const hasVideo = existsSync(join(process.cwd(), 'public', videoFile));
 ---
 
 <section class="hero">
