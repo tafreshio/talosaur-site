@@ -74,7 +74,7 @@ const shareImage = new URL('/images/og-image.jpg', Astro.site);
       // Scroll-in animation: anything with a data-reveal attribute fades up when it comes into view.
       // Elements inside a data-reveal-group fade in one after another.
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const targets = document.querySelectorAll<HTMLElement>('[data-reveal]');
+      const targets = document.querySelectorAll<HTMLElement>('[data-reveal], [data-reveal-group]');
 
       if (reduceMotion || !('IntersectionObserver' in window)) {
         targets.forEach((el) => el.classList.add('is-visible'));
@@ -90,6 +90,9 @@ const shareImage = new URL('/images/og-image.jpg', Astro.site);
           { rootMargin: '0px 0px -8% 0px' },
         );
         targets.forEach((el) => observer.observe(el));
+
+        // Safety net: if anything is still hidden after a few seconds, show it anyway.
+        setTimeout(() => targets.forEach((el) => el.classList.add('is-visible')), 4000);
       }
     </script>
   </body>
