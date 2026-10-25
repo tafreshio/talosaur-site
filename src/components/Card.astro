@@ -1,31 +1,42 @@
 ---
-// Card with a title, one line of text and a "Read more" link. The whole card is clickable.
-// With a photo (file present in public/images/) it's a photo card; without one it's a solid
-// text panel that stretches to the same height as the photo cards beside it.
-import Photo from './Photo.astro';
+// Photo card used on the Home page: photo on top, then a hairline, a small number,
+// the title and one line of text. The whole card is clickable.
+//
+// Every card has the same shape, so a row of cards always lines up. If the photo file
+// is missing from public/images/, a quiet dark panel of the same shape takes its place.
 import { imageExists } from '../lib/images';
 
 interface Props {
   title: string;
   text: string;
   href: string;
-  photo?: string;      // filename in public/images/ (optional)
-  photoLabel?: string; // what the photo shows
-  index?: number;      // shows a small "01", "02"... above the title
+  photo?: string;      // filename in public/images/
+  photoLabel?: string; // what the photo shows (used as alt text)
+  index?: number;      // shows a small "01", "02"... in the card
   ratio?: string;      // photo shape, e.g. '4 / 3' or '16 / 9'
 }
 
-const { title, text, href, photo, photoLabel = title, index, ratio } = Astro.props;
+const { title, text, href, photo, photoLabel = title, index, ratio = '4 / 3' } = Astro.props;
 const hasPhoto = !!photo && imageExists(photo);
 const isExternal = href.startsWith('http');
 const isPlaceholderLink = href.startsWith('[');
 const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
 ---
 
-<article class:list={['card', hasPhoto ? 'card--photo' : 'card--panel']}>
-  {hasPhoto && <Photo file={photo!} label={photoLabel} ratio={ratio} />}
+<article class="card">
+  <div class="card-media" style={`aspect-ratio: ${ratio};`}>
+    {hasPhoto && <img src={`/images/${photo}`} alt={photoLabel} loading="lazy" decoding="async" />}
+  </div>
+
   <div class="card-body">
-    {num && <p class="label card-num">{num}</p>}
+    <p class="card-meta label">
+      <span>{num}</span>
+      {isPlaceholderLink ? (
+        <span class="card-placeholder">Link: {href}</span>
+      ) : (
+        <span class="card-arrow" aria-hidden="true">→</span>
+      )}
+    </p>
     <h3 class="card-title">
       {isPlaceholderLink ? (
         title
@@ -38,9 +49,6 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
       )}
     </h3>
     <p class="card-text">{text}</p>
-    <p class="card-more" aria-hidden="true">
-      {isPlaceholderLink ? <span class="label">Link: {href}</span> : <>Read more <span class="arrow">→</span></>}
-    </p>
   </div>
 </article>
 
@@ -49,45 +57,56 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+  }
+
+  /* The photo. overflow: hidden keeps the zoom-on-hover inside the frame. */
+  .card-media {
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: linear-gradient(160deg, var(--color-surface), var(--color-bg));
+  }
+
+  .card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* fill the frame, cropping the edges if the photo is a different shape */
+    transition: transform 700ms var(--ease);
   }
 
   .card-body {
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-line);
+    transition: border-color var(--duration) var(--ease);
   }
 
-  /* Text panel: solid block, title pushed toward the bottom like the help buttons */
-  .card--panel {
-    min-height: 18rem;
-    padding: var(--space-md);
-    border-radius: var(--radius);
-    background: var(--color-surface);
-    transition: background var(--duration) var(--ease);
-  }
-
-  .card--panel:hover {
-    background: color-mix(in srgb, var(--color-surface) 85%, var(--color-accent));
-  }
-
-  .card--panel .card-body {
-    flex: 1;
-  }
-
-  .card--panel .card-title {
-    margin-top: auto;
-    padding-top: var(--space-lg);
-  }
-
-  .card-num {
+  /* Small number on the left, arrow on the right */
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-sm);
     margin: 0;
     color: var(--color-accent);
   }
 
-  .card-title {
-    font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.1rem);
+  .card-placeholder {
+    color: var(--color-muted);
+    text-align: right;
+  }
+
+  .card-arrow {
+    display: inline-block;
+    font-size: 1rem;
     line-height: 1;
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .card-title {
+    font-size: clamp(1.4rem, 1.1rem + 0.9vw, 1.9rem);
     transition: color var(--duration) var(--ease);
   }
 
@@ -95,7 +114,7 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
     text-decoration: none;
   }
 
-  /* Stretch the link over the whole card so anywhere is clickable */
+  /* Stretch the link over the whole card so anywhere on it is clickable */
   .card-link::after {
     content: '';
     position: absolute;
@@ -104,39 +123,26 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
 
   .card-text {
     margin: 0;
+    max-width: 30rem;
     color: var(--color-muted);
+    line-height: 1.5;
   }
 
-  .card-more {
-    margin: var(--space-xs) 0 0;
-    font-weight: 600;
-    color: var(--color-accent);
-  }
+  /* ---------- Hover ---------- */
 
-  .arrow {
-    display: inline-block;
-    transition: transform var(--duration) var(--ease);
-  }
-
-  .card:hover .arrow {
-    transform: translateX(4px);
-  }
-
-  .card:hover :global(.photo img) {
+  .card:hover .card-media img {
     transform: scale(1.04);
+  }
+
+  .card:hover .card-arrow {
+    transform: translateX(6px);
   }
 
   .card:hover .card-title {
     color: var(--color-accent);
   }
 
-  @media (max-width: 760px) {
-    .card--panel {
-      min-height: 0;
-    }
-
-    .card--panel .card-title {
-      padding-top: var(--space-md);
-    }
+  .card:hover .card-body {
+    border-top-color: var(--color-accent);
   }
 </style>

@@ -1,6 +1,6 @@
 // Cards and buttons on the Home page (copy from the Content doc).
-// "photo" is a filename in public/images/. A card only shows a photo when that file exists;
-// otherwise it's a solid text panel. Add the file and the photo appears on the next build.
+// "photo" is a filename in public/images/. Every card shows its photo; to swap one, replace the
+// file and keep the same name. If a file is missing, the card shows a plain dark panel of the same shape.
 // A link in [brackets] is a placeholder: the card shows but isn't clickable yet.
 
 // Three cards under the hero

@@ -49,21 +49,20 @@ const financeHref = contactHref(financeContact);
 <style>
   .ways {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-sm);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-lg) var(--space-md);
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
+  /* Each way to help is a column with a thin line on top */
   .way {
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
-    min-height: 14rem;
-    padding: var(--space-md);
-    border-radius: var(--radius);
-    background: var(--color-surface);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-accent);
   }
 
   .way-num {
@@ -72,13 +71,14 @@ const financeHref = contactHref(financeContact);
   }
 
   .way-title {
-    margin-top: auto; /* pushes the title and text to the bottom of the box */
     font-size: var(--text-xl);
   }
 
   .way-text {
     margin: 0;
     color: var(--color-muted);
+    font-size: var(--text-lg);
+    line-height: 1.5;
   }
 
   .contact {
@@ -108,8 +108,8 @@ const financeHref = contactHref(financeContact);
       grid-template-columns: 1fr;
     }
 
-    .way {
-      min-height: 0;
+    .way-text {
+      font-size: var(--text-base);
     }
   }
 </style>

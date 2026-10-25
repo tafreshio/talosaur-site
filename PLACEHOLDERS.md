@@ -1,7 +1,8 @@
 # Placeholders
 
 Everything the Content doc leaves in [brackets], and the file where you fill it in. Photos and video are not
-listed here: the site uses the team's media and simply shows a photo wherever a file is added (see README).
+listed here: every Home card already has a photo (stills from the hero video and the team's artwork), and the
+README's "Add or swap a photo" table says which file is which so they can be swapped for real team photos.
 
 | Placeholder | Where it shows | File to edit |
 |---|---|---|

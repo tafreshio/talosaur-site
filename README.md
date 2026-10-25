@@ -57,13 +57,29 @@ Open `src/data/positions.ts`. Each role is one `{ ... }` block with a title, "Wh
 
 ## Add or swap a photo
 
-Cards and team members show a photo only when the file exists; otherwise they're solid text panels. To add one, save a JPG (about 1600 px wide, under 500 KB) in `public/images/` with the filename written in the data file:
+All photos live in `public/images/`. To swap one, overwrite the file and keep the same name. Save JPGs about 1600 px wide and under 300 KB.
 
-- Home cards: the `photo` name in `src/data/home.ts` (for example `home-edna.jpg`, `home-live.jpg`, `home-team.jpg`, `home-positions.jpg`, `home-meet-the-team.jpg`, `home-get-in-touch.jpg`)
-- Team members: the `photo` name in `src/data/team.ts`, saved in `public/images/team/`
-- News posts: add `image: name.jpg` to the post and save the file in `public/images/news/`
+**Home page cards.** Every card shows a photo; the filename is the `photo` line in `src/data/home.ts`. Section 02 photos are 4:3 (for example 1600 × 1200), Sections 03 and 06 are 16:9 (1600 × 900). If a file is missing, the card shows a plain dark panel of the same shape so the row still lines up.
 
-To replace a photo, overwrite the file and keep the same name. Photos already in place: `home-turtle.jpg`, `home-build-log.jpg`, `home-twilight-zone.jpg`, the hero poster and the share-preview image (`og-image.jpg`).
+| File | Card | What is in it now |
+|---|---|---|
+| `home-turtle.jpg` | Turtle | The 1775 Turtle illustration |
+| `home-edna.jpg` | Deep eDNA possibilities | DNA helix (still from the hero video) |
+| `home-live.jpg` | Talosaur Live | Research ship deck (still from the hero video) |
+| `home-team.jpg` | Who we are | Talosaur wordmark over a school of fish |
+| `home-positions.jpg` | Open positions | Hands at work in a lab (still from the hero video) |
+| `home-build-log.jpg` | Our build log | Light rays underwater |
+| `home-twilight-zone.jpg` | The twilight zone | Old map blending into a sonar map |
+| `home-meet-the-team.jpg` | Meet the team | School of fish (still from the hero video) |
+| `home-get-in-touch.jpg` | Get in touch | Jellyfish (still from the hero video) |
+
+Swap any of these for real team photos whenever you have them.
+
+**Team members:** the `photo` name in `src/data/team.ts`, saved in `public/images/team/` (portrait, about 800 × 1000 px). Until the file exists the card shows a panel with the person's initials.
+
+**News posts:** add `image: name.jpg` to the post and save the file in `public/images/news/`.
+
+Other files in `public/images/`: `hero-poster.jpg` (the still behind the Home video) and `og-image.jpg` (the preview image when a link to the site is shared).
 
 ## Add a news post
 
