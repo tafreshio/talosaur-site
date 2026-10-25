@@ -1,0 +1,86 @@
+// Cards and buttons on the Home page (copy from the Content doc).
+// "photo" is a filename in public/images/. Add a photo with that exact name to replace the placeholder box.
+// A link in [brackets] is a placeholder: the card shows but isn't clickable yet.
+
+// Three cards under the hero
+export const heroCards = [
+  {
+    title: 'Turtle: affordable autonomous underwater vehicle for freshwater',
+    text: "Talosaur's first AUV, built to prove affordable documentation is possible.",
+    href: '/news',
+    photo: 'home-turtle.jpg',
+    photoLabel: 'Turtle AUV',
+  },
+  {
+    title: 'Deep eDNA possibilities',
+    text: 'Development of lightweight deep-sea eDNA samplers.',
+    href: '/news',
+    photo: 'home-edna.jpg',
+    photoLabel: 'eDNA sampler',
+  },
+  {
+    title: 'Talosaur Live',
+    text: 'Join the live build stream and see our engineers at work.',
+    href: '[Live stream link]', // PLACEHOLDER
+    photo: 'home-live.jpg',
+    photoLabel: 'Live build stream',
+  },
+];
+
+// Featured content
+export const featuredHeading = '[Featured content heading]'; // PLACEHOLDER: the Content doc doesn't give this heading
+export const featuredCards = [
+  {
+    title: 'Who we are',
+    text: 'A Texas-based student team, mostly in College Station.',
+    href: '/who-we-are',
+    photo: 'home-team.jpg',
+    photoLabel: 'The team',
+  },
+  {
+    title: 'Open positions',
+    text: "We're recruiting. See what roles are open.",
+    href: '/positions',
+    photo: 'home-positions.jpg',
+    photoLabel: 'Team members at work',
+  },
+  {
+    title: 'Our build log',
+    text: 'Updates, photos and videos from every stage.',
+    href: '/news',
+    photo: 'home-build-log.jpg',
+    photoLabel: 'Build in progress',
+  },
+];
+
+// "How can we help?" buttons
+export const helpButtons = [
+  { label: 'Talk to us', href: '/work-with-us' },
+  { label: 'Join the team', href: '/positions' },
+  { label: 'Support our research', href: '/donate' },
+];
+
+// "You may also be interested in"
+export const interestedCards = [
+  {
+    title: 'The twilight zone',
+    text: 'Why 50–300 m is so hard to study.',
+    href: '/the-problem',
+    photo: 'home-twilight-zone.jpg',
+    photoLabel: 'The twilight zone',
+  },
+  {
+    title: 'Meet the team',
+    text: 'The people behind Talosaur.',
+    href: '/who-we-are',
+    photo: 'home-meet-the-team.jpg',
+    photoLabel: 'Team portrait',
+  },
+  {
+    title: 'Get in touch',
+    text: "Researchers, sanctuaries and offshore teams: let's talk.",
+    href: '/work-with-us',
+    photo: 'home-get-in-touch.jpg',
+    photoLabel: 'Ocean or field work',
+  },
+];

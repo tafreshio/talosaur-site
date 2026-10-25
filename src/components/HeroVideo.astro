@@ -1,5 +1,6 @@
 ---
-// Full-screen video hero at the top of the Home page.
+// Full-screen video hero at the top of the Home page: just the video and the TALOSAUR wordmark.
+// The headline and intro text come right after it, in Section 01 (src/pages/index.astro).
 //
 // To swap the media, replace these files (keep the same names):
 //   public/videos/hero.mp4       the background video
@@ -43,17 +44,12 @@ const hasVideo = existsSync(join(process.cwd(), 'public', videoSrc));
   )}
 
   <div class="container hero-content">
-    <p class="label hero-label">Section 01</p>
-    <h1 class="hero-title">Life at 50–300&nbsp;m is barely watched.</h1>
-    <p class="hero-text">
-      The ocean's twilight zone is too deep for divers and too costly to visit often.
-      Talosaur is a Texas-based student team building a low-cost underwater robot that
-      finds, follows and films marine life there.
-    </p>
-    <a class="hero-button" href="/the-problem">
-      Read more <span aria-hidden="true">→</span>
-    </a>
+    <p class="hero-wordmark">Talosaur</p>
   </div>
+
+  <a class="hero-scroll label" href="#intro">
+    Scroll <span aria-hidden="true">↓</span>
+  </a>
 </section>
 
 <script>
@@ -105,7 +101,7 @@ const hasVideo = existsSync(join(process.cwd(), 'public', videoSrc));
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(to top, var(--color-bg) 0%, color-mix(in srgb, var(--color-bg) 60%, transparent) 35%, transparent 70%),
+      linear-gradient(to top, var(--color-bg) 0%, color-mix(in srgb, var(--color-bg) 40%, transparent) 30%, transparent 60%),
       linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 50%, transparent) 0%, transparent 20%);
   }
 
@@ -128,52 +124,37 @@ const hasVideo = existsSync(join(process.cwd(), 'public', videoSrc));
   }
 
   .hero-content {
-    padding-top: calc(var(--header-height) + var(--space-lg));
-    padding-bottom: var(--space-xl);
+    padding-bottom: clamp(4rem, 12svh, 9rem);
   }
 
-  .hero-label {
-    margin: 0 0 var(--space-sm);
-    color: var(--color-accent);
+  /* Giant wordmark in the lower part of the video */
+  .hero-wordmark {
+    margin: 0;
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    font-weight: 900;
+    font-size: clamp(4rem, 19vw, 19rem);
+    line-height: 0.8;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    color: var(--color-text);
   }
 
-  .hero-title {
-    max-width: 14ch;
-    /* Grows with screen width, but never so tall that the button falls off a short screen */
-    font-size: min(var(--text-hero), 11svh);
-  }
-
-  .hero-text {
-    max-width: 38rem;
-    margin: var(--space-md) 0 var(--space-md);
-    font-size: var(--text-lg);
-    line-height: 1.5;
-  }
-
-  .hero-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.9rem 1.6rem;
-    border-radius: 999px;
-    background: var(--color-accent);
-    color: var(--color-accent-ink);
-    font-weight: 600;
+  .hero-scroll {
+    position: absolute;
+    left: 50%;
+    bottom: var(--space-md);
+    transform: translateX(-50%);
+    color: var(--color-text);
     text-decoration: none;
-    transition: transform var(--duration) var(--ease);
   }
 
-  .hero-button span {
-    transition: transform var(--duration) var(--ease);
+  .hero-scroll span {
+    display: inline-block;
+    animation: bob 2s var(--ease) infinite;
   }
 
-  .hero-button:hover span {
-    transform: translateX(4px);
-  }
-
-  @media (max-width: 600px) {
-    .hero-text {
-      font-size: var(--text-base);
-    }
+  @keyframes bob {
+    50% { transform: translateY(4px); }
   }
 </style>

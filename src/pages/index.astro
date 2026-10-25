@@ -1,9 +1,279 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroVideo from '../components/HeroVideo.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import Card from '../components/Card.astro';
+import { heroCards, featuredHeading, featuredCards, helpButtons, interestedCards } from '../data/home';
+import { getSortedNews, formatNewsDate } from '../lib/news';
+
+// The four newest news entries (newest first)
+const latestNews = (await getSortedNews()).slice(0, 4);
 ---
 
 <BaseLayout headerOverlay>
   <HeroVideo />
-  <!-- Next: three cards, featured content, "How can we help?", latest news, "You may also be interested in" -->
+
+  <!-- Section 01: headline and intro -->
+  <section id="intro" class="container section intro">
+    <SectionHeader number={1} />
+    <h1 class="intro-title">Life at 50–300&nbsp;m is barely watched.</h1>
+    <div class="intro-body">
+      <p class="intro-text">
+        The ocean's twilight zone is too deep for divers and too costly to visit often.
+        Talosaur is a Texas-based student team building a low-cost underwater robot that
+        finds, follows and films marine life there.
+      </p>
+      <a class="button" href="/the-problem">Read more <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <!-- Section 02: three cards -->
+  <section class="container section">
+    <SectionHeader number={2} />
+    <div class="card-grid">
+      {heroCards.map((card, i) => <Card {...card} index={i + 1} />)}
+    </div>
+  </section>
+
+  <!-- Section 03: featured content -->
+  <section class="container section">
+    <SectionHeader number={3} title={featuredHeading} centered />
+    <div class="card-grid card-grid--featured">
+      {featuredCards.map((card) => <Card {...card} ratio="3 / 4" />)}
+    </div>
+  </section>
+
+  <!-- Section 04: How can we help? -->
+  <section class="container section">
+    <SectionHeader number={4} title="How can we help?" />
+    <div class="help-buttons">
+      {helpButtons.map((button) => (
+        <a class="help-button" href={button.href}>
+          <span>{button.label}</span>
+          <span class="help-arrow" aria-hidden="true">→</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- Section 05: latest news -->
+  <section class="container section">
+    <SectionHeader number={5} title="Latest news" />
+    <ol class="news-grid">
+      {latestNews.map((entry) => (
+        <li class="news-card">
+          <p class="label news-date">{formatNewsDate(entry)}</p>
+          <h3 class="news-title">
+            <a href={`/news#${entry.id}`}>{entry.data.title}</a>
+          </h3>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- Section 06: You may also be interested in -->
+  <section class="container section">
+    <SectionHeader number={6} title="You may also be interested in" />
+    <div class="card-grid">
+      {interestedCards.map((card) => <Card {...card} />)}
+    </div>
+  </section>
 </BaseLayout>
+
+<style>
+  .section {
+    padding-top: var(--space-2xl);
+  }
+
+  /* ---------- Section 01 ---------- */
+
+  .intro {
+    scroll-margin-top: var(--header-height); /* so the "Scroll" link doesn't hide it under the header */
+  }
+
+  .intro-title {
+    max-width: 14ch;
+    font-size: var(--text-hero);
+  }
+
+  .intro-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+    max-width: 38rem;
+    margin-top: var(--space-lg);
+    margin-left: auto; /* sits to the right of the headline on wide screens */
+  }
+
+  .intro-text {
+    margin: 0;
+    font-size: var(--text-lg);
+    line-height: 1.5;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 1.6rem;
+    border-radius: 999px;
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .button span {
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .button:hover span {
+    transform: translateX(4px);
+  }
+
+  /* ---------- Card grids (sections 02, 03, 06) ---------- */
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg) var(--space-md);
+  }
+
+  /* ---------- Section 04: help buttons ---------- */
+
+  .help-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .help-button {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    min-height: 9rem;
+    padding: var(--space-md);
+    border-radius: var(--radius);
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    font-weight: 800;
+    font-size: var(--text-xl);
+    line-height: 1;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background var(--duration) var(--ease);
+  }
+
+  .help-button:hover {
+    background: var(--color-text);
+  }
+
+  .help-arrow {
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .help-button:hover .help-arrow {
+    transform: translateX(6px);
+  }
+
+  /* ---------- Section 05: latest news ---------- */
+
+  .news-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-sm);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .news-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    min-height: 11rem;
+    padding: var(--space-md);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    transition: background var(--duration) var(--ease);
+  }
+
+  .news-card:hover {
+    background: color-mix(in srgb, var(--color-surface) 80%, var(--color-accent));
+  }
+
+  .news-date {
+    margin: 0;
+    color: var(--color-accent);
+  }
+
+  .news-title {
+    font-size: var(--text-lg);
+    font-family: var(--font-body);
+    font-stretch: normal;
+    font-weight: 600;
+    line-height: 1.3;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .news-title a {
+    text-decoration: none;
+  }
+
+  /* Whole card is clickable */
+  .news-title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  /* ---------- Tablet ---------- */
+
+  @media (max-width: 1023px) {
+    .news-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* ---------- Phone ---------- */
+
+  @media (max-width: 760px) {
+    .card-grid,
+    .help-buttons {
+      grid-template-columns: 1fr;
+    }
+
+    .help-button {
+      min-height: 6rem;
+    }
+
+    /* Tall featured photos would fill a whole phone screen, so use landscape ones there */
+    .card-grid--featured :global(.photo) {
+      aspect-ratio: 4 / 3 !important;
+    }
+
+    .intro-body {
+      margin-left: 0;
+    }
+
+    .intro-text {
+      font-size: var(--text-base);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .news-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .news-card {
+      min-height: 0;
+    }
+  }
+</style>

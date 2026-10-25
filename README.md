@@ -28,6 +28,8 @@ npm run build
 | Top navigation design | `src/components/Header.astro` |
 | Footer design | `src/components/Footer.astro` |
 | Home page video hero | `src/components/HeroVideo.astro` |
+| Home page cards, buttons and featured heading | `src/data/home.ts` |
+| News posts | `src/content/news/` (one `.md` file per post) |
 | Photos | `public/images/` |
 | Videos | `public/videos/` |
 | Page wrapper (head, header, footer) used by every page | `src/layouts/BaseLayout.astro` |
@@ -39,6 +41,29 @@ npm run build
 open `src/data/site.ts` and edit the text between the quotes. Social links left as `''` show as plain text until filled in.
 
 **Change a color or font:** open `src/styles/global.css` and change the value next to the variable (for example `--color-accent`).
+
+## Swap a photo
+
+Every photo spot shows a striped placeholder box with a label like `public/images/home-turtle.jpg`. To fill it, save your photo in `public/images/` with **exactly that filename** (JPG, about 1600 px wide, under 500 KB). It replaces the box the next time the site builds. To replace a photo that's already there, overwrite the file and keep the same name.
+
+## Add a news post
+
+Create a new file in `src/content/news/`, for example `first-dive.md`. The filename becomes the post's web address, so use lowercase words and hyphens. Paste this in and edit it:
+
+```md
+---
+title: First dive
+date: 2026-11-20
+---
+
+One or two sentences about what happened.
+```
+
+- `date` is year-month-day. The site sorts newest first and shows it as "Nov 20, 2026".
+- For something planned but not done yet, swap the `date:` line for `upcoming: true` and `dateLabel: Coming soon`. Upcoming posts show at the top.
+- Optional photo: add `image: first-dive.jpg` and put the photo in `public/images/news/`.
+
+The Home page automatically shows the four newest posts.
 
 ## Swap the Home page video
 
@@ -74,7 +99,7 @@ ffmpeg -i original.mov -an -vf "scale=1920:-2" -c:v libx264 -crf 26 -preset slow
 ffmpeg -i hero.mp4 -frames:v 1 -q:v 3 hero-poster.jpg
 ```
 
-Still to come in this README: adding a news post, editing team members and positions, and deploying.
+Still to come in this README: editing team members and positions, and deploying.
 
 ## Placeholders
 

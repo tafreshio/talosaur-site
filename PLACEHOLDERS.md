@@ -14,4 +14,8 @@ Everything on the site that still needs real content, and the file where you fil
 | Hero still image (plain blue gradient for now) | Home hero, shown while the video loads and to people with reduced motion on | Replace `public/images/hero-poster.jpg` |
 | `[List each photo or video on the site and who took it.]` | Image credits page | `src/pages/image-credits.astro` |
 | `[Privacy policy: ...]` | Privacy page | `src/pages/privacy.astro` |
-| Rest of the Home page (cards, featured content, latest news...) | Home, below the hero | `src/pages/index.astro` (not built yet) |
+| `[Live stream link]` | Home, "Talosaur Live" card (not clickable until filled in) | `src/data/home.ts` |
+| `[Featured content heading]` (not given in the Content doc) | Home, Section 03 | `src/data/home.ts` (`featuredHeading`) |
+| 9 Home card photos: `home-turtle.jpg`, `home-edna.jpg`, `home-live.jpg`, `home-team.jpg`, `home-positions.jpg`, `home-build-log.jpg`, `home-twilight-zone.jpg`, `home-meet-the-team.jpg`, `home-get-in-touch.jpg` | Home, Sections 02, 03 and 06 | Add each file to `public/images/` with that exact name |
+| News entries (placeholder copies of the Content doc's four updates) | Home "Latest news", and the News page once built | `src/content/news/` |
+| "Project kicks off" news entry: `[Date]` and `[One line on how Talosaur started.]` | Home "Latest news" | `src/content/news/project-kicks-off.md` |

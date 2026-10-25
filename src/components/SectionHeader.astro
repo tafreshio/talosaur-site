@@ -1,0 +1,40 @@
+---
+// "Section 0X" label plus a big uppercase heading, used at the top of each Home section.
+interface Props {
+  number: number;
+  title?: string;
+  centered?: boolean;
+}
+
+const { number, title, centered = false } = Astro.props;
+---
+
+<header class:list={['section-header', { 'section-header--center': centered }]}>
+  <p class="label section-num">Section {String(number).padStart(2, '0')}</p>
+  {title && <h2 class="section-title">{title}</h2>}
+</header>
+
+<style>
+  .section-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .section-header--center {
+    align-items: center;
+    text-align: center;
+  }
+
+  .section-num {
+    margin: 0;
+    color: var(--color-accent);
+  }
+
+  .section-title {
+    font-size: var(--text-2xl);
+  }
+</style>

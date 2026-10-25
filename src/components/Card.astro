@@ -1,0 +1,105 @@
+---
+// Photo card: photo, title, one line of text and a "Read more" link.
+// The whole card is clickable.
+import Photo from './Photo.astro';
+
+interface Props {
+  title: string;
+  text: string;
+  href: string;
+  photo: string;       // filename in public/images/
+  photoLabel: string;  // what the photo should show
+  index?: number;      // shows a small "01", "02"... above the title
+  ratio?: string;
+}
+
+const { title, text, href, photo, photoLabel, index, ratio } = Astro.props;
+const isExternal = href.startsWith('http');
+const isPlaceholderLink = href.startsWith('[');
+---
+
+<article class="card">
+  <Photo file={photo} label={photoLabel} ratio={ratio} />
+  <div class="card-body">
+    {index !== undefined && <p class="label card-num">{String(index).padStart(2, '0')}</p>}
+    <h3 class="card-title">
+      {isPlaceholderLink ? (
+        title
+      ) : (
+        <a
+          href={href}
+          class="card-link"
+          {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+        >{title}</a>
+      )}
+    </h3>
+    <p class="card-text">{text}</p>
+    <p class="card-more" aria-hidden="true">
+      {isPlaceholderLink ? <span class="label">Link: {href}</span> : <>Read more <span class="arrow">→</span></>}
+    </p>
+  </div>
+</article>
+
+<style>
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .card-num {
+    margin: 0;
+    color: var(--color-accent);
+  }
+
+  .card-title {
+    font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.1rem);
+    line-height: 1;
+  }
+
+  .card-link {
+    text-decoration: none;
+  }
+
+  /* Stretch the link over the whole card so anywhere is clickable */
+  .card-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .card-text {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  .card-more {
+    margin: var(--space-xs) 0 0;
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+
+  .arrow {
+    display: inline-block;
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .card:hover .arrow {
+    transform: translateX(4px);
+  }
+
+  .card:hover :global(.photo img) {
+    transform: scale(1.04);
+  }
+
+  .card:hover .card-title {
+    color: var(--color-accent);
+  }
+</style>
