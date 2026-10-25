@@ -12,6 +12,11 @@ export const applicationFormUrl =
 
 export const positions = [
   {
+    title: 'Embedded Software Engineer',
+    whatYoullDo: 'Write microcontroller code for motor control, sensors and safety systems',
+    skills: 'C/C++, Arduino or ESP32',
+  },
+  {
     title: 'Computer Vision / ML Engineer',
     whatYoullDo: 'Help the robot spot and track marine animals in video',
     skills: 'Python, PyTorch, OpenCV',
