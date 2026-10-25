@@ -1,5 +1,6 @@
 // Cards and buttons on the Home page (copy from the Content doc).
-// "photo" is a filename in public/images/. Add a photo with that exact name to replace the placeholder box.
+// "photo" is a filename in public/images/. A card only shows a photo when that file exists;
+// otherwise it's a solid text panel. Add the file and the photo appears on the next build.
 // A link in [brackets] is a placeholder: the card shows but isn't clickable yet.
 
 // Three cards under the hero
@@ -28,7 +29,7 @@ export const heroCards = [
 ];
 
 // Featured content
-export const featuredHeading = '[Featured content heading]'; // PLACEHOLDER: the Content doc doesn't give this heading
+export const featuredHeading = 'Featured content';
 export const featuredCards = [
   {
     title: 'Who we are',

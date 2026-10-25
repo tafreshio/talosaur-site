@@ -1,13 +1,24 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { teamEmail, contactHref } from '../data/site';
+
+const emailHref = contactHref(teamEmail);
 ---
 
 <BaseLayout title="Privacy">
   <section class="container simple-page">
     <p class="label">Privacy</p>
     <h1>Privacy</h1>
-    <!-- PLACEHOLDER: privacy policy text -->
-    <p>[Privacy policy: what information the site collects, if any, and how to contact us about it.]</p>
+    <div class="prose">
+      <p>This site doesn't collect personal information. There are no accounts, no comment forms, no cookies set by us and no analytics.</p>
+      <p><strong>Fonts.</strong> The site loads its typefaces from Google Fonts, so your browser requests font files from Google's servers when a page loads. Google's privacy policy covers those requests.</p>
+      <p><strong>Applications.</strong> The team application form is hosted on Google Forms. Anything you enter there is stored by Google and used by the Talosaur team only to review applications.</p>
+      <p><strong>Email.</strong> If you email us, we keep your message so we can reply to it.</p>
+      <p><strong>Hosting.</strong> Our hosting provider may keep standard server logs, such as IP addresses and request times, to run the service.</p>
+      <p>
+        Questions? Write to {emailHref ? <a href={emailHref}>{teamEmail}</a> : <span class="placeholder">{teamEmail}</span>}.
+      </p>
+    </div>
   </section>
 </BaseLayout>
 
@@ -21,8 +32,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     font-size: var(--text-2xl);
   }
 
-  p:not(.label) {
+  .prose {
     max-width: 60ch;
+    font-size: var(--text-lg);
+    line-height: 1.6;
+  }
+
+  .prose p {
+    margin: 0 0 var(--space-md);
     color: var(--color-muted);
+  }
+
+  .prose strong {
+    color: var(--color-text);
+  }
+
+  .placeholder {
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
   }
 </style>

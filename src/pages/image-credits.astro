@@ -6,8 +6,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="container simple-page">
     <p class="label">Image credits</p>
     <h1>Image credits</h1>
-    <!-- PLACEHOLDER: list each photo or video and who took it -->
-    <p>[List each photo or video on the site and who took it.]</p>
+    <div class="prose">
+      <p>The photos, graphics and the homepage video on this site were provided by the Talosaur team.</p>
+      <!-- PLACEHOLDER: list any third-party footage or photos here, with the creator and licence -->
+      <p>[Credits for any third-party footage or photos used in the homepage video.]</p>
+    </div>
   </section>
 </BaseLayout>
 
@@ -21,8 +24,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     font-size: var(--text-2xl);
   }
 
-  p:not(.label) {
+  .prose {
     max-width: 60ch;
+    font-size: var(--text-lg);
+    line-height: 1.6;
+  }
+
+  .prose p {
+    margin: 0 0 var(--space-md);
     color: var(--color-muted);
   }
 </style>

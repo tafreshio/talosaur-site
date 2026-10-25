@@ -6,12 +6,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Photo from '../components/Photo.astro';
 import { getSortedNews, formatNewsDate } from '../lib/news';
+import { imageExists } from '../lib/images';
 
 const entries = await getSortedNews();
 
 // Turn each entry's Markdown body into HTML we can place on the page
 const items = await Promise.all(
-  entries.map(async (entry) => ({ entry, Content: (await render(entry)).Content })),
+  entries.map(async (entry) => ({
+    entry,
+    Content: (await render(entry)).Content,
+    hasPhoto: !!entry.data.image && imageExists(`news/${entry.data.image}`),
+  })),
 );
 ---
 
@@ -20,8 +25,8 @@ const items = await Promise.all(
 
   <section class="container">
     <ol class="news-list" data-reveal-group>
-      {items.map(({ entry, Content }) => (
-        <li id={entry.id} class:list={['news-item', { 'news-item--has-photo': entry.data.image }]}>
+      {items.map(({ entry, Content, hasPhoto }) => (
+        <li id={entry.id} class:list={['news-item', { 'news-item--has-photo': hasPhoto }]}>
           <p class:list={['label', 'news-date', { 'news-date--upcoming': entry.data.upcoming }]}>
             {entry.data.date
               ? <time datetime={entry.data.date.toISOString().slice(0, 10)}>{formatNewsDate(entry)}</time>
@@ -31,7 +36,7 @@ const items = await Promise.all(
             <h2 class="news-title">{entry.data.title}</h2>
             <div class="news-text"><Content /></div>
           </div>
-          {entry.data.image && (
+          {hasPhoto && (
             <div class="news-photo">
               <Photo file={`news/${entry.data.image}`} label={entry.data.title} ratio="4 / 3" />
             </div>

@@ -55,9 +55,15 @@ Open `src/data/team.ts`. Each person is one `{ ... }` block with their name, rol
 
 Open `src/data/positions.ts`. Each role is one `{ ... }` block with a title, "What you'd do" and "Helpful skills". Copy a block to add a role, delete it to close one. The **Apply now** button at the top of the page opens the Google Form saved in `applicationFormUrl`; change that line if the form ever moves. If you add or rename a role, also update the "Position applying for" dropdown in the Google Form so they match.
 
-## Swap a photo
+## Add or swap a photo
 
-Every photo spot shows a striped placeholder box with a label like `public/images/home-turtle.jpg`. To fill it, save your photo in `public/images/` with **exactly that filename** (JPG, about 1600 px wide, under 500 KB). It replaces the box the next time the site builds. To replace a photo that's already there, overwrite the file and keep the same name.
+Cards and team members show a photo only when the file exists; otherwise they're solid text panels. To add one, save a JPG (about 1600 px wide, under 500 KB) in `public/images/` with the filename written in the data file:
+
+- Home cards: the `photo` name in `src/data/home.ts` (for example `home-edna.jpg`, `home-live.jpg`, `home-team.jpg`, `home-positions.jpg`, `home-meet-the-team.jpg`, `home-get-in-touch.jpg`)
+- Team members: the `photo` name in `src/data/team.ts`, saved in `public/images/team/`
+- News posts: add `image: name.jpg` to the post and save the file in `public/images/news/`
+
+To replace a photo, overwrite the file and keep the same name. Photos already in place: `home-turtle.jpg`, `home-build-log.jpg`, `home-twilight-zone.jpg`, the hero poster and the share-preview image (`og-image.jpg`).
 
 ## Add a news post
 
@@ -87,7 +93,7 @@ The full-screen video at the top of the Home page uses two files. Replace them a
 | `public/videos/hero.mp4` | The background video |
 | `public/images/hero-poster.jpg` | A still frame from the video. It shows while the video loads, and instead of the video for visitors who have "reduce motion" turned on in their phone or computer settings |
 
-Until `hero.mp4` exists, the site shows the still image with a small "Placeholder" tag. Once you add the file, the video appears the next time the site is built (automatically when you deploy, or restart `npm run dev` on your computer).
+The current video is 1280 × 720, 51 seconds and 13 MB. It works, but a shorter, smaller file (see below) loads faster on phones. If `hero.mp4` is ever removed, the site shows the still image instead.
 
 **Video file checklist**
 

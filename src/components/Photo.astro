@@ -1,32 +1,24 @@
 ---
-// A photo that falls back to a labeled placeholder box.
+// A photo from public/images/, cropped to a fixed shape.
 //
 // Usage: <Photo file="home-turtle.jpg" label="Turtle AUV in the water" />
-// Put the real photo at public/images/home-turtle.jpg and it shows up on the next build.
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+// Renders nothing if the file doesn't exist, so a missing photo never leaves a gap.
+import { imageExists } from '../lib/images';
 
 interface Props {
   file: string;        // filename inside public/images/
-  label: string;       // what the photo should show (also used as alt text)
+  label: string;       // what the photo shows (used as alt text)
   ratio?: string;      // width / height, e.g. '4 / 3' or '16 / 9'
 }
 
 const { file, label, ratio = '4 / 3' } = Astro.props;
-const src = `/images/${file}`;
-const exists = existsSync(join(process.cwd(), 'public', 'images', file));
 ---
 
-<div class="photo" style={`aspect-ratio: ${ratio};`}>
-  {exists ? (
-    <img src={src} alt={label} loading="lazy" decoding="async" />
-  ) : (
-    <div class="photo-placeholder" role="img" aria-label={`Photo placeholder: ${label}`}>
-      <span class="label">Photo: {label}</span>
-      <span class="label photo-file">public/images/{file}</span>
-    </div>
-  )}
-</div>
+{imageExists(file) && (
+  <div class="photo" style={`aspect-ratio: ${ratio};`}>
+    <img src={`/images/${file}`} alt={label} loading="lazy" decoding="async" />
+  </div>
+)}
 
 <style>
   .photo {
@@ -42,32 +34,5 @@ const exists = existsSync(join(process.cwd(), 'public', 'images', file));
     height: 100%;
     object-fit: cover;
     transition: transform 600ms var(--ease);
-  }
-
-  .photo-placeholder {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    gap: 0.25rem;
-    padding: var(--space-sm);
-    border: 1px dashed var(--color-line);
-    border-radius: var(--radius);
-    background: repeating-linear-gradient(
-      45deg,
-      var(--color-surface) 0 12px,
-      color-mix(in srgb, var(--color-surface) 80%, var(--color-line)) 12px 13px
-    );
-  }
-
-  .photo-placeholder .label {
-    overflow-wrap: anywhere; /* long filenames wrap inside small boxes */
-  }
-
-  .photo-file {
-    opacity: 0.6;
-    text-transform: none;
-    letter-spacing: 0.02em;
   }
 </style>

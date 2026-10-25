@@ -1,10 +1,16 @@
 ---
 // Who we are: team cards. Team members are listed in src/data/team.ts.
+// A member with a photo in public/images/team/ gets a photo card; without one, a solid panel with initials.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Photo from '../components/Photo.astro';
 import { team, teamIntro } from '../data/team';
 import { isPlaceholder } from '../data/site';
+import { imageExists } from '../lib/images';
+
+// Big faded text on a panel: "Fernando Guzman" -> "FG". A [Name] placeholder shows the role instead.
+const panelText = (name: string, role: string) =>
+  isPlaceholder(name) ? role : name.split(/\s+/).map((part) => part[0]).join('').slice(0, 3).toUpperCase();
 ---
 
 <BaseLayout title="Who we are" description={teamIntro}>
@@ -12,23 +18,29 @@ import { isPlaceholder } from '../data/site';
 
   <section class="container">
     <ul class="team-grid" data-reveal-group>
-      {team.map((member) => (
-        <li class="member">
-          <Photo
-            file={`team/${member.photo}`}
-            label={isPlaceholder(member.name) ? member.role : member.name}
-            ratio="4 / 5"
-          />
-          <h2 class="member-name">{member.name}</h2>
-          <p class="member-role">{member.role}</p>
-          <p class="member-major">{member.majorYear}</p>
-          {member.linkedin && (
-            <a class="member-linkedin label" href={member.linkedin} target="_blank" rel="noopener noreferrer">
-              LinkedIn <span aria-hidden="true">↗</span>
-            </a>
-          )}
-        </li>
-      ))}
+      {team.map((member, i) => {
+        const hasPhoto = imageExists(`team/${member.photo}`);
+        return (
+          <li class="member">
+            {hasPhoto ? (
+              <Photo file={`team/${member.photo}`} label={member.name} ratio="4 / 5" />
+            ) : (
+              <div class="member-panel" aria-hidden="true">
+                <span class="label member-index">{String(i + 1).padStart(2, '0')}</span>
+                <span class:list={['member-initials', { 'member-initials--role': isPlaceholder(member.name) }]}>{panelText(member.name, member.role)}</span>
+              </div>
+            )}
+            <h2 class="member-name">{member.name}</h2>
+            <p class="member-role">{member.role}</p>
+            <p class="member-major">{member.majorYear}</p>
+            {member.linkedin && (
+              <a class="member-linkedin label" href={member.linkedin} target="_blank" rel="noopener noreferrer">
+                LinkedIn <span aria-hidden="true">↗</span>
+              </a>
+            )}
+          </li>
+        );
+      })}
     </ul>
   </section>
 </BaseLayout>
@@ -47,6 +59,38 @@ import { isPlaceholder } from '../data/site';
   .member {
     display: flex;
     flex-direction: column;
+  }
+
+  /* Stand-in for a portrait: same shape as a photo, with the person's initials */
+  .member-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    aspect-ratio: 4 / 5;
+    padding: var(--space-md);
+    border-radius: var(--radius);
+    background: linear-gradient(160deg, var(--color-surface), color-mix(in srgb, var(--color-surface) 70%, var(--color-bg)));
+  }
+
+  .member-index {
+    color: var(--color-accent);
+  }
+
+  .member-initials {
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    font-weight: 900;
+    font-size: clamp(3rem, 1rem + 5vw, 6rem);
+    line-height: 0.85;
+    letter-spacing: -0.02em;
+    color: color-mix(in srgb, var(--color-text) 25%, transparent);
+  }
+
+  /* Role text is longer than initials, so it's smaller and wraps */
+  .member-initials--role {
+    font-size: clamp(1.6rem, 0.8rem + 2vw, 2.6rem);
+    line-height: 0.95;
+    text-transform: uppercase;
   }
 
   .member-name {
@@ -82,7 +126,7 @@ import { isPlaceholder } from '../data/site';
     }
   }
 
-  /* Phone: keep two across so each photo doesn't fill the whole screen */
+  /* Phone: keep two across so each card doesn't fill the whole screen */
   @media (max-width: 480px) {
     .team-grid {
       gap: var(--space-lg) var(--space-sm);
