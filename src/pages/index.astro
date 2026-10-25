@@ -1,16 +1,11 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout>
+  <!-- TEMPORARY: stand-in content so the header and footer can be previewed. Replaced when the Home page is built. -->
+  <section class="container" style="padding-block: var(--space-2xl);">
+    <p class="label">Section 00</p>
+    <h1 style="font-size: var(--text-hero); margin-top: var(--space-sm);">Life at 50–300 m is barely watched.</h1>
+  </section>
+</BaseLayout>

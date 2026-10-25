@@ -1,0 +1,286 @@
+---
+// Shared top navigation. Used on every page through BaseLayout.astro.
+import { mainNav } from '../data/site';
+
+// Which page are we on? Used to highlight the current link.
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <!-- PLACEHOLDER: text wordmark until we have a logo file -->
+    <a href="/" class="logo" aria-label="Talosaur home">Talosaur</a>
+
+    <button
+      class="menu-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-nav"
+    >
+      <span class="menu-toggle-text">Menu</span>
+      <span class="menu-toggle-icon" aria-hidden="true"></span>
+    </button>
+
+    <nav id="site-nav" class="site-nav" aria-label="Main">
+      <ol>
+        {mainNav.map((item, i) => (
+          <li>
+            <a
+              href={item.href}
+              class:list={['nav-link', { 'nav-link--cta': item.label === 'Donate' }]}
+              aria-current={currentPath === item.href ? 'page' : undefined}
+            >
+              <span class="nav-num">{pad(i + 1)}</span>
+              <span class="nav-label">{item.label}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  </div>
+</header>
+
+<script>
+  // Opens and closes the phone menu.
+  const header = document.querySelector('.site-header');
+  const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+
+  const setOpen = (open: boolean) => {
+    toggle?.setAttribute('aria-expanded', String(open));
+    header?.classList.toggle('is-open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  };
+
+  toggle?.addEventListener('click', () => {
+    setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+  });
+
+  // Close with the Escape key, or when the screen gets wide again.
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setOpen(false);
+  });
+  window.matchMedia('(min-width: 1024px)').addEventListener('change', () => setOpen(false));
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  /* Frosted-glass background. It sits on a pseudo-element because a blur
+     on the header itself would trap the full-screen phone menu inside it. */
+  .site-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: color-mix(in srgb, var(--color-bg) 85%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-height);
+  }
+
+  .logo {
+    position: relative;
+    z-index: 2; /* stays above the open phone menu */
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    font-weight: 900;
+    font-size: 1.6rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  /* ---------- Desktop nav ---------- */
+
+  .site-nav ol {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color var(--duration) var(--ease);
+  }
+
+  .nav-num {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-accent);
+  }
+
+  .nav-link:hover,
+  .nav-link[aria-current='page'] {
+    color: var(--color-accent);
+  }
+
+  .nav-link[aria-current='page'] .nav-label {
+    text-decoration: underline;
+    text-underline-offset: 6px;
+  }
+
+  /* Donate is styled as a button */
+  .nav-link--cta {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-accent);
+    border-radius: 999px;
+    color: var(--color-accent);
+    transition:
+      background var(--duration) var(--ease),
+      color var(--duration) var(--ease);
+  }
+
+  .nav-link--cta:hover,
+  .nav-link--cta[aria-current='page'] {
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+
+  .nav-link--cta:hover .nav-num,
+  .nav-link--cta[aria-current='page'] .nav-num {
+    color: var(--color-accent-ink);
+  }
+
+  .nav-link--cta[aria-current='page'] .nav-label {
+    text-decoration: none;
+  }
+
+  .menu-toggle {
+    display: none;
+  }
+
+  /* ---------- Phone and tablet nav ---------- */
+
+  @media (max-width: 1023px) {
+    .menu-toggle {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0;
+      background: none;
+      border: 0;
+      color: var(--color-text);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    /* Two-line "hamburger" that turns into an X */
+    .menu-toggle-icon,
+    .menu-toggle-icon::after {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: currentColor;
+      transition: transform var(--duration) var(--ease);
+    }
+
+    .menu-toggle-icon {
+      position: relative;
+      transform: translateY(-4px);
+    }
+
+    .menu-toggle-icon::after {
+      content: '';
+      position: absolute;
+      top: 8px;
+    }
+
+    .is-open .menu-toggle-icon {
+      transform: translateY(0) rotate(45deg);
+    }
+
+    .is-open .menu-toggle-icon::after {
+      top: 0;
+      transform: rotate(-90deg);
+    }
+
+    /* Full-screen panel with big numbered links */
+    .site-nav {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      height: 100dvh;
+      padding: calc(var(--header-height) + var(--space-lg)) var(--gutter) var(--space-lg);
+      background: var(--color-bg);
+      overflow-y: auto;
+      opacity: 0;
+      visibility: hidden;
+      transition:
+        opacity var(--duration) var(--ease),
+        visibility var(--duration);
+    }
+
+    .is-open .site-nav {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .site-nav ol {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .site-nav li {
+      border-bottom: 1px solid var(--color-line);
+    }
+
+    .nav-link,
+    .nav-link--cta {
+      gap: var(--space-sm);
+      padding: var(--space-sm) 0;
+      border: 0;
+      border-radius: 0;
+      font-family: var(--font-display);
+      font-stretch: var(--display-width);
+      font-size: clamp(2rem, 1rem + 6vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .nav-num {
+      font-size: 0.8rem;
+    }
+
+    .nav-link--cta {
+      color: var(--color-accent);
+    }
+
+    .nav-link--cta:hover,
+    .nav-link--cta[aria-current='page'] {
+      background: none;
+      color: var(--color-accent);
+    }
+
+    .nav-link--cta:hover .nav-num,
+    .nav-link--cta[aria-current='page'] .nav-num {
+      color: var(--color-accent);
+    }
+  }
+</style>

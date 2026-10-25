@@ -1,43 +1,44 @@
-# Astro Starter Kit: Minimal
+# Talosaur website
+
+The Talosaur team website, built with [Astro](https://astro.build). It is a static site: no server or database, just pages.
+
+## Run the site on your computer
+
+You need [Node.js](https://nodejs.org) installed (version 22 or newer).
 
 ```sh
-npm create astro@latest -- --template minimal
+npm install      # first time only: downloads Astro
+npm run dev      # starts the site at http://localhost:4321
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Edits show up in the browser as soon as you save a file. Stop the server with `Ctrl + C`.
 
-## 🚀 Project Structure
+To check that the site builds without errors before publishing:
 
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```sh
+npm run build
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Where things live
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+| What | File |
+|---|---|
+| Colors, fonts, spacing | `src/styles/global.css` (the `:root` block at the top) |
+| Top navigation and footer links, team email, social links | `src/data/site.ts` |
+| Top navigation design | `src/components/Header.astro` |
+| Footer design | `src/components/Footer.astro` |
+| Page wrapper (head, header, footer) used by every page | `src/layouts/BaseLayout.astro` |
+| Pages | `src/pages/` (one file per page) |
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Common edits
 
-## 🧞 Commands
+**Change a link in the nav or footer, or add the team email / social links:**
+open `src/data/site.ts` and edit the text between the quotes. Social links left as `''` show as plain text until filled in.
 
-All commands are run from the root of the project, from a terminal:
+**Change a color or font:** open `src/styles/global.css` and change the value next to the variable (for example `--color-accent`).
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+Still to come in this README: adding a news post, swapping a photo, editing team members and positions, and deploying.
 
-## 👀 Want to learn more?
+## Placeholders
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+See `PLACEHOLDERS.md` for everything that still needs real content.

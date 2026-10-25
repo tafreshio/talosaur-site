@@ -20,6 +20,8 @@ I'm a CS student but this is my first website. Work in small steps, tell me what
   - Large uppercase headlines, big stat callouts, full-width photos
   - Dated news list
   - Clean layout with generous spacing and subtle motion
+  - Home hero: full-width background video (autoplay, muted, looping) with the headline over it, like Colossal's opening video. Our own footage will be provided; use a labeled placeholder until then.
+- Colossal replaces shell.com as the reference. Where the Content doc says "same layout as shell.com" (home hero, footer), follow the Colossal-style layout instead but keep the Content doc's copy.
 - Use it for inspiration only. Never copy Colossal's images, logos, text or code.
 - Theme fits the deep ocean / twilight zone. Before building, propose a palette and font pairing (free Google Fonts) for me to approve.
 - Must look and work well on phones. Check every page at mobile width.
