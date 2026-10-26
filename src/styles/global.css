@@ -16,6 +16,7 @@
   --color-accent: #3de0d0;      /* Biolum cyan: buttons, links, numbers */
   --color-accent-ink: #06121f;  /* Text that sits on top of the accent color */
   --color-line: #1c3a52;        /* Dividers and borders */
+  --color-white: #ffffff;       /* Pure white: the inverted wordmark over the Home video */
 
   /* Fonts (loaded from Google Fonts in BaseLayout.astro) */
   --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;

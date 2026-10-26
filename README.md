@@ -129,7 +129,7 @@ The list of files lives at the top of `src/components/HeroVideo.astro`. If a fil
 - **Length:** 10 to 20 seconds. It loops, so pick a clip where the end flows back into the start.
 - **No sound.** Browsers only autoplay muted video, and the site never plays audio. Remove the audio track to save space.
 - **File size:** phones get `hero.mp4`, so keep that one as small as you can (the current 51-second loop is 13 MB). `hero-1080.mp4` can be bigger (around 25 MB) because only wide screens download it.
-- **Framing:** on phones the left and right sides get cropped, so keep the subject near the center. The headline sits over the bottom-left, so keep that area fairly dark and calm.
+- **Framing:** on phones the left and right sides get cropped, so keep the subject near the center. The big TALOSAUR wordmark sits across the bottom and shows the video inverted through its letters, so it stays readable over light or dark shots. Very busy textures right under it make it harder to read.
 
 **Poster image checklist:** JPG, 1920 × 1080, under 300 KB, ideally the first frame of the video.
 

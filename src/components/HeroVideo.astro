@@ -107,14 +107,14 @@ const posterSrc = url(`/${posterFile}`);
     object-fit: cover;
   }
 
-  /* Dark fade at the bottom so the white text is always readable */
+  /* Dark fade at the top so the menu stays readable. There is no fade at the bottom:
+     the wordmark inverts the video instead (see .hero-wordmark below), and a dark fade
+     there would leave it nothing to invert. */
   .hero-media::after {
     content: '';
     position: absolute;
     inset: 0;
-    background:
-      linear-gradient(to top, var(--color-bg) 0%, color-mix(in srgb, var(--color-bg) 40%, transparent) 30%, transparent 60%),
-      linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 50%, transparent) 0%, transparent 20%);
+    background: linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 50%, transparent) 0%, transparent 20%);
   }
 
   /* Belt and braces: if the script hasn't run yet, still hide the video */
@@ -144,7 +144,12 @@ const posterSrc = url(`/${posterFile}`);
     padding-bottom: clamp(2rem, 6svh, 4rem);
   }
 
-  /* Giant wordmark in the lower part of the video */
+  /* Giant wordmark in the lower part of the video.
+     mix-blend-mode: difference subtracts the video's colors from the white letters, so the
+     letters show the video inverted: copper over blue water, black over a white flash.
+     It stays readable over any shot without a dark fade, and changes with every cut.
+     It needs pure white to be a true invert, and only works because .hero has
+     "isolation: isolate", which keeps the blend inside the hero. */
   .hero-wordmark {
     margin: 0;
     font-family: var(--font-display);
@@ -154,7 +159,8 @@ const posterSrc = url(`/${posterFile}`);
     line-height: 0.8;
     letter-spacing: -0.02em;
     text-transform: uppercase;
-    color: var(--color-text);
+    color: var(--color-white);
+    mix-blend-mode: difference;
     animation: rise 1.2s var(--ease) both;
   }
 
@@ -165,15 +171,18 @@ const posterSrc = url(`/${posterFile}`);
     }
   }
 
+  /* Same invert as the wordmark, so it doesn't disappear on bright shots */
   .hero-scroll {
     padding-bottom: 0.35em;
-    color: var(--color-text);
+    color: var(--color-white);
+    mix-blend-mode: difference;
     text-decoration: none;
     animation: rise 1.2s 400ms var(--ease) both;
   }
 
   .hero-scroll:hover {
     color: var(--color-accent);
+    mix-blend-mode: normal; /* show the real accent color on hover, not its inverse */
   }
 
   .hero-scroll span {
