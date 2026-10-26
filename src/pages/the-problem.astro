@@ -4,7 +4,7 @@ import PageHeader from '../components/PageHeader.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import StatCallout from '../components/StatCallout.astro';
 import DepthBands from '../components/DepthBands.astro';
-import { problemIntro, stats, statsSource, reasons } from '../data/problem';
+import { problemIntro, stats, statsSource } from '../data/problem';
 import { isPlaceholder } from '../data/site';
 ---
 
@@ -18,10 +18,10 @@ import { isPlaceholder } from '../data/site';
     imagePosition="50% 30%"
   />
 
-  <!-- Light band: big numbers and reasons. It ends where the sea (Section 03) begins. -->
+  <!-- Light band: the big numbers. It ends where the sea (Section 02) begins. -->
   <div class="band theme-light sky">
-    <!-- Section 01: big numbers -->
-    <section class="container section">
+    <!-- Section 01: big numbers (drifts a little as you scroll, see BaseLayout) -->
+    <section class="container section" data-drift="60">
       <SectionHeader number={1} />
       <div class="stats" data-reveal-group>
         {stats.map((stat, i) => <StatCallout {...stat} index={i + 1} />)}
@@ -31,27 +31,14 @@ import { isPlaceholder } from '../data/site';
       </p>
     </section>
 
-    <!-- Section 02: why it's hard to study -->
-    <section class="container section">
-      <SectionHeader number={2} />
-      <ol class="reasons" data-reveal-group>
-        {reasons.map((reason, i) => (
-          <li class="reason">
-            <p class="label reason-num">{String(i + 1).padStart(2, '0')}</p>
-            <h2 class="reason-title">{reason.title}</h2>
-            <p class="reason-text">{reason.text}</p>
-          </li>
-        ))}
-      </ol>
-    </section>
-
-    <!-- Section 03 label sits just above the water line -->
+    <!-- Section 02 label sits just above the water line -->
     <div class="container section">
-      <SectionHeader number={3} />
+      <SectionHeader number={2} />
     </div>
   </div>
 
-  <!-- Section 03: the sea itself, drawn to scale (the ship pokes up into the light band above) -->
+  <!-- Section 02: the sea itself, drawn to scale. The three reasons it is hard to study
+       (Content doc) sit inside it at the depths they are about. -->
   <DepthBands />
 </BaseLayout>
 
@@ -60,7 +47,7 @@ import { isPlaceholder } from '../data/site';
     padding-top: var(--space-2xl);
   }
 
-  /* The light band stops a short way under the Section 03 label, leaving room for the ship's mast */
+  /* The light band stops a short way under the Section 02 label, leaving room for the ship's mast */
   .sky {
     padding-bottom: var(--space-xl);
   }
@@ -81,39 +68,6 @@ import { isPlaceholder } from '../data/site';
     color: var(--color-muted);
   }
 
-  /* ---------- Reasons ---------- */
-
-  .reasons {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-lg);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .reason {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-
-  .reason-num {
-    margin: 0;
-    color: var(--color-accent);
-  }
-
-  .reason-title {
-    font-size: var(--text-xl);
-  }
-
-  .reason-text {
-    margin: 0;
-    color: var(--color-muted);
-    font-size: var(--text-lg);
-    line-height: 1.5;
-  }
-
   /* ---------- Tablet and phone ---------- */
 
   @media (max-width: 1023px) {
@@ -123,13 +77,8 @@ import { isPlaceholder } from '../data/site';
   }
 
   @media (max-width: 760px) {
-    .stats,
-    .reasons {
+    .stats {
       grid-template-columns: 1fr;
-    }
-
-    .reason-text {
-      font-size: var(--text-base);
     }
   }
 </style>

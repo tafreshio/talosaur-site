@@ -37,7 +37,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     <section class="container section">
       <SectionHeader number={2} />
       <!-- Feature layout: the first card (Turtle) is big and square, the other two stack beside it -->
-      <div class="card-grid card-grid--feature" data-reveal-group>
+      <div class="card-grid card-grid--feature" data-reveal-group data-drift="90">
         {heroCards.map((card, i) => (
           <Card {...card} index={i + 1} ratio={i === 0 ? '1 / 1' : '16 / 9'} feature={i === 0} />
         ))}
@@ -51,7 +51,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     <section class="container section">
       <SectionHeader number={3} title={featuredHeading} />
       <!-- Stepped layout: each card sits a little lower than the one before -->
-      <div class="card-grid card-grid--stepped" data-reveal-group>
+      <div class="card-grid card-grid--stepped" data-reveal-group data-drift="140">
         {featuredCards.map((card, i) => <Card {...card} index={i + 1} ratio="16 / 9" />)}
       </div>
     </section>
@@ -106,7 +106,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     <!-- Section 06: You may also be interested in -->
     <section class="container section">
       <SectionHeader number={6} title="You may also be interested in" />
-      <div class="card-grid" data-reveal-group>
+      <div class="card-grid" data-reveal-group data-drift="100">
         {interestedCards.map((card, i) => <Card {...card} index={i + 1} ratio="16 / 9" />)}
       </div>
     </section>

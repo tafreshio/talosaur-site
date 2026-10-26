@@ -30,7 +30,7 @@ const imageUrl = url(`/images/pages/${image}`);
 <header class:list={['page-header', { 'page-header--image': hasImage }]}>
   {hasImage && (
     <div class="page-header-media" aria-hidden="true">
-      <img src={imageUrl} alt="" fetchpriority="high" style={`object-position: ${imagePosition};`} />
+      <img src={imageUrl} alt="" fetchpriority="high" style={`object-position: ${imagePosition};`} data-parallax="0.35" />
     </div>
   )}
 

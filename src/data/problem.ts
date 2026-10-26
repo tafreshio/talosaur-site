@@ -23,21 +23,65 @@ export const stats = [
 // PLACEHOLDER: replace with the real source (a name and, ideally, a link)
 export const statsSource = '[Add a source for these numbers.]';
 
-// Why the twilight zone is hard to study
+// Sources for the facts in the depth graphic. Each is shown as a small [ link ] under its fact.
+const sources = {
+  diving: { label: 'Scuba Diving', href: 'https://www.scubadiving.com/why-is-130-feet-depth-limit-for-recreational-scuba-diving' },
+  fgb: { label: 'NOAA', href: 'https://flowergarden.noaa.gov/about/mesophotic.html' },
+  light: { label: 'NOAA', href: 'https://oceanservice.noaa.gov/facts/light_travel.html' },
+  pressure: { label: 'NOAA', href: 'https://oceanservice.noaa.gov/facts/pressure.html' },
+};
+
+// Why the twilight zone is hard to study. These sit inside the depth graphic, at "depth" meters.
+// "title" and "text" are the Content doc copy; "fact" is an extra sourced line added under it.
 export const reasons = [
   {
+    depth: 92,
     title: 'Too deep for divers.',
     text: 'Most of this zone is beyond safe diving limits.',
+    fact: 'Recreational scuba divers stop at 40 m (130 ft), a limit that goes back to the U.S. Navy in the 1950s.',
+    source: sources.diving,
   },
   {
+    depth: 142,
     title: 'Too expensive to visit often.',
     text: 'Remotely operated vehicles need pilots and boats, commercial underwater robots cost $50,000 to over $1 million, and ship time costs tens of thousands of dollars a day.',
+    fact: '',
+    source: null, // uses statsSource (the placeholder above) until the team adds one
   },
   {
+    depth: 210,
     title: 'Close to home.',
     text: 'Deep reefs off Texas and Louisiana, including Flower Garden Banks, sit in this zone.',
+    fact: "Most of the sanctuary's habitats lie 40 to 221 m down, and in the past 20 years researchers have found new species of shrimp, squat lobster and black coral there.",
+    source: sources.fgb,
   },
 ];
+
+// Thin lines across the water at an exact depth
+export const depthMarks = [
+  { depth: 40, text: 'Recreational dive limit', source: sources.diving },
+  { depth: 200, text: 'Rarely any significant sunlight below here', source: sources.light },
+];
+
+// Bars beside the ruler showing a depth range
+export const depthRanges = [
+  { from: 18, to: 50, label: 'Reef · 18–50 m', source: sources.fgb },
+  { from: 40, to: 221, label: 'Flower Garden Banks · 40–221 m', source: sources.fgb },
+];
+
+// The last note, in the deep band
+export const pressureNote = {
+  depth: 335,
+  title: 'About 31 atmospheres.',
+  text: 'Every 10 m of seawater adds about one atmosphere of pressure. At 300 m it is about 31 times the pressure at the surface.',
+  source: sources.pressure,
+};
+
+// Next to the Talosaur mark in the twilight zone (Content doc, Home hero text)
+export const talosaurNote = {
+  depth: 268,
+  text: 'Talosaur is a Texas-based student team building a low-cost underwater robot that finds, follows and films marine life there.',
+};
 
 // Depth bands graphic, top to bottom. The graphic is drawn to scale:
 // "from" and "to" are depths in meters and decide where each band starts and ends.

@@ -93,11 +93,16 @@ Swap any of these for real team photos whenever you have them.
 
 **Page-header captions.** Each page header has a thin line under the title with a hatched `//////` stripe and a short caption in [ brackets ], for example `[ 50–300 M · THE TWILIGHT ZONE ]`. Change or remove it with the `caption` text where the page uses `<PageHeader>`.
 
-**The depth graphic (The Problem, Section 03).** The whole section is the sea, drawn to scale from the surface to 400 m. Its top edge is the water surface, and the research ship sits on it, poking up into the light band above. A thin line stays in the middle of the screen as you scroll and reads out the depth under it. The code is `src/components/DepthBands.astro`:
-- Band text and where each band starts and ends (`from`, `to` in meters): `depthBands` in `src/data/problem.ts`.
+**The depth graphic (The Problem, Section 02).** The whole section is the sea, drawn to scale from the surface to 400 m. Its top edge is the water surface, and the research ship sits on it, poking up into the light band above. A line stays in the middle of the screen as you scroll and reads out the depth and water pressure under it; the notes outside the band you are in fade back. The code is `src/components/DepthBands.astro`; all the words are in `src/data/problem.ts`:
+- `depthBands`: the three bands (Content doc copy) and where each starts and ends (`from`, `to` in meters).
+- `reasons`: the three "why it's hard to study" notes (Content doc copy), each with a `depth` (where it sits), an extra sourced `fact` and its `source` link.
+- `depthMarks` (dashed lines at 40 m and 200 m), `depthRanges` (the bars beside the ruler), `pressureNote` and `talosaurNote`.
+- Move anything up or down by changing its `depth`. Leave about 50 m between notes so they don't overlap on phones.
 - Make the whole drawing taller or shorter: change `--m` (pixels per meter) at the top of the component's styles.
-- The shark and jellyfish are false-color cut-outs in `public/images/depth/` (`shark.webp`, `jelly.webp`, transparent backgrounds). Replace them with files of the same name. Their depth is the `top: calc(85 * var(--m))` line in each `.sticker--…` style (85 = 85 m).
+- The animals are cut-outs of Ocean Image Bank photos in `public/images/depth/` (transparent backgrounds; the squid and jellyfish have false-color edits). Replace a file with one of the same name. Each one's depth is in the `animals` list at the top of the component.
 - The ship is a simple drawing inside the component (the `<svg class="ship">`), not a photo.
+
+**Scroll-under effect.** Like Colossal, some pictures move at a slightly different speed from the page, and the next section slides over them. Add `data-parallax="0.4"` to a picture at the very top of a page (it lags behind the scroll), or `data-drift="100"` to anything else (it starts 100 px low and rises into place as you scroll past). Used on the Home video, every page header photo, the Home card grids and The Problem's big numbers. This only works because every `.band` has `position: relative` and its own background, so the next band paints on top. It's switched off for visitors with "reduce motion" turned on. The code is at the bottom of `src/layouts/BaseLayout.astro`.
 
 **Team members:** the `photo` name in `src/data/team.ts`, saved in `public/images/team/` (portrait, about 800 × 1000 px). Until the file exists the card shows a panel with the person's initials.
 

@@ -4,36 +4,66 @@
 // How it works:
 // - The whole section is the sea. Its top edge is the water surface, and the research ship
 //   sits on it, poking up into the light section above (Colossal-style "stitched" boundary).
-// - Every depth is drawn to scale: 1 meter = var(--m) pixels. Change --m to make it taller or shorter.
-// - A thin line stays in the middle of the screen as you scroll and reads out the depth under it
-//   (the script at the bottom). Without JavaScript the line is simply not shown.
-// - Band text lives in src/data/problem.ts. Animal cut-outs live in public/images/depth/.
-import { depthBands } from '../data/problem';
+// - Every depth is drawn to scale: 1 meter = var(--m) pixels. Anything placed at a depth uses
+//   top: calc(<meters> * var(--m)), so changing --m stretches the whole drawing.
+// - A line stays in the middle of the screen as you scroll and reads out the depth and water
+//   pressure under it (the script at the bottom). Without JavaScript it is simply not shown.
+// - All the words live in src/data/problem.ts. Animal cut-outs live in public/images/depth/.
+import { depthBands, reasons, depthMarks, depthRanges, pressureNote, talosaurNote, statsSource } from '../data/problem';
+import { isPlaceholder } from '../data/site';
 import { url } from '../lib/url';
 
 const MAX = depthBands[depthBands.length - 1].to; // where the drawing stops (meters)
 const marks = Array.from({ length: MAX / 50 + 1 }, (_, i) => i * 50); // ruler labels every 50 m
 
+// Which band a depth falls in (used to dim the notes outside the band you are scrolling through)
+const zoneOf = (d: number) => (depthBands.find((b) => d < b.to) ?? depthBands[depthBands.length - 1]).zone;
+
 // What the moving readout says in each band
 const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name || b.depth }));
+
+// Animal cut-outs (Ocean Image Bank photos, see Image credits). "depth" is where the top of the picture sits.
+const animals = [
+  { file: 'jellyfish.webp', w: 520, h: 688, depth: 4, key: 'jelly', label: 'Jellyfish' },
+  { file: 'larval-fish.webp', w: 640, h: 359, depth: 92, key: 'larva', label: 'Larval fish' },
+  { file: 'squid.webp', w: 720, h: 872, depth: 122, key: 'squid', label: 'Squid' },
+  { file: 'drifter-oval.webp', w: 400, h: 490, depth: 230, key: 'oval', label: '' },
+  { file: 'drifter-long.webp', w: 600, h: 208, depth: 275, key: 'long', label: '' },
+];
 ---
 
 <section class="depth-sea" aria-labelledby="depth-title" style={`--max: ${MAX}`}>
   <div class="container">
-    <figure class="depth" data-depth data-max={MAX} data-bands={JSON.stringify(readout)}>
-      <h2 id="depth-title" class="visually-hidden">Depth bands, drawn to scale from the surface to {MAX} m</h2>
+    <figure class="depth" data-depth data-max={MAX} data-bands={JSON.stringify(readout)} data-zone="sunlit">
+      <h2 id="depth-title" class="visually-hidden">The water column, drawn to scale from the surface to {MAX} m</h2>
 
       <div class="depth-col">
-        <!-- The moving depth readout (sticky: it stays in the middle of the screen while you scroll) -->
+        <!-- The moving readout (sticky: it stays in the middle of the screen while you scroll) -->
         <div class="depth-gauge" aria-hidden="true">
-          <p class="gauge-num"><span data-depth-num>0</span><span class="gauge-unit">m</span></p>
-          <p class="label gauge-zone" data-depth-zone>{readout[0].label}</p>
+          <div class="gauge-read">
+            <p class="gauge-num"><span data-depth-num>0</span><span class="gauge-unit">m</span></p>
+            <p class="label gauge-meta"><span data-depth-zone>{readout[0].label}</span><span class="gauge-atm"><span data-depth-atm>1</span> atm</span></p>
+          </div>
         </div>
 
-        <!-- Ruler down the left edge -->
+        <!-- Ruler down the left edge, with bars for depth ranges beside it -->
         <ol class="depth-ruler" aria-hidden="true">
-          {marks.map((d) => <li style={`--d: ${d}`}>{d} m</li>)}
+          {marks.map((d) => <li style={`--d: ${d}`}><span>{d}</span><span class="ruler-unit"> m</span></li>)}
         </ol>
+        {depthRanges.map((r, i) => (
+          <div class={`range range--${i}`} style={`--from: ${r.from}; --to: ${r.to}`}>
+            <span class="label range-label">{r.label}</span>
+          </div>
+        ))}
+
+        <!-- Lines across the water at exact depths -->
+        {depthMarks.map((m) => (
+          <div class="mark" style={`--d: ${m.depth}`} data-zone={zoneOf(m.depth)}>
+            <p class="label mark-text">
+              {m.depth} m · {m.text} <a class="src" href={m.source.href} target="_blank" rel="noopener">[ {m.source.label} ]</a>
+            </p>
+          </div>
+        ))}
 
         <!-- Research ship on the surface, with a cable down to a deep vehicle -->
         <svg class="ship" viewBox="0 0 600 190" aria-hidden="true">
@@ -47,27 +77,59 @@ const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name |
         <span class="tether" aria-hidden="true"></span>
         <span class="vehicle" aria-hidden="true"></span>
 
-        <!-- False-colour animal cut-outs (stickers), drifting a little as you scroll -->
-        <img class="sticker sticker--shark" src={url('/images/depth/shark.webp')} alt="" width="1094" height="289" loading="lazy" decoding="async" />
-        <img class="sticker sticker--jelly" src={url('/images/depth/jelly.webp')} alt="" width="900" height="623" loading="lazy" decoding="async" />
+        <!-- Animal cut-outs, drifting a little as you scroll -->
+        {animals.map((a) => (
+          <div class={`animal animal--${a.key}`} style={`--d: ${a.depth}`} aria-hidden="true">
+            <img src={url(`/images/depth/${a.file}`)} alt="" width={a.w} height={a.h} loading="lazy" decoding="async" />
+            {a.label && <span class="label animal-label">[ {a.label} ]</span>}
+          </div>
+        ))}
 
-        <!-- Talosaur, working in the twilight zone -->
-        <div class="talosaur" aria-hidden="true">
-          <img src={url('/brand/talosaur-mark-reverse.svg')} alt="" width="64" height="64" />
-          <span class="label">[ Talosaur ]</span>
-        </div>
-
-        <!-- The three bands: the real text of the graphic -->
+        <!-- The three bands (Content doc copy) -->
         <ol class="zones" aria-label="Ocean depth bands">
           {depthBands.map((b) => (
             <li class={`zone zone--${b.zone}`} style={`--from: ${b.from}; --to: ${b.to}`}>
-              <div class="zone-copy">
+              <div class="zone-copy" data-zone={b.zone}>
                 <p class="zone-depth">{b.depth}</p>
                 <p class="zone-text">{b.name && <strong>{b.name}.</strong>} {b.text}</p>
               </div>
             </li>
           ))}
         </ol>
+
+        <!-- Why the twilight zone is hard to study, each at the depth it is about -->
+        <ol class="notes" aria-label="Why the twilight zone is hard to study">
+          {reasons.map((r, i) => (
+            <li class="note" style={`--d: ${r.depth}`} data-zone={zoneOf(r.depth)}>
+              <p class="label note-tag">[ {String(i + 1).padStart(2, '0')} ]</p>
+              <h3 class="note-title">{r.title}</h3>
+              <p class="note-text">{r.text}</p>
+              {r.fact && <p class="note-fact">{r.fact}</p>}
+              {r.source ? (
+                <a class="label src" href={r.source.href} target="_blank" rel="noopener">[ Source: {r.source.label} ]</a>
+              ) : (
+                <p class:list={['label', 'src', { 'src--placeholder': isPlaceholder(statsSource) }]}>Source: {statsSource}</p>
+              )}
+            </li>
+          ))}
+        </ol>
+
+        <!-- Talosaur, working in the twilight zone -->
+        <div class="note talosaur" style={`--d: ${talosaurNote.depth}`} data-zone={zoneOf(talosaurNote.depth)}>
+          <img class="talosaur-mark" src={url('/brand/talosaur-mark-reverse.svg')} alt="" width="64" height="64" />
+          <div>
+            <p class="label note-tag">[ Talosaur ]</p>
+            <p class="note-text">{talosaurNote.text}</p>
+          </div>
+        </div>
+
+        <!-- Pressure, in the deep band -->
+        <div class="note" style={`--d: ${pressureNote.depth}`} data-zone={zoneOf(pressureNote.depth)}>
+          <p class="label note-tag">[ Pressure ]</p>
+          <h3 class="note-title">{pressureNote.title}</h3>
+          <p class="note-text">{pressureNote.text}</p>
+          <a class="label src" href={pressureNote.source.href} target="_blank" rel="noopener">[ Source: {pressureNote.source.label} ]</a>
+        </div>
       </div>
     </figure>
   </div>
@@ -77,8 +139,9 @@ const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name |
   /* ---------- The sea: a full-width section whose background is the water ---------- */
 
   .depth-sea {
-    --m: clamp(3.5px, 2.5px + 0.25vw, 5px); /* pixels per meter */
-    --rule-w: 4.5rem; /* width of the ruler on the left */
+    --m: 6px; /* pixels per meter: 400 m = 2400 px */
+    --rule-w: 7rem; /* ruler + range bars on the left */
+    --lane-a: 47%; /* text lane: from the ruler to here */
     /* distance from the content edge to the edge of the screen, so things can bleed off it */
     --bleed: calc(var(--gutter) + max(0px, (100vw - var(--max-width)) / 2));
     position: relative;
@@ -86,7 +149,7 @@ const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name |
     overflow-x: clip; /* hide what bleeds off the sides, but let the ship poke up */
     background:
       /* sunlight glow just under the surface */
-      radial-gradient(ellipse 55% calc(45 * var(--m)) at 70% 0, rgb(190 245 240 / 0.28), transparent),
+      radial-gradient(ellipse 55% calc(45 * var(--m)) at 70% 0, rgb(190 245 240 / 0.25), transparent),
       /* the water gets darker with depth, in step with the ruler */
       linear-gradient(
         to bottom,
@@ -100,20 +163,6 @@ const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name |
       );
   }
 
-  /* Marine snow: faint specks that only appear below about 80 m */
-  .depth-sea::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background-image:
-      radial-gradient(circle at 30% 40%, rgb(220 240 240 / 0.5) 0 1px, transparent 1.6px),
-      radial-gradient(circle at 70% 80%, rgb(220 240 240 / 0.35) 0 1px, transparent 1.6px);
-    background-size: 97px 131px, 173px 89px;
-    mask-image: linear-gradient(to bottom, transparent calc(80 * var(--m)), #000 calc(200 * var(--m)));
-    -webkit-mask-image: linear-gradient(to bottom, transparent calc(80 * var(--m)), #000 calc(200 * var(--m)));
-  }
-
   .depth {
     position: relative;
     margin: 0;
@@ -124,12 +173,35 @@ const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name |
     height: calc(var(--max) * var(--m));
   }
 
-  /* ---------- Ruler ---------- */
+  /* Everything placed at a depth */
+  .mark,
+  .note,
+  .animal {
+    position: absolute;
+    top: calc(var(--d) * var(--m));
+  }
+
+  /* While the readout runs, things outside the band you are in fade back */
+  [data-zone] {
+    transition: opacity 400ms var(--ease);
+  }
+
+  .is-live [data-zone] {
+    opacity: 0.35;
+  }
+
+  .is-live[data-zone='sunlit'] [data-zone='sunlit'],
+  .is-live[data-zone='twilight'] [data-zone='twilight'],
+  .is-live[data-zone='deep'] [data-zone='deep'] {
+    opacity: 1;
+  }
+
+  /* ---------- Ruler and range bars ---------- */
 
   .depth-ruler {
     position: absolute;
     inset: 0 auto 0 0;
-    width: var(--rule-w);
+    width: 4.5rem;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -171,9 +243,52 @@ const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name |
     transform: translateY(0.35rem);
   }
 
+  /* A bar beside the ruler from one depth to another, with its label running up it */
+  .range {
+    position: absolute;
+    top: calc(var(--from) * var(--m));
+    height: calc((var(--to) - var(--from)) * var(--m));
+    left: 4.6rem;
+    width: 3px;
+    background: var(--color-accent);
+  }
+
+  .range--0 {
+    left: 6.1rem;
+    background: rgb(232 241 245 / 0.7);
+  }
+
+  .range-label {
+    position: absolute;
+    top: 0;
+    left: 0.45rem;
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+    font-size: 0.62rem;
+    color: var(--color-text);
+  }
+
+  /* ---------- Lines at exact depths ---------- */
+
+  .mark {
+    left: var(--rule-w);
+    right: 0;
+    z-index: 1;
+    border-top: 1px dashed rgb(232 241 245 / 0.5);
+  }
+
+  .mark-text {
+    position: absolute;
+    bottom: 0.35rem;
+    left: var(--space-md);
+    margin: 0;
+    color: var(--color-text);
+  }
+
   /* ---------- Bands ---------- */
 
-  .zones {
+  .zones,
+  .notes {
     margin: 0;
     padding: 0;
     list-style: none;
@@ -185,7 +300,7 @@ const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name |
     height: calc((var(--to) - var(--from)) * var(--m));
     left: var(--rule-w);
     right: 0;
-    z-index: 2;
+    pointer-events: none;
   }
 
   /* dashed line where one band ends and the next begins */
@@ -194,9 +309,11 @@ const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name |
   }
 
   .zone-copy {
+    position: relative;
+    z-index: 2;
     max-width: 30rem;
     padding: var(--space-sm) 0 0 var(--space-md);
-    transition: opacity 400ms var(--ease);
+    pointer-events: auto;
   }
 
   .zone-depth {
@@ -246,24 +363,86 @@ const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name |
     color: var(--color-muted);
   }
 
-  /* While the readout is running, the band you are in is bright and the others dim */
-  .is-live .zone-copy {
-    opacity: 0.4;
+  /* ---------- Notes ---------- */
+
+  .note {
+    left: calc(var(--rule-w) + var(--space-md));
+    width: min(30rem, calc(var(--lane-a) - var(--rule-w)));
+    z-index: 2;
   }
 
-  .is-live[data-zone='sunlit'] .zone--sunlit .zone-copy,
-  .is-live[data-zone='twilight'] .zone--twilight .zone-copy,
-  .is-live[data-zone='deep'] .zone--deep .zone-copy {
-    opacity: 1;
+  .note-tag {
+    margin: 0 0 0.5rem;
+    color: var(--color-accent);
+  }
+
+  .note-title {
+    font-size: clamp(1.6rem, 1.1rem + 1.4vw, 2.4rem);
+  }
+
+  .note-text,
+  .note-fact {
+    margin: 0.6rem 0 0;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+  }
+
+  /* the extra sourced fact: a little quieter, with a thin line on its left */
+  .note-fact {
+    padding-left: 0.85rem;
+    border-left: 1px solid var(--color-accent);
+    color: rgb(232 241 245 / 0.78);
+  }
+
+  .src {
+    display: inline-block;
+    margin-top: 0.6rem;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  a.src:hover,
+  a.src:focus-visible {
+    text-decoration: underline;
+  }
+
+  .src--placeholder {
+    color: var(--color-muted);
+  }
+
+  .mark-text .src {
+    margin: 0 0 0 0.25rem;
+  }
+
+  .talosaur {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .talosaur-mark {
+    flex: none;
+    width: clamp(3rem, 2rem + 2vw, 4rem);
+    height: auto;
+    animation: bob 6s ease-in-out infinite;
+  }
+
+  .talosaur .note-text {
+    margin-top: 0;
+  }
+
+  @keyframes bob {
+    50% {
+      transform: translateY(-0.5rem);
+    }
   }
 
   /* ---------- Ship, cable and deep vehicle ---------- */
 
   .ship {
-    --ship-x: 56%;
     --ship-w: clamp(170px, 24vw, 360px);
     position: absolute;
-    left: var(--ship-x);
+    left: 56%;
     /* the waterline is 150 units down the 600-unit-wide drawing */
     top: calc(var(--ship-w) * -150 / 600);
     width: var(--ship-w);
@@ -289,72 +468,73 @@ const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name |
     height: 1rem;
     transform: translateX(-50%);
     border: 1.5px solid rgb(232 241 245 / 0.8);
+    background: var(--color-bg);
     z-index: 1;
   }
 
-  /* its light shining down into the dark */
-  .vehicle::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    width: 11rem;
-    height: calc(60 * var(--m));
-    transform: translateX(-50%);
-    background: radial-gradient(ellipse 50% 100% at 50% 0, rgb(160 245 235 / 0.22), transparent 75%);
-    clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%);
-  }
+  /* ---------- Animals ---------- */
 
-  /* ---------- Stickers ---------- */
-
-  .sticker {
-    position: absolute;
+  .animal {
     z-index: 1;
-    max-width: none;
     pointer-events: none;
     /* --p (0 to 1) is how far you have scrolled through the column, set by the script below */
-    transform: translateY(calc((var(--p, 0.5) - 0.5) * var(--drift)));
+    transform: translateY(calc((var(--p, 0.5) - 0.5) * var(--drift, 0px)));
   }
 
-  .sticker--shark {
-    --drift: -90px;
-    top: calc(85 * var(--m));
-    left: 42%;
-    width: min(62%, 660px);
-  }
-
-  .sticker--jelly {
-    --drift: 120px;
-    top: calc(195 * var(--m));
-    /* its cut-off side sits exactly on the right edge of the screen */
-    right: calc(-1 * var(--bleed));
-    width: clamp(220px, 34vw, 540px);
-  }
-
-  .talosaur {
-    position: absolute;
-    top: calc(165 * var(--m));
-    left: calc(var(--rule-w) + var(--space-md));
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    animation: bob 6s ease-in-out infinite;
-  }
-
-  .talosaur img {
-    width: clamp(3rem, 2rem + 2vw, 4rem);
+  .animal img {
+    width: 100%;
     height: auto;
   }
 
-  .talosaur .label {
+  .animal-label {
+    position: absolute;
+    left: 0;
+    bottom: -1.5rem;
     color: var(--color-text);
+    white-space: nowrap;
   }
 
-  @keyframes bob {
-    50% {
-      transform: translateY(-0.6rem);
-    }
+  .animal--jelly {
+    --drift: -50px;
+    left: 70%;
+    width: clamp(140px, 13vw, 210px);
+  }
+
+  /* its label sits on the left, clear of the 50 m line */
+  .animal--jelly .animal-label {
+    top: 30%;
+    bottom: auto;
+    left: -0.75rem;
+    transform: translateX(-100%);
+  }
+
+  .animal--larva {
+    --drift: -70px;
+    left: 61%;
+    width: clamp(190px, 21vw, 320px);
+  }
+
+  .animal--squid {
+    --drift: -120px;
+    /* bleeds off the right edge of the screen */
+    right: calc(-1 * var(--bleed) - 3vw);
+    width: clamp(250px, 30vw, 470px);
+  }
+
+  .animal--squid .animal-label {
+    left: 22%;
+  }
+
+  .animal--oval {
+    --drift: -60px;
+    left: 57%;
+    width: clamp(110px, 10vw, 160px);
+  }
+
+  .animal--long {
+    --drift: -90px;
+    left: 70%;
+    width: clamp(170px, 18vw, 280px);
   }
 
   /* ---------- The moving readout ---------- */
@@ -391,10 +571,14 @@ const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name |
     border-left: 0.6rem solid var(--color-accent);
   }
 
-  .gauge-num {
+  .gauge-read {
     position: absolute;
     top: 0.6rem;
     right: 0;
+    text-align: right;
+  }
+
+  .gauge-num {
     margin: 0;
     font-family: var(--font-display);
     font-stretch: var(--display-width);
@@ -411,20 +595,25 @@ const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name |
     margin-left: 0.1em;
   }
 
-  .gauge-zone {
-    position: absolute;
-    top: calc(0.9rem + clamp(3rem, 1.5rem + 5vw, 7.5rem) * 0.8);
-    right: 0;
-    margin: 0;
+  .gauge-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    margin: 0.6rem 0 0;
     color: var(--color-text);
     white-space: nowrap;
   }
 
-  /* ---------- Phone ---------- */
+  .gauge-atm {
+    color: var(--color-accent);
+  }
 
-  @media (max-width: 760px) {
+  /* ---------- Tablet and phone (under 1100 px): one text lane, readout on the ruler ---------- */
+
+  @media (max-width: 1099px) {
     .depth-sea {
-      --rule-w: 2.75rem;
+      --rule-w: 4.25rem;
+      --lane-a: 100%;
     }
 
     .depth-ruler {
@@ -432,11 +621,24 @@ const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name |
     }
 
     .depth-ruler li {
-      left: 1.6rem;
+      left: 1.55rem;
+    }
+
+    .ruler-unit,
+    .range-label {
+      display: none;
+    }
+
+    .range {
+      left: 3.35rem;
+    }
+
+    .range--0 {
+      left: 3.75rem;
     }
 
     .zone-copy {
-      max-width: 15rem;
+      max-width: 20rem;
       padding: 0.75rem 0 0 0.75rem;
     }
 
@@ -444,8 +646,23 @@ const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name |
       font-size: var(--text-base);
     }
 
-    /* Flip the ship and push it to the right edge, so its cable runs down the right side
-       instead of through the band text */
+    .note {
+      left: calc(var(--rule-w) + 0.75rem);
+      width: auto;
+      right: 0;
+      max-width: 34rem;
+    }
+
+    .note-text,
+    .note-fact {
+      font-size: 0.975rem;
+    }
+
+    .mark-text {
+      left: 0.75rem;
+    }
+
+    /* Flip the ship and push it to the right edge, so its cable runs down the right side */
     .ship {
       left: auto;
       right: 0;
@@ -462,42 +679,90 @@ const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name |
       transform: translateX(50%);
     }
 
-    .sticker--shark {
-      --drift: -50px;
-      left: 22%;
-      width: 88%;
+    /* Animals sit behind the text on the right, partly off the screen */
+    .animal {
+      opacity: 0.4;
     }
 
-    .sticker--jelly {
-      --drift: 60px;
-      width: 62vw;
+    .animal-label {
+      display: none;
     }
 
-    .talosaur {
-      left: calc(var(--rule-w) + 0.75rem);
+    .animal--jelly {
+      left: auto;
+      right: -6%;
+      width: 30vw;
+    }
+
+    .animal--larva {
+      left: auto;
+      right: -12%;
+      width: 46vw;
+    }
+
+    .animal--squid {
+      width: 52vw;
+      right: calc(-1 * var(--bleed) - 12vw);
+    }
+
+    .animal--oval {
+      left: auto;
+      right: -4%;
+      width: 24vw;
+    }
+
+    .animal--long {
+      left: auto;
+      right: -14%;
+      width: 44vw;
+    }
+
+    /* The readout becomes a small tag sitting on the ruler at the line */
+    .gauge-read {
+      top: -0.85rem;
+      left: 0.9rem;
+      right: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-align: left;
+    }
+
+    .gauge-num {
+      padding: 0.3rem 0.4rem 0.2rem;
+      background: var(--color-accent);
+      color: var(--color-accent-ink);
+      font-size: 1.15rem;
+      line-height: 1;
+      text-shadow: none;
+    }
+
+    .gauge-meta {
+      display: none;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .talosaur {
+    .talosaur-mark {
       animation: none;
     }
 
-    .zone-copy {
+    [data-zone] {
       transition: none;
     }
   }
 </style>
 
 <script>
-  // Reads the depth under the middle-of-screen line, highlights the band you are in,
-  // and lets the stickers drift a little. Runs once per animation frame while scrolling.
+  // Reads the depth under the middle-of-screen line, shows the band and water pressure there,
+  // fades the notes outside that band, and lets the animals drift a little.
   const fig = document.querySelector<HTMLElement>('[data-depth]');
 
   if (fig) {
     const col = fig.querySelector<HTMLElement>('.depth-col')!;
     const gauge = fig.querySelector<HTMLElement>('.depth-gauge')!;
     const num = fig.querySelector<HTMLElement>('[data-depth-num]')!;
+    const atm = fig.querySelector<HTMLElement>('[data-depth-atm]')!;
     const zoneLabel = fig.querySelector<HTMLElement>('[data-depth-zone]')!;
     const max = Number(fig.dataset.max);
     const bands: { zone: string; to: number; label: string }[] = JSON.parse(fig.dataset.bands || '[]');
@@ -514,6 +779,8 @@ const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name |
       const band = bands.find((b) => depth < b.to) ?? bands[bands.length - 1];
 
       num.textContent = String(Math.round(depth));
+      // about one more atmosphere for every 10 m of seawater (NOAA)
+      atm.textContent = String(Math.round(1 + depth / 10.06));
       if (fig.dataset.zone !== band.zone) {
         fig.dataset.zone = band.zone;
         zoneLabel.textContent = band.label;
