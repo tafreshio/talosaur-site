@@ -112,22 +112,23 @@ The News page (`src/pages/news.astro`) lists every post, and the Home page autom
 
 ## Swap the Home page video
 
-The full-screen video at the top of the Home page uses two files. Replace them and keep the exact same names:
+The full-screen video at the top of the Home page is the same video saved in two sizes, plus a still image. Each visitor downloads only one of the videos: big screens get a sharp 1080p file, phones get a lighter 720p one. Replace the files and keep the exact same names:
 
-| File | What it is |
-|---|---|
-| `public/videos/hero.mp4` | The background video |
-| `public/images/hero-poster.jpg` | A still frame from the video. It shows while the video loads, and instead of the video for visitors who have "reduce motion" turned on in their phone or computer settings |
+| File | What it is | Who gets it |
+|---|---|---|
+| `public/videos/hero-1080.mp4` | 1920 × 1080 MP4 (H.264), about 25 MB | Screens 900 px wide or more |
+| `public/videos/hero.mp4` | 1280 × 720 MP4 (H.264), about 13 MB | Phones, small windows, and everything else |
+| `public/images/hero-poster.jpg` | 1920 × 1080 still frame from the video | Shows while the video loads, and instead of the video for visitors who have "reduce motion" turned on |
 
-The current video is 1280 × 720, 51 seconds and 13 MB. It works, but a shorter, smaller file (see below) loads faster on phones. If `hero.mp4` is ever removed, the site shows the still image instead.
+The list of files lives at the top of `src/components/HeroVideo.astro`. If a file is missing it is skipped, and if both videos are missing the site shows the still image instead.
 
 **Video file checklist**
 
-- **Format:** MP4 (H.264 video). This plays on every browser, including iPhones.
-- **Size on screen:** 1920 × 1080 (landscape, 16:9).
+- **Format:** MP4 (H.264 video) for both files. This plays on every browser, including iPhones. `hero.mp4` is the safety net, so always keep it.
+- **Size on screen:** 1920 × 1080 (landscape, 16:9), and 1280 × 720 for `hero.mp4`.
 - **Length:** 10 to 20 seconds. It loops, so pick a clip where the end flows back into the start.
 - **No sound.** Browsers only autoplay muted video, and the site never plays audio. Remove the audio track to save space.
-- **File size:** aim for under 5 MB (10 MB at most). Big files load slowly on phones.
+- **File size:** phones get `hero.mp4`, so keep that one as small as you can (the current 51-second loop is 13 MB). `hero-1080.mp4` can be bigger (around 25 MB) because only wide screens download it.
 - **Framing:** on phones the left and right sides get cropped, so keep the subject near the center. The headline sits over the bottom-left, so keep that area fairly dark and calm.
 
 **Poster image checklist:** JPG, 1920 × 1080, under 300 KB, ideally the first frame of the video.
@@ -135,13 +136,16 @@ The current video is 1280 × 720, 51 seconds and 13 MB. It works, but a shorter,
 **Compressing a video** with the free tool [ffmpeg](https://ffmpeg.org) (`brew install ffmpeg` on a Mac):
 
 ```sh
-ffmpeg -i original.mov -an -vf "scale=1920:-2" -c:v libx264 -crf 26 -preset slow -pix_fmt yuv420p -movflags +faststart hero.mp4
+# 1080p MP4 for wide screens
+ffmpeg -i original.mov -an -vf "scale=1920:-2" -c:v libx264 -crf 26 -preset slow -pix_fmt yuv420p -movflags +faststart hero-1080.mp4
+# 720p MP4 for phones and everything else
+ffmpeg -i original.mov -an -vf "scale=1280:-2" -c:v libx264 -crf 26 -preset slow -pix_fmt yuv420p -movflags +faststart hero.mp4
 ```
 
-`-an` removes the sound, `-crf 26` sets the quality (higher number = smaller file, try 23 to 30), and `-movflags +faststart` lets it start playing before it fully downloads. To grab the first frame as the poster:
+`-an` removes the sound, `-crf 26` sets the quality (higher number = smaller file, try 23 to 30), and `-movflags +faststart` lets it start playing before it fully downloads. To grab a frame as the poster (here, the frame 25.5 seconds in):
 
 ```sh
-ffmpeg -i hero.mp4 -frames:v 1 -q:v 3 hero-poster.jpg
+ffmpeg -ss 25.5 -i original.mov -frames:v 1 -vf "scale=1920:-2" -q:v 3 hero-poster.jpg
 ```
 
 ## Deploy (put the site online)
