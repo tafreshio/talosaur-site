@@ -269,9 +269,12 @@ h3 {
   }
 }
 
-/* ---------- Color glitch ----------
-   A split-second "bad signal" moment borrowed from the Home video: the photo's red and
-   cyan channels slide apart in slices, with one false-color frame.
+/* ---------- Color glitch (moving, on hover) ----------
+   The page-header photos have a permanent false-color glitch baked into the image files,
+   like Colossal's. This is the moving version, used on Home cards when you hover: a
+   split-second "bad signal" where red and cyan copies slide apart in slices, with two
+   false-color frames. Card.astro plays the keyframes with steps(1, end), so they snap
+   like dropped video frames.
 
    Usage: wrap an image, and give the wrapper the same file as a CSS variable:
      <div class="color-glitch" style="--glitch-src: url(/talosaur-site/images/x.jpg)">
@@ -284,8 +287,8 @@ h3 {
    colored fringes. (Our photos are nearly all blue, so tinting works better than
    splitting the real red channel, which is almost empty.) The real <img> gets one
    inverted frame and one violet frame (the false-color flash).
-   Add .color-glitch--intro to play it once on page load (page headers). Cards play it
-   on hover (Card.astro). People who ask for less motion never see it (rule above). */
+   Cards play it on hover (Card.astro). People who ask for less motion never see it
+   (rule above). */
 .color-glitch {
   position: relative;
   width: 100%;
@@ -322,15 +325,6 @@ h3 {
 
 .color-glitch::after {
   background-color: var(--glitch-cyan);
-}
-
-/* steps(1, end) makes each keyframe snap instead of sliding, like dropped video frames */
-.color-glitch--intro::before {
-  animation: glitch-red 0.75s steps(1, end) 0.3s;
-}
-
-.color-glitch--intro::after {
-  animation: glitch-cyan 0.75s steps(1, end) 0.3s;
 }
 
 /* Red slides one way, cyan the other; clip-path shows only a horizontal band at a time */
