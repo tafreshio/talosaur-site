@@ -15,11 +15,12 @@ interface Props {
   heading?: string;       // the big headline, if different from the page name
   href: string;           // the page's address, used to look up its nav number
   intro?: string;
+  caption?: string;       // short line shown in [ brackets ] on a hairline under the title, e.g. '50–300 m · The twilight zone'
   image?: string;         // filename in public/images/pages/, e.g. 'news.jpg'
   imagePosition?: string; // the part of the photo to keep when a narrow screen crops it ('50% 50%' = center)
 }
 
-const { title, heading = title, href, intro, image, imagePosition = '50% 50%' } = Astro.props;
+const { title, heading = title, href, intro, caption, image, imagePosition = '50% 50%' } = Astro.props;
 const navIndex = mainNav.findIndex((item) => item.href === href);
 const number = navIndex >= 0 ? String(navIndex + 1).padStart(2, '0') : null;
 const hasImage = !!image && imageExists(`pages/${image}`);
@@ -36,6 +37,13 @@ const imageUrl = url(`/images/pages/${image}`);
   <div class="container page-header-inner" data-reveal-group>
     {number && <p class="label page-num">{number} · {title}</p>}
     <h1 class="page-title">{heading}</h1>
+    <!-- Caption line: a hairline with a hatched stripe on the left and the caption in brackets on the right -->
+    {caption && (
+      <div class="page-meta">
+        <span class="page-hatch" aria-hidden="true"></span>
+        <p class="label page-caption">[ {caption} ]</p>
+      </div>
+    )}
     {intro && <p class="page-intro">{intro}</p>}
     <!-- Anything placed inside <PageHeader>...</PageHeader> (e.g. a button) shows here -->
     {Astro.slots.has('default') && <div class="page-actions"><slot /></div>}
@@ -135,6 +143,34 @@ const imageUrl = url(`/images/pages/${image}`);
     margin-top: var(--space-lg);
   }
 
+  /* ---------- Caption line ---------- */
+
+  .page-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-top: var(--space-lg);
+    padding-top: var(--space-sm);
+    border-top: 1px solid color-mix(in srgb, var(--color-text) 30%, transparent);
+  }
+
+  /* The "//////" stripe: a repeating gradient that draws a 1px slanted line every 7px */
+  .page-hatch {
+    flex: 0 1 22rem;
+    height: 0.9rem;
+    background: repeating-linear-gradient(
+      115deg,
+      color-mix(in srgb, var(--color-text) 55%, transparent) 0 1px,
+      transparent 1px 7px
+    );
+  }
+
+  .page-caption {
+    margin: 0 0 0 auto;
+    text-align: right;
+    color: var(--color-text);
+  }
+
   .page-intro {
     max-width: 38rem;
     margin: var(--space-lg) 0 0;
@@ -145,6 +181,23 @@ const imageUrl = url(`/images/pages/${image}`);
   @media (max-width: 760px) {
     .page-header--image {
       min-height: clamp(30rem, 88svh, 44rem);
+    }
+
+    /* Phones: stripe on top, caption under it, both left-aligned, so long captions wrap cleanly */
+    .page-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-xs);
+    }
+
+    .page-hatch {
+      flex: none;
+      width: 7rem;
+    }
+
+    .page-caption {
+      margin-left: 0;
+      text-align: left;
     }
 
     .page-intro {
