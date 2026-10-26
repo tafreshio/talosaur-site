@@ -1,5 +1,5 @@
 ---
-// Full-screen video hero at the top of the Home page: just the video and the TALOSAUR wordmark.
+// Full-screen video hero at the top of the Home page: just the video and the Talosaur logo.
 // The headline and intro text come right after it, in Section 01 (src/pages/index.astro).
 //
 // The same video comes in two sizes, and each visitor's browser downloads only one:
@@ -57,7 +57,9 @@ const posterSrc = url(`/${posterFile}`);
   )}
 
   <div class="container hero-content">
-    <p class="hero-wordmark">Talosaur</p>
+    <!-- Logo: replace public/brand/talosaur-lockup-white.svg to change it (keep it pure white) -->
+    <img class="hero-wordmark" src={url('/brand/talosaur-lockup-white.svg')} alt="Talosaur" width="4983" height="852" />
+
     <a class="hero-scroll label" href="#intro">
       Scroll <span aria-hidden="true">↓</span>
     </a>
@@ -144,24 +146,26 @@ const posterSrc = url(`/${posterFile}`);
     padding-bottom: clamp(2rem, 6svh, 4rem);
   }
 
-  /* Giant wordmark in the lower part of the video.
-     mix-blend-mode: difference subtracts the video's colors from the white letters, so the
-     letters show the video inverted: copper over blue water, black over a white flash.
-     It stays readable over any shot without a dark fade, and changes with every cut.
-     It needs pure white to be a true invert, and only works because .hero has
-     "isolation: isolate", which keeps the blend inside the hero. */
+  /* Giant logo in the lower part of the video: the white lockup from the brand pack.
+     mix-blend-mode: difference subtracts the video's colors from the white logo, so the
+     stripes and letters show the video inverted: copper over blue water, black over a
+     white flash. It stays readable over any shot without a dark fade, and changes with
+     every cut. It needs a pure white logo to be a true invert, and only works because
+     .hero has "isolation: isolate", which keeps the blend inside the hero. */
   .hero-wordmark {
-    margin: 0;
-    font-family: var(--font-display);
-    font-stretch: var(--display-width);
-    font-weight: 900;
-    font-size: clamp(4rem, 19vw, 19rem);
-    line-height: 0.8;
-    letter-spacing: -0.02em;
-    text-transform: uppercase;
-    color: var(--color-white);
+    display: block;
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: calc(100% - 7rem); /* leaves room for "Scroll" on wide screens */
+    height: auto;
     mix-blend-mode: difference;
     animation: rise 1.2s var(--ease) both;
+  }
+
+  @media (max-width: 760px) {
+    .hero-wordmark {
+      max-width: 100%; /* phones: full width, "Scroll" wraps underneath */
+    }
   }
 
   @keyframes rise {

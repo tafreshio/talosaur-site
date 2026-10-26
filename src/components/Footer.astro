@@ -41,8 +41,13 @@ const year = new Date().getFullYear();
       </div>
     </div>
 
-    <!-- Oversized wordmark. PLACEHOLDER: swap for the logo file when we have one -->
-    <p class="footer-wordmark" aria-hidden="true">Talosaur</p>
+    <!-- Oversized logo. The logo file is used as a "mask" (a stencil), so its color
+         comes from the CSS below instead of the file. -->
+    <div
+      class="footer-wordmark"
+      aria-hidden="true"
+      style={`--logo-url: url(${url('/brand/talosaur-lockup-white.svg')})`}
+    ></div>
 
     <div class="footer-bottom">
       <span>&copy; {year} Talosaur</span>
@@ -105,17 +110,15 @@ const year = new Date().getFullYear();
     font-size: var(--text-sm);
   }
 
+  /* Full-width logo in the faint surface color. mask-image cuts the colored box
+     to the logo's shape; aspect-ratio matches the logo file so it never stretches. */
   .footer-wordmark {
-    margin: var(--space-xl) 0 0;
-    font-family: var(--font-display);
-    font-stretch: var(--display-width);
-    font-weight: 900;
-    font-size: clamp(4rem, 19vw, 19rem); /* fills the width on any screen */
-    line-height: 0.8;
-    letter-spacing: -0.02em;
-    text-transform: uppercase;
-    color: var(--color-surface);
-    user-select: none;
+    width: 100%;
+    margin: var(--space-xl) 0 var(--space-md);
+    aspect-ratio: 4982.64 / 852;
+    background-color: var(--color-surface);
+    -webkit-mask: var(--logo-url) center / contain no-repeat;
+    mask: var(--logo-url) center / contain no-repeat;
   }
 
   .footer-bottom {
