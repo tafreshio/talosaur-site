@@ -34,15 +34,19 @@ const pad = (n: number) => String(n).padStart(2, '0');
   <!-- Section 02: three cards -->
   <section class="container section">
     <SectionHeader number={2} />
-    <div class="card-grid" data-reveal-group>
-      {heroCards.map((card, i) => <Card {...card} index={i + 1} ratio="4 / 3" />)}
+    <!-- Feature layout: the first card (Turtle) is big and square, the other two stack beside it -->
+    <div class="card-grid card-grid--feature" data-reveal-group>
+      {heroCards.map((card, i) => (
+        <Card {...card} index={i + 1} ratio={i === 0 ? '1 / 1' : '16 / 9'} feature={i === 0} />
+      ))}
     </div>
   </section>
 
   <!-- Section 03: featured content -->
   <section class="container section">
     <SectionHeader number={3} title={featuredHeading} />
-    <div class="card-grid" data-reveal-group>
+    <!-- Stepped layout: each card sits a little lower than the one before -->
+    <div class="card-grid card-grid--stepped" data-reveal-group>
       {featuredCards.map((card, i) => <Card {...card} index={i + 1} ratio="16 / 9" />)}
     </div>
   </section>
@@ -143,6 +147,30 @@ const pad = (n: number) => String(n).padStart(2, '0');
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space-xl) var(--space-md);
+  }
+
+  /* Section 02: a wide left column for the big card, a narrower right column for the
+     other two. "grid-row: span 2" lets the big card take the height of both rows.
+     :global() is needed because the cards come from Card.astro, and Astro's scoped
+     styles here would otherwise only match elements written in this file. */
+  .card-grid--feature {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: start;
+    gap: var(--space-lg) var(--space-lg);
+  }
+
+  .card-grid--feature > :global(:first-child) {
+    grid-row: span 2;
+  }
+
+  /* Section 03: the 2nd and 3rd cards are pushed down a step each, so the row
+     reads as a staircase instead of a flat line */
+  .card-grid--stepped > :global(:nth-child(2)) {
+    margin-top: var(--space-xl);
+  }
+
+  .card-grid--stepped > :global(:nth-child(3)) {
+    margin-top: calc(var(--space-xl) * 2);
   }
 
   /* ---------- Section 04: three big rows ---------- */
@@ -289,6 +317,16 @@ const pad = (n: number) => String(n).padStart(2, '0');
     .card-grid {
       grid-template-columns: 1fr;
       gap: var(--space-lg);
+    }
+
+    /* One column on phones: no spanning, no steps */
+    .card-grid--feature > :global(:first-child) {
+      grid-row: auto;
+    }
+
+    .card-grid--stepped > :global(:nth-child(2)),
+    .card-grid--stepped > :global(:nth-child(3)) {
+      margin-top: 0;
     }
 
     .help-row {
