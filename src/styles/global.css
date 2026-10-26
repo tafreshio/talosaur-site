@@ -284,7 +284,11 @@ h3 {
    .theme-light works by redefining the color variables inside it, so everything in the
    band (cards, labels, buttons, lines) switches to its light version automatically. */
 .band {
+  /* position + background: each band paints over pictures from the band above
+     that drift down into it while scrolling (the scroll-under effect in BaseLayout.astro) */
+  position: relative;
   padding-bottom: var(--space-2xl);
+  background: var(--color-bg);
 }
 
 /* Inner pages: a little room between the photo header and the first section */
