@@ -20,6 +20,9 @@ interface Props {
 }
 
 const { title, text, href, photo, photoLabel = title, index, ratio = '4 / 3', feature = false, badge } = Astro.props;
+// Titles are shown in capitals; these words keep their own spelling (eDNA would otherwise read "EDNA")
+const KEEP_CASE = /(eDNA)/;
+const titleParts = title.split(KEEP_CASE).map((part) => ({ part, keep: KEEP_CASE.test(part) }));
 const hasPhoto = !!photo && imageExists(photo);
 const isExternal = href.startsWith('http');
 const isPlaceholderLink = href.startsWith('[');
@@ -43,13 +46,13 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
     </p>
     <h3 class="card-title">
       {isPlaceholderLink ? (
-        title
+        titleParts.map(({ part, keep }) => (keep ? <span class="keep-case">{part}</span> : part))
       ) : (
         <a
           href={url(href)}
           class="card-link"
           {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-        >{title}</a>
+        >{titleParts.map(({ part, keep }) => (keep ? <span class="keep-case">{part}</span> : part))}</a>
       )}
     </h3>
     <p class="card-text">{text}</p>
@@ -108,6 +111,10 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
     font-size: 1rem;
     line-height: 1;
     transition: transform var(--duration) var(--ease);
+  }
+
+  .keep-case {
+    text-transform: none;
   }
 
   .card-title {

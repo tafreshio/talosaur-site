@@ -16,13 +16,14 @@ interface Props {
   heading?: string;           // big headline over the photo
   tag?: string;               // short line in [ brackets ] under the headline
   split?: boolean;            // true: headline on the left, buttons (the slot) on the right
+  size?: 'lg' | 'md';         // 'md' for a whole sentence as the headline
 }
 
-const { image, position = '50% 50%', label, heading, tag, split = false } = Astro.props;
+const { image, position = '50% 50%', label, heading, tag, split = false, size = 'lg' } = Astro.props;
 const hasSlot = Astro.slots.has('default');
 ---
 
-<section class:list={['photo-band', { 'photo-band--split': split }]}>
+<section class:list={['photo-band', { 'photo-band--split': split, 'photo-band--md': size === 'md' }]}>
   <div class="photo-band-media" aria-hidden="true">
     <img src={imageUrl(`bands/${image}`)} alt="" width="2400" height="1500" loading="lazy" decoding="async" style={`object-position: ${position};`} data-pan="160" />
   </div>
@@ -75,7 +76,7 @@ const hasSlot = Astro.slots.has('default');
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, rgb(6 18 31 / 0.55) 0%, rgb(6 18 31 / 0.15) 55%, transparent 80%);
+    background: linear-gradient(90deg, rgb(6 18 31 / 0.7) 0%, rgb(6 18 31 / 0.4) 40%, rgb(6 18 31 / 0.1) 65%, transparent 85%);
   }
 
   .photo-band-inner {
@@ -101,6 +102,11 @@ const hasSlot = Astro.slots.has('default');
     color: var(--color-white);
   }
 
+  .photo-band--md .photo-band-title {
+    max-width: 16ch;
+    font-size: var(--text-2xl);
+  }
+
   .photo-band-meta {
     display: flex;
     align-items: center;
@@ -117,7 +123,12 @@ const hasSlot = Astro.slots.has('default');
 
   .photo-band-tag {
     margin: 0;
+    padding: 0.3rem 0.55rem;
     color: var(--color-white);
+    background: rgb(6 18 31 / 0.55);
+    border: 1px solid rgb(232 241 245 / 0.22);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
   }
 
   .photo-band-slot {
@@ -135,7 +146,19 @@ const hasSlot = Astro.slots.has('default');
 
     /* the text covers most of the photo on narrow screens, so darken it evenly */
     .photo-band-media::after {
-      background: rgb(6 18 31 / 0.45);
+      background: rgb(6 18 31 / 0.5);
+    }
+
+    /* slashes on their own line above the tag, like the page headers */
+    .photo-band-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-xs);
+    }
+
+    .photo-band-hatch {
+      flex: none;
+      width: 7rem;
     }
   }
 </style>

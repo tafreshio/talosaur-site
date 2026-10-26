@@ -187,7 +187,7 @@ const animals = [
   }
 
   .is-live [data-zone] {
-    opacity: 0.35;
+    opacity: 0.62;
   }
 
   .is-live[data-zone='sunlit'] [data-zone='sunlit'],
@@ -652,8 +652,12 @@ const animals = [
     .note {
       left: calc(var(--rule-w) + 0.75rem);
       width: auto;
-      right: 0;
+      right: 2.25rem; /* keeps the text clear of the ship's cable down the right edge */
       max-width: 34rem;
+    }
+
+    .mark-text {
+      right: 2.25rem;
     }
 
     .note-text,
@@ -684,7 +688,7 @@ const animals = [
 
     /* Animals sit behind the text on the right, partly off the screen */
     .animal {
-      opacity: 0.4;
+      opacity: 0.3;
     }
 
     .animal-label {

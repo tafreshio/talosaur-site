@@ -49,7 +49,7 @@ export const reasons = [
     sources: [sources.diving],
   },
   {
-    depth: 142,
+    depth: 136,
     title: 'Too expensive to visit often.',
     text: 'Remotely operated vehicles need pilots and boats, commercial underwater robots cost $50,000 to over $1 million, and ship time costs tens of thousands of dollars a day.',
     fact: '',
@@ -96,5 +96,5 @@ export const talosaurNote = {
 export const depthBands = [
   { depth: '0–50 m', name: 'Sunlit', text: 'Within reach of divers.', zone: 'sunlit', from: 0, to: 50 },
   { depth: '50–300 m', name: 'Twilight zone', text: 'Too deep for divers, too costly to revisit.', zone: 'twilight', from: 50, to: 300 },
-  { depth: '300 m+', name: '', text: 'Reached by research ships and deep vehicles.', zone: 'deep', from: 300, to: 400 },
+  { depth: '300 m+', name: '', text: 'Reached by research ships and deep vehicles.', zone: 'deep', from: 300, to: 380 },
 ];

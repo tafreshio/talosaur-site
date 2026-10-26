@@ -134,7 +134,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   /* Straddle: a zero-height row on the edge; the photo hangs over both sections */
   .patch-row--straddle {
     height: 0;
-    margin: 0;
+    margin-block: 0; /* only top and bottom: the sides stay auto so the row stays centred */
     align-items: flex-start;
   }
 
@@ -154,12 +154,23 @@ const pad = (n: number) => String(n).padStart(2, '0');
     object-fit: cover;
   }
 
-  .patch-caption {
-    margin-top: 0.6rem;
-    color: var(--color-muted);
+  /* Captions are small boxed tags with a dark glassy backing, so they read on any photo */
+  .patch-caption,
+  .strip-label {
+    padding: 0.3rem 0.55rem;
+    color: var(--color-white);
+    background: rgb(6 18 31 / 0.6);
+    border: 1px solid rgb(232 241 245 / 0.2);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
   }
 
-  .patch-row--right .patch-caption {
+  .patch-caption {
+    display: inline-block;
+    margin-top: 0.6rem;
+  }
+
+  .patch-row--right .patch {
     text-align: right;
   }
 
@@ -314,7 +325,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
     margin: 0;
     writing-mode: vertical-rl;
     transform: rotate(180deg);
-    color: var(--color-muted);
     white-space: nowrap;
   }
 
