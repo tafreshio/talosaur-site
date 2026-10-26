@@ -3,14 +3,12 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-  // The site is hosted on GitHub Pages at https://tafreshio.github.io/talosaur-site/
+  // The site is hosted on GitHub Pages at the team's own domain, https://talosaur.com/
+  // (the custom domain is set in the repository's Settings → Pages; see "Deploy" in README.md).
   //
   // site: the domain. Used to build full links in social-share previews (Open Graph tags).
-  site: 'https://tafreshio.github.io',
-  // base: the folder the site lives in on that domain. Every page, image and video address
-  // starts with it. Links in the code get it added automatically by url() in src/lib/url.ts.
-  //
-  // Custom domain later? Set site to the domain (e.g. 'https://talosaur.org') and delete
-  // the base line. See "Using a custom domain" in README.md.
-  base: '/talosaur-site',
+  site: 'https://talosaur.com',
+  // No `base`: on its own domain the site sits at the root, so pages are /news, /donate...
+  // (On the old address, tafreshio.github.io/talosaur-site/, base was '/talosaur-site'.
+  // Links in the code go through url() in src/lib/url.ts, so they follow whatever this is.)
 });

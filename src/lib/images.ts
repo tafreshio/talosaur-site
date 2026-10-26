@@ -10,7 +10,7 @@ const imagePath = (file: string) => join(process.cwd(), 'public', 'images', file
 export const imageExists = (file: string) => existsSync(imagePath(file));
 
 // The address of a photo, with a short fingerprint of its contents on the end:
-//   imageUrl('pages/news.jpg') -> '/talosaur-site/images/pages/news.jpg?v=3f9a1c2e'
+//   imageUrl('pages/news.jpg') -> '/images/pages/news.jpg?v=3f9a1c2e'
 // Browsers keep photos for a while. When a photo is replaced by a new file with the same
 // name, the fingerprint changes, so every visitor gets the new photo straight away.
 const fingerprints = new Map<string, string>();
