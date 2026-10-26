@@ -12,11 +12,12 @@ and the README's "Add or swap a photo" section says which file is which so they 
 | `[Name]` (3 people) and `[Major, year]` (all 5) | Who we are | `src/data/team.ts` |
 | Team photos (initials show until a photo is added) | Who we are | `public/images/team/` (file names are in `src/data/team.ts`) |
 | Team LinkedIn links (optional, hidden until filled in) | Who we are | `src/data/team.ts` (`linkedin`) |
-| `[Add a source for these numbers.]` (cost figures) | The Problem, under the big numbers and under note 02 in the depth graphic | `src/data/problem.ts` (`statsSource`) |
 | `[Date]` and `[One line on how Talosaur started.]` | "Project kicks off" news entry | `src/content/news/project-kicks-off.md` |
 | `[Credits for the remaining third-party stills...]` | Image credits page | `src/pages/image-credits.astro` |
+| `[Photographer and source for these four photos.]` (zoanthids, porcelain crab, soft coral, pygmy seahorse headers) | Image credits page | `src/pages/image-credits.astro` |
 
 ## To confirm
 
 - **Ocean Image Bank photos** (the animals in The Problem depth graphic): free for non-commercial use with credit to the photographer and Ocean Image Bank. Check that the site counts as non-commercial (it has a Donate page, but no payments). Credits are on the Image credits page.
-- **New facts in the depth graphic** (dive limit, Flower Garden Banks depths, light below 200 m, pressure) each link to their source. Give them a read before launch: `reasons`, `depthMarks`, `depthRanges` and `pressureNote` in `src/data/problem.ts`.
+- **Sources on The Problem page.** Every number and fact now links to a source (the `sources` list at the top of `src/data/problem.ts`). Give them a read before launch. The closest match for the robot cost range is Deep Trekker's ROV buying guide (inspection ROVs $15,000 to $300,000, work-class ROVs $250,000 up to millions); swap in the team's own source if the $50,000 figure came from somewhere specific.
+- **Patch captions** ("On deck", "Making parts" and so on) are short labels written for the inset photos, not Content doc copy. Change them where each page uses `<Patch>`.

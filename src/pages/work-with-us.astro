@@ -2,6 +2,9 @@
 // Work with us: the contact page. Email and location come from src/data/site.ts.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
+import PhotoBand from '../components/PhotoBand.astro';
+import Patch from '../components/Patch.astro';
+import { url } from '../lib/url';
 import { teamEmail, location, contactHref } from '../data/site';
 
 const intro =
@@ -11,7 +14,7 @@ const emailHref = contactHref(teamEmail);
 ---
 
 <BaseLayout title="Work with us" description={intro} headerOverlay>
-  <PageHeader title="Work with us" heading="Get in touch" href="/work-with-us" intro={intro} caption="Research · Conservation · Fisheries · Offshore" image="work-with-us.jpg" imagePosition="62% 50%" />
+  <PageHeader title="Work with us" heading="Get in touch" href="/work-with-us" intro={intro} caption="Research · Conservation · Fisheries · Offshore" image="work-with-us.jpg" imagePosition="50% 50%" />
 
   <!-- Light band: everything below the photo header -->
   <div class="band band--top theme-light">
@@ -34,6 +37,14 @@ const emailHref = contactHref(teamEmail);
       </dl>
     </section>
   </div>
+
+  <!-- Inset photo sitting across the edge between the contact details and the photo below -->
+  <Patch variant="strip" image="wake-tall.jpg" caption="Under way" side="right" straddle />
+
+  <!-- One big photo (anemone, false colour) leading on to Donate. Copy: the Donate page heading. -->
+  <PhotoBand image="work-with-us.jpg" position="50% 50%" heading="Support our research" tag="Parts · Testing · Field trips">
+    <a class="button" href={url('/donate')}>Donate <span aria-hidden="true">→</span></a>
+  </PhotoBand>
 </BaseLayout>
 
 <style>

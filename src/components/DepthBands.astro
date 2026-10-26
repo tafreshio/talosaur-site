@@ -9,8 +9,7 @@
 // - A line stays in the middle of the screen as you scroll and reads out the depth and water
 //   pressure under it (the script at the bottom). Without JavaScript it is simply not shown.
 // - All the words live in src/data/problem.ts. Animal cut-outs live in public/images/depth/.
-import { depthBands, reasons, depthMarks, depthRanges, pressureNote, talosaurNote, statsSource } from '../data/problem';
-import { isPlaceholder } from '../data/site';
+import { depthBands, reasons, depthMarks, depthRanges, pressureNote, talosaurNote } from '../data/problem';
 import { url } from '../lib/url';
 
 const MAX = depthBands[depthBands.length - 1].to; // where the drawing stops (meters)
@@ -105,11 +104,11 @@ const animals = [
               <h3 class="note-title">{r.title}</h3>
               <p class="note-text">{r.text}</p>
               {r.fact && <p class="note-fact">{r.fact}</p>}
-              {r.source ? (
-                <a class="label src" href={r.source.href} target="_blank" rel="noopener">[ Source: {r.source.label} ]</a>
-              ) : (
-                <p class:list={['label', 'src', { 'src--placeholder': isPlaceholder(statsSource) }]}>Source: {statsSource}</p>
-              )}
+              <p class="label src-list">
+                {r.sources.map((src) => (
+                  <a class="src" href={src.href} target="_blank" rel="noopener">[ Source: {src.label} ]</a>
+                ))}
+              </p>
             </li>
           ))}
         </ol>
@@ -406,8 +405,11 @@ const animals = [
     text-decoration: underline;
   }
 
-  .src--placeholder {
-    color: var(--color-muted);
+  .src-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1rem;
+    margin: 0;
   }
 
   .mark-text .src {

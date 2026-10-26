@@ -1,5 +1,16 @@
 // Text for The Problem page (copy from the Content doc).
 
+// Sources for every number and fact on The Problem page. Each shows as a small [ link ] under what it backs up.
+const sources = {
+  zones: { label: 'Smithsonian', href: 'https://dashboard.si.edu/newsdesk/releases/smithsonian-researchers-name-new-ocean-zone-rariphotic' },
+  robots: { label: 'Deep Trekker', href: 'https://www.deeptrekker.com/learn/rov-buying-guide' },
+  ship: { label: 'Dialogue Earth', href: 'https://dialogue.earth/en/ocean/scientists-are-becoming-ocean-hitchhikers-to-fill-data-gaps/' },
+  diving: { label: 'Scuba Diving', href: 'https://www.scubadiving.com/why-is-130-feet-depth-limit-for-recreational-scuba-diving' },
+  fgb: { label: 'NOAA', href: 'https://flowergarden.noaa.gov/about/mesophotic.html' },
+  light: { label: 'NOAA', href: 'https://oceanservice.noaa.gov/facts/light_travel.html' },
+  pressure: { label: 'NOAA', href: 'https://oceanservice.noaa.gov/facts/pressure.html' },
+};
+
 export const problemIntro =
   "Between 50 and 300 meters lies the ocean's twilight zone. It's full of marine life, yet few people ever get to look at it.";
 
@@ -8,28 +19,24 @@ export const stats = [
   {
     value: '50–300 m',
     caption: "The ocean's twilight zone. Too deep for divers, too costly to revisit.",
+    // Smithsonian: deep reefs run through the mesophotic (40–150 m) and rariphotic (130–309 m) zones
+    source: sources.zones,
   },
   {
     value: '$50K–$1M+',
     caption: 'What commercial underwater robots cost: $50,000 to over $1 million.',
+    // Deep Trekker: inspection and survey ROVs $15,000–$300,000; work-class ROVs $250,000 up to millions
+    source: sources.robots,
   },
   {
     value: '$10K+',
     unit: 'a day',
     caption: 'Ship time costs tens of thousands of dollars a day.',
+    // Dialogue Earth (2024): "running a research ship can easily cost tens of thousands of dollars a day or more"
+    source: sources.ship,
   },
 ];
 
-// PLACEHOLDER: replace with the real source (a name and, ideally, a link)
-export const statsSource = '[Add a source for these numbers.]';
-
-// Sources for the facts in the depth graphic. Each is shown as a small [ link ] under its fact.
-const sources = {
-  diving: { label: 'Scuba Diving', href: 'https://www.scubadiving.com/why-is-130-feet-depth-limit-for-recreational-scuba-diving' },
-  fgb: { label: 'NOAA', href: 'https://flowergarden.noaa.gov/about/mesophotic.html' },
-  light: { label: 'NOAA', href: 'https://oceanservice.noaa.gov/facts/light_travel.html' },
-  pressure: { label: 'NOAA', href: 'https://oceanservice.noaa.gov/facts/pressure.html' },
-};
 
 // Why the twilight zone is hard to study. These sit inside the depth graphic, at "depth" meters.
 // "title" and "text" are the Content doc copy; "fact" is an extra sourced line added under it.
@@ -39,21 +46,21 @@ export const reasons = [
     title: 'Too deep for divers.',
     text: 'Most of this zone is beyond safe diving limits.',
     fact: 'Recreational scuba divers stop at 40 m (130 ft), a limit that goes back to the U.S. Navy in the 1950s.',
-    source: sources.diving,
+    sources: [sources.diving],
   },
   {
     depth: 142,
     title: 'Too expensive to visit often.',
     text: 'Remotely operated vehicles need pilots and boats, commercial underwater robots cost $50,000 to over $1 million, and ship time costs tens of thousands of dollars a day.',
     fact: '',
-    source: null, // uses statsSource (the placeholder above) until the team adds one
+    sources: [sources.robots, sources.ship],
   },
   {
     depth: 210,
     title: 'Close to home.',
     text: 'Deep reefs off Texas and Louisiana, including Flower Garden Banks, sit in this zone.',
     fact: "Most of the sanctuary's habitats lie 40 to 221 m down, and in the past 20 years researchers have found new species of shrimp, squat lobster and black coral there.",
-    source: sources.fgb,
+    sources: [sources.fgb],
   },
 ];
 

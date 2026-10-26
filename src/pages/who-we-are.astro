@@ -3,6 +3,9 @@
 // A member with a photo in public/images/team/ gets a photo card; without one, a solid panel with initials.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
+import PhotoBand from '../components/PhotoBand.astro';
+import Patch from '../components/Patch.astro';
+import { url } from '../lib/url';
 import Photo from '../components/Photo.astro';
 import { team, teamIntro } from '../data/team';
 import { isPlaceholder } from '../data/site';
@@ -14,7 +17,7 @@ const panelText = (name: string, role: string) =>
 ---
 
 <BaseLayout title="Who we are" description={teamIntro} headerOverlay>
-  <PageHeader title="Who we are" href="/who-we-are" intro={teamIntro} caption="Students · College Station, Texas" image="who-we-are.jpg" imagePosition="58% 50%" />
+  <PageHeader title="Who we are" href="/who-we-are" intro={teamIntro} caption="Students · College Station, Texas" image="who-we-are.jpg" imagePosition="45% 50%" />
 
   <!-- Light band: everything below the photo header -->
   <div class="band band--top theme-light">
@@ -46,6 +49,14 @@ const panelText = (name: string, role: string) =>
       </ul>
     </section>
   </div>
+
+  <!-- Inset photo sitting across the edge between the team and the photo below -->
+  <Patch variant="contact" images={['frame-deck.jpg', 'frame-pipette.jpg', 'frame-rover.jpg']} captions={['On deck', 'In the lab', 'At depth']} side="right" straddle />
+
+  <!-- One big photo (ocean sunfish, false colour) leading on to Positions. Copy: Content doc, "Open positions" card. -->
+  <PhotoBand image="who-we-are.jpg" position="45% 40%" heading="We're recruiting." tag="Open positions">
+    <a class="button" href={url('/positions')}>See what roles are open <span aria-hidden="true">→</span></a>
+  </PhotoBand>
 </BaseLayout>
 
 <style>

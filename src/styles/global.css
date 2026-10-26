@@ -90,6 +90,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Things that bleed off the side of the screen (cut-outs, the edge strip) never cause sideways scrolling.
+   "clip" rather than "hidden" so sticky elements inside still work. */
+main {
+  overflow-x: clip;
+}
+
 img,
 video {
   display: block;
