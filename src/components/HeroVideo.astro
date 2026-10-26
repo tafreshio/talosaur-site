@@ -2,25 +2,32 @@
 // Full-screen video hero at the top of the Home page: just the video and the TALOSAUR wordmark.
 // The headline and intro text come right after it, in Section 01 (src/pages/index.astro).
 //
-// To swap the media, replace these files (keep the same names):
-//   public/videos/hero.mp4       the background video
+// The same video comes in two sizes, and each visitor's browser downloads only one:
+//   public/videos/hero-1080.mp4    1920 x 1080, for screens 900 px wide or more
+//   public/videos/hero.mp4         1280 x 720, for phones, small windows and anything else
 //   public/images/hero-poster.jpg  a still from the video, shown while it loads
 //                                  and to visitors who have "reduce motion" turned on
 //
-// If hero.mp4 is missing, only the poster shows, with a placeholder tag.
+// The browser goes down the list below and plays the first file whose "media" rule fits
+// its screen. To swap the video, replace the files and keep the same names. A missing
+// file is simply left out of the list. If both are missing, only the poster shows,
+// with a placeholder tag.
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { url } from '../lib/url';
 
-const videoFile = 'videos/hero.mp4';         // where the file sits inside public/
+const videoFiles = [
+  { file: 'videos/hero-1080.mp4', type: 'video/mp4', media: '(min-width: 900px)' },
+  { file: 'videos/hero.mp4', type: 'video/mp4' }, // no media rule, so it is the fallback for everyone else
+];
 const posterFile = 'images/hero-poster.jpg';
 
-// Web addresses (with the /talosaur-site base added by url())
-const videoSrc = url(`/${videoFile}`);
+// Checked when the site is built, so adding or removing a file is all it takes.
+const sources = videoFiles
+  .filter(({ file }) => existsSync(join(process.cwd(), 'public', file)))
+  .map(({ file, ...rest }) => ({ src: url(`/${file}`), ...rest })); // url() adds the /talosaur-site base
+const hasVideo = sources.length > 0;
 const posterSrc = url(`/${posterFile}`);
-
-// Checked when the site is built, so adding the file is all it takes.
-const hasVideo = existsSync(join(process.cwd(), 'public', videoFile));
 ---
 
 <section class="hero">
@@ -31,20 +38,21 @@ const hasVideo = existsSync(join(process.cwd(), 'public', videoFile));
     {hasVideo && (
       <video
         class="hero-video"
-        src={videoSrc}
         poster={posterSrc}
         autoplay
         muted
         loop
         playsinline
         preload="auto"
-      ></video>
+      >
+        {sources.map((s) => <source src={s.src} type={s.type} media={s.media} />)}
+      </video>
     )}
   </div>
 
   {!hasVideo && (
     <p class="hero-placeholder-tag label">
-      Placeholder: hero video (public/videos/hero.mp4) and still image (public/images/hero-poster.jpg)
+      Placeholder: hero video (public/videos/hero-1080.mp4 and hero.mp4) and still image (public/images/hero-poster.jpg)
     </p>
   )}
 
@@ -64,7 +72,7 @@ const hasVideo = existsSync(join(process.cwd(), 'public', videoFile));
 
   if (video && reduceMotion.matches) {
     video.pause();
-    video.removeAttribute('src');
+    video.querySelectorAll('source').forEach((source) => source.remove());
     video.load();
     video.remove();
   }
@@ -99,14 +107,14 @@ const hasVideo = existsSync(join(process.cwd(), 'public', videoFile));
     object-fit: cover;
   }
 
-  /* Dark fade at the bottom so the white text is always readable */
+  /* Dark fade at the top so the menu stays readable. There is no fade at the bottom:
+     the wordmark inverts the video instead (see .hero-wordmark below), and a dark fade
+     there would leave it nothing to invert. */
   .hero-media::after {
     content: '';
     position: absolute;
     inset: 0;
-    background:
-      linear-gradient(to top, var(--color-bg) 0%, color-mix(in srgb, var(--color-bg) 40%, transparent) 30%, transparent 60%),
-      linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 50%, transparent) 0%, transparent 20%);
+    background: linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 50%, transparent) 0%, transparent 20%);
   }
 
   /* Belt and braces: if the script hasn't run yet, still hide the video */
@@ -136,7 +144,12 @@ const hasVideo = existsSync(join(process.cwd(), 'public', videoFile));
     padding-bottom: clamp(2rem, 6svh, 4rem);
   }
 
-  /* Giant wordmark in the lower part of the video */
+  /* Giant wordmark in the lower part of the video.
+     mix-blend-mode: difference subtracts the video's colors from the white letters, so the
+     letters show the video inverted: copper over blue water, black over a white flash.
+     It stays readable over any shot without a dark fade, and changes with every cut.
+     It needs pure white to be a true invert, and only works because .hero has
+     "isolation: isolate", which keeps the blend inside the hero. */
   .hero-wordmark {
     margin: 0;
     font-family: var(--font-display);
@@ -146,7 +159,8 @@ const hasVideo = existsSync(join(process.cwd(), 'public', videoFile));
     line-height: 0.8;
     letter-spacing: -0.02em;
     text-transform: uppercase;
-    color: var(--color-text);
+    color: var(--color-white);
+    mix-blend-mode: difference;
     animation: rise 1.2s var(--ease) both;
   }
 
@@ -157,15 +171,18 @@ const hasVideo = existsSync(join(process.cwd(), 'public', videoFile));
     }
   }
 
+  /* Same invert as the wordmark, so it doesn't disappear on bright shots */
   .hero-scroll {
     padding-bottom: 0.35em;
-    color: var(--color-text);
+    color: var(--color-white);
+    mix-blend-mode: difference;
     text-decoration: none;
     animation: rise 1.2s 400ms var(--ease) both;
   }
 
   .hero-scroll:hover {
     color: var(--color-accent);
+    mix-blend-mode: normal; /* show the real accent color on hover, not its inverse */
   }
 
   .hero-scroll span {
