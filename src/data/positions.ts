@@ -4,7 +4,7 @@
 export const positionsHeadline = 'Help us explore the twilight zone';
 
 export const positionsIntro =
-  "We're looking for motivated students who want to build something real. No ocean experience needed. Most roles take about [X] hours a week."; // PLACEHOLDER: [X]
+  "We're looking for motivated students who want to build something real. No ocean experience needed.";
 
 // The Google Form the "Apply now" button opens
 export const applicationFormUrl =

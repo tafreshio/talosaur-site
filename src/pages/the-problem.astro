@@ -8,12 +8,14 @@ import { problemIntro, stats, statsSource, reasons } from '../data/problem';
 import { isPlaceholder } from '../data/site';
 ---
 
-<BaseLayout title="The Problem" description={problemIntro}>
+<BaseLayout title="The Problem" description={problemIntro} headerOverlay>
   <PageHeader
     title="The Problem"
     heading="The gap in the water column"
     href="/the-problem"
     intro={problemIntro}
+    image="the-problem.jpg"
+    imagePosition="50% 30%"
   />
 
   <!-- Section 01: big numbers -->

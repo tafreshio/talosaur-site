@@ -17,6 +17,13 @@ export const team = [
     linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
   },
   {
+    name: 'Omeed Tafreshi',
+    role: 'Software Engineer',
+    majorYear: '[Major, year]', // PLACEHOLDER
+    photo: 'omeed-tafreshi.jpg',
+    linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
+  },
+  {
     name: '[Name]', // PLACEHOLDER
     role: 'Ocean Engineer',
     majorYear: '[Major, year]', // PLACEHOLDER

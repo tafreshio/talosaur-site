@@ -1,43 +1,62 @@
 ---
 // Big title at the top of inner pages, e.g. "03 · News".
 // The number matches the page's position in the top navigation.
+//
+// With an image (a file in public/images/pages/), the header becomes a full-width photo
+// band like the Home video: the photo runs up under the menu and the title sits over its
+// lower part. The page must also use <BaseLayout headerOverlay> so the menu floats on top.
+// Without an image (or if the file is missing), it's the plain title with a faint glow.
 import { mainNav } from '../data/site';
+import { imageExists } from '../lib/images';
+import { url } from '../lib/url';
 
 interface Props {
-  title: string;     // the page name, shown in the small label ("02 · The Problem")
-  heading?: string;  // the big headline, if different from the page name
-  href: string;      // the page's address, used to look up its nav number
+  title: string;          // the page name, shown in the small label ("02 · The Problem")
+  heading?: string;       // the big headline, if different from the page name
+  href: string;           // the page's address, used to look up its nav number
   intro?: string;
+  image?: string;         // filename in public/images/pages/, e.g. 'news.jpg'
+  imagePosition?: string; // the part of the photo to keep when a narrow screen crops it ('50% 50%' = center)
 }
 
-const { title, heading = title, href, intro } = Astro.props;
+const { title, heading = title, href, intro, image, imagePosition = '50% 50%' } = Astro.props;
 const navIndex = mainNav.findIndex((item) => item.href === href);
 const number = navIndex >= 0 ? String(navIndex + 1).padStart(2, '0') : null;
+const hasImage = !!image && imageExists(`pages/${image}`);
+const imageUrl = url(`/images/pages/${image}`);
 ---
 
-<header class="container page-header" data-reveal-group>
-  {number && <p class="label page-num">{number} · {title}</p>}
-  <h1 class="page-title">{heading}</h1>
-  {intro && <p class="page-intro">{intro}</p>}
-  <!-- Anything placed inside <PageHeader>...</PageHeader> (e.g. a button) shows here -->
-  {Astro.slots.has('default') && <div class="page-actions"><slot /></div>}
+<header class:list={['page-header', { 'page-header--image': hasImage }]}>
+  {hasImage && (
+    <div class="page-header-media" aria-hidden="true">
+      <img src={imageUrl} alt="" fetchpriority="high" style={`object-position: ${imagePosition};`} />
+    </div>
+  )}
+
+  <div class="container page-header-inner" data-reveal-group>
+    {number && <p class="label page-num">{number} · {title}</p>}
+    <h1 class="page-title">{heading}</h1>
+    {intro && <p class="page-intro">{intro}</p>}
+    <!-- Anything placed inside <PageHeader>...</PageHeader> (e.g. a button) shows here -->
+    {Astro.slots.has('default') && <div class="page-actions"><slot /></div>}
+  </div>
 </header>
 
 <style>
   .page-header {
     position: relative;
+  }
+
+  .page-header-inner {
     padding-block: var(--space-2xl) var(--space-xl);
   }
 
-  /* Faint cyan glow behind the title, like light reaching down from the surface */
-  .page-header::before {
+  /* No photo: faint cyan glow behind the title, like light reaching down from the surface */
+  .page-header:not(.page-header--image)::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: calc(50% - 50vw); /* stretch to the screen edges so the glow never has a visible box edge */
+    inset: 0;
     z-index: -1;
-    width: 100vw;
-    height: 100%;
     background: radial-gradient(
       50rem 20rem at 12% 0%,
       color-mix(in srgb, var(--color-accent) 12%, transparent),
@@ -45,6 +64,62 @@ const number = navIndex >= 0 ? String(navIndex + 1).padStart(2, '0') : null;
     );
     pointer-events: none;
   }
+
+  /* ---------- With a photo ---------- */
+
+  .page-header--image {
+    display: flex;
+    align-items: flex-end;
+    min-height: clamp(32rem, 82svh, 54rem);
+    /* The menu floats on top, so pull the photo up underneath it (same as the Home hero) */
+    margin-top: calc(-1 * var(--header-height));
+    overflow: hidden;
+    isolation: isolate; /* keeps the photo's z-index: -1 inside this header */
+  }
+
+  .page-header-media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  /* The photo fills the band, cropping the edges (object-position picks which part stays).
+     Its false-color glitch is part of the image file itself, so it's always on, like Colossal's. */
+  .page-header-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: photo-in 1.4s var(--ease) both;
+  }
+
+  /* Fades so the text stays readable: dark at the bottom (where the title sits, blending
+     into the page below) and a little at the top (behind the menu) */
+  .page-header-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to top, var(--color-bg) 0%, color-mix(in srgb, var(--color-bg) 60%, transparent) 38%, transparent 72%),
+      linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 55%, transparent) 0%, transparent 22%);
+  }
+
+  .page-header--image .page-header-inner {
+    padding-block: calc(var(--header-height) + var(--space-xl)) var(--space-xl);
+  }
+
+  @keyframes photo-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-header-media img {
+      animation: none;
+    }
+  }
+
+  /* ---------- Text ---------- */
 
   .page-num {
     margin: 0 0 var(--space-sm);
@@ -65,5 +140,15 @@ const number = navIndex >= 0 ? String(navIndex + 1).padStart(2, '0') : null;
     margin: var(--space-lg) 0 0;
     font-size: var(--text-lg);
     line-height: 1.5;
+  }
+
+  @media (max-width: 760px) {
+    .page-header--image {
+      min-height: clamp(30rem, 88svh, 44rem);
+    }
+
+    .page-intro {
+      font-size: var(--text-base);
+    }
   }
 </style>

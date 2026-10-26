@@ -13,8 +13,8 @@ const panelText = (name: string, role: string) =>
   isPlaceholder(name) ? role : name.split(/\s+/).map((part) => part[0]).join('').slice(0, 3).toUpperCase();
 ---
 
-<BaseLayout title="Who we are" description={teamIntro}>
-  <PageHeader title="Who we are" href="/who-we-are" intro={teamIntro} />
+<BaseLayout title="Who we are" description={teamIntro} headerOverlay>
+  <PageHeader title="Who we are" href="/who-we-are" intro={teamIntro} image="who-we-are.jpg" imagePosition="58% 50%" />
 
   <section class="container">
     <ul class="team-grid" data-reveal-group>

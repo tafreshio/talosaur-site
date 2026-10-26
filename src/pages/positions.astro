@@ -5,8 +5,8 @@ import PageHeader from '../components/PageHeader.astro';
 import { positions, positionsHeadline, positionsIntro, applicationFormUrl } from '../data/positions';
 ---
 
-<BaseLayout title="Positions" description={positionsIntro}>
-  <PageHeader title="Positions" heading={positionsHeadline} href="/positions" intro={positionsIntro}>
+<BaseLayout title="Positions" description={positionsIntro} headerOverlay>
+  <PageHeader title="Positions" heading={positionsHeadline} href="/positions" intro={positionsIntro} image="positions.jpg" imagePosition="62% 50%">
     <a class="button" href={applicationFormUrl} target="_blank" rel="noopener noreferrer">
       Apply now <span aria-hidden="true">→</span>
       <span class="visually-hidden">(opens the application form in a new tab)</span>

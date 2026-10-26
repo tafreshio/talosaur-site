@@ -2,6 +2,7 @@
 // "photo" is a filename in public/images/. Every card shows its photo; to swap one, replace the
 // file and keep the same name. If a file is missing, the card shows a plain dark panel of the same shape.
 // A link in [brackets] is a placeholder: the card shows but isn't clickable yet.
+import { twitchUrl } from './site';
 
 // Three cards under the hero
 export const heroCards = [
@@ -22,7 +23,7 @@ export const heroCards = [
   {
     title: 'Talosaur Live',
     text: 'Join the live build stream and see our engineers at work.',
-    href: '[Live stream link]', // PLACEHOLDER
+    href: twitchUrl, // set in src/data/site.ts
     photo: 'home-live.jpg',
     photoLabel: 'Live build stream',
   },
