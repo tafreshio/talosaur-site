@@ -7,6 +7,7 @@
 // (false colour is for nature and animals, see the photo rule in the README).
 // To cross the edge below the band with an inset photo, put a <Patch> right after it.
 import { url } from '../lib/url';
+import { imageUrl } from '../lib/images';
 
 interface Props {
   image: string;              // file name in public/images/bands/
@@ -23,7 +24,7 @@ const hasSlot = Astro.slots.has('default');
 
 <section class:list={['photo-band', { 'photo-band--split': split }]}>
   <div class="photo-band-media" aria-hidden="true">
-    <img src={url(`/images/bands/${image}`)} alt="" width="2400" height="1500" loading="lazy" decoding="async" style={`object-position: ${position};`} data-pan="160" />
+    <img src={imageUrl(`bands/${image}`)} alt="" width="2400" height="1500" loading="lazy" decoding="async" style={`object-position: ${position};`} data-pan="160" />
   </div>
 
   <div class="container photo-band-inner">

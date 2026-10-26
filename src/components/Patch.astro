@@ -16,7 +16,7 @@
 //
 // Photos live in public/images/patches/. People, lab and machine photos stay natural; only
 // nature photos get false colour (see the photo rule in the README).
-import { url } from '../lib/url';
+import { imageUrl } from '../lib/images';
 
 type Variant = 'frame' | 'lens' | 'contact' | 'strip' | 'pano' | 'stack';
 
@@ -42,7 +42,7 @@ const defaultOverlap: Record<Variant, string> = {
   pano: 'clamp(2rem, 1rem + 2.5vw, 4.5rem)',
   stack: 'clamp(2rem, 0.5rem + 3vw, 4.5rem)',
 };
-const src = (file: string) => url(`/images/patches/${file}`);
+const src = (file: string) => imageUrl(`patches/${file}`);
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
