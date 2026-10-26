@@ -11,6 +11,7 @@
 // - All the words live in src/data/problem.ts. Animal cut-outs live in public/images/depth/.
 import { depthBands, reasons, depthMarks, depthRanges, pressureNote, talosaurNote } from '../data/problem';
 import { url } from '../lib/url';
+import { imageUrl } from '../lib/images';
 
 const MAX = depthBands[depthBands.length - 1].to; // where the drawing stops (meters)
 const marks = Array.from({ length: MAX / 50 + 1 }, (_, i) => i * 50); // ruler labels every 50 m
@@ -79,7 +80,7 @@ const animals = [
         <!-- Animal cut-outs, drifting a little as you scroll -->
         {animals.map((a) => (
           <div class={`animal animal--${a.key}`} style={`--d: ${a.depth}`} aria-hidden="true">
-            <img src={url(`/images/depth/${a.file}`)} alt="" width={a.w} height={a.h} loading="lazy" decoding="async" />
+            <img src={imageUrl(`depth/${a.file}`)} alt="" width={a.w} height={a.h} loading="lazy" decoding="async" />
             {a.label && <span class="label animal-label">[ {a.label} ]</span>}
           </div>
         ))}

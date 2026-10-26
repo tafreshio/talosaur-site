@@ -25,7 +25,7 @@ const posterFile = 'images/hero-poster.jpg';
 // Checked when the site is built, so adding or removing a file is all it takes.
 const sources = videoFiles
   .filter(({ file }) => existsSync(join(process.cwd(), 'public', file)))
-  .map(({ file, ...rest }) => ({ src: url(`/${file}`), ...rest })); // url() adds the /talosaur-site base
+  .map(({ file, ...rest }) => ({ src: url(`/${file}`), ...rest })); // url() adds the site's base folder, if it has one
 const hasVideo = sources.length > 0;
 const posterSrc = url(`/${posterFile}`);
 ---

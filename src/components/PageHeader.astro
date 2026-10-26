@@ -7,7 +7,7 @@
 // lower part. The page must also use <BaseLayout headerOverlay> so the menu floats on top.
 // Without an image (or if the file is missing), it's the plain title with a faint glow.
 import { mainNav } from '../data/site';
-import { imageExists } from '../lib/images';
+import { imageExists, imageUrl } from '../lib/images';
 import { url } from '../lib/url';
 
 interface Props {
@@ -24,13 +24,13 @@ const { title, heading = title, href, intro, caption, image, imagePosition = '50
 const navIndex = mainNav.findIndex((item) => item.href === href);
 const number = navIndex >= 0 ? String(navIndex + 1).padStart(2, '0') : null;
 const hasImage = !!image && imageExists(`pages/${image}`);
-const imageUrl = url(`/images/pages/${image}`);
+const photoUrl = imageUrl(`pages/${image}`);
 ---
 
 <header class:list={['page-header', { 'page-header--image': hasImage }]}>
   {hasImage && (
     <div class="page-header-media" aria-hidden="true">
-      <img src={imageUrl} alt="" fetchpriority="high" style={`object-position: ${imagePosition};`} data-parallax="0.35" />
+      <img src={photoUrl} alt="" fetchpriority="high" style={`object-position: ${imagePosition};`} data-parallax="0.35" />
     </div>
   )}
 

@@ -11,7 +11,7 @@ interface Props {
 const { overlay = false } = Astro.props;
 
 // Which page are we on? Used to highlight the current link.
-// withoutBase turns '/talosaur-site/news/' into '/news' so it matches the addresses in site.ts.
+// withoutBase turns the current address ('/news/', or '/talosaur-site/news/' with a base) into '/news' so it matches the addresses in site.ts.
 const currentPath = withoutBase(Astro.url.pathname);
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
