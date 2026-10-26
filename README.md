@@ -30,7 +30,9 @@ npm run check    # looks for mistakes in the code (typos in data files, missing 
 | What | File |
 |---|---|
 | Colors, fonts, spacing | `src/styles/global.css` (the `:root` block at the top) |
-| Top navigation and footer links, team email, social links | `src/data/site.ts` |
+| Top navigation and footer links, team email, social links, Twitch link | `src/data/site.ts` |
+| Logo files and browser-tab icons | `public/brand/`, `public/favicon.*`, `public/apple-touch-icon.png` |
+| Page-header photos | `public/images/pages/` |
 | Top navigation design | `src/components/Header.astro` |
 | Footer design | `src/components/Footer.astro` |
 | Home page video hero | `src/components/HeroVideo.astro` |
@@ -73,21 +75,35 @@ All photos live in `public/images/`. To swap one, overwrite the file and keep th
 |---|---|---|
 | `home-turtle.jpg` | Turtle | The 1775 Turtle illustration |
 | `home-edna.jpg` | Deep eDNA possibilities | DNA helix (still from the hero video) |
-| `home-live.jpg` | Talosaur Live | Research ship deck (still from the hero video) |
-| `home-team.jpg` | Who we are | Talosaur wordmark over a school of fish |
+| `home-live.jpg` | Talosaur Live | Milling machine as a "LIVE" camera feed (links to Twitch) |
+| `home-team.jpg` | Who we are | Talosaur logo cut out of a school of fish |
 | `home-positions.jpg` | Open positions | Hands at work in a lab (still from the hero video) |
-| `home-build-log.jpg` | Our build log | Light rays underwater |
-| `home-twilight-zone.jpg` | The twilight zone | Old map blending into a sonar map |
-| `home-meet-the-team.jpg` | Meet the team | School of fish (still from the hero video) |
-| `home-get-in-touch.jpg` | Get in touch | Jellyfish (still from the hero video) |
+| `home-build-log.jpg` | Our build log | The test ladder, Bench to Offshore, with "Now: Bench" |
+| `home-twilight-zone.jpg` | The twilight zone | Sea nettle jellyfish, half photo and half dots |
+| `home-meet-the-team.jpg` | Meet the team | Crew and rover on a research ship deck (NOAA) |
+| `home-get-in-touch.jpg` | Get in touch | A ship offshore |
 
-Swap any of these for real team photos whenever you have them.
+Swap any of these for real team photos whenever you have them. The build log image shows "Now: Bench"; when testing moves to the next step, ask for it to be regenerated (or swap in a photo from that test).
+
+**Page headers.** Every page in the top menu opens with a full-width photo band. The photos live in `public/images/pages/` and are named after the page: `who-we-are.jpg`, `the-problem.jpg`, `news.jpg`, `work-with-us.jpg`, `positions.jpg`, `donate.jpg`. Each is 2400 × 1350 and edited in the same style as the Home video (dots, smears, scan lines). The title sits over the bottom-left of the photo, so keep that area calm and darkish. To change which part of a photo stays visible on phones, edit `imagePosition` where the page uses `<PageHeader>` (for example `imagePosition="60% 50%"` keeps a bit right of center). Delete a page's photo and that page goes back to a plain title.
 
 **Team members:** the `photo` name in `src/data/team.ts`, saved in `public/images/team/` (portrait, about 800 × 1000 px). Until the file exists the card shows a panel with the person's initials.
 
 **News posts:** add `image: name.jpg` to the post and save the file in `public/images/news/`.
 
-Other files in `public/images/`: `hero-poster.jpg` (the still behind the Home video) and `og-image.jpg` (the preview image when a link to the site is shared).
+Other files in `public/images/`: `hero-poster.jpg` (the still behind the Home video) and `og-image.jpg` (the preview image when a link to the site is shared: the logo over a jellyfish, 1200 × 630).
+
+## Logo and icons
+
+The logo files are in `public/brand/` and come from the Talosaur brand pack (striped disc plus the lowercase wordmark):
+
+| File | Where it shows |
+|---|---|
+| `talosaur-lockup-reverse.svg` | Top menu (light stripes for the dark background) |
+| `talosaur-lockup-white.svg` | Giant logo over the Home video (inverted against the video, so keep it pure white) and the faint full-width logo in the footer |
+| `talosaur-mark-reverse.svg` | The disc on its own, for anywhere a small mark is needed |
+
+The browser-tab icons are `public/favicon.svg`, `public/favicon.png` (64 × 64) and `public/apple-touch-icon.png` (180 × 180, used when someone saves the site to a phone home screen): the disc on a navy rounded square. To update the logo, replace these files and keep the names.
 
 ## Add a news post
 
