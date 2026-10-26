@@ -87,6 +87,8 @@ Swap any of these for real team photos whenever you have them. The build log ima
 
 **Page headers.** Every page in the top menu opens with a full-width photo band. The photos live in `public/images/pages/` and are named after the page: `who-we-are.jpg`, `the-problem.jpg`, `news.jpg`, `work-with-us.jpg`, `positions.jpg`, `donate.jpg`. Each is 2400 × 1350 and edited in the same style as the Home video (dots, smears, scan lines). The title sits over the bottom-left of the photo, so keep that area calm and darkish. To change which part of a photo stays visible on phones, edit `imagePosition` where the page uses `<PageHeader>` (for example `imagePosition="60% 50%"` keeps a bit right of center). Delete a page's photo and that page goes back to a plain title.
 
+**Color glitch.** When a page opens, its header photo flickers for under half a second: red and cyan copies slide apart in slices, with one copper and one violet frame, like the Home video's glitches. Home cards do the same on hover. It's all CSS (the "Color glitch" section of `src/styles/global.css`), and visitors who turn on "reduce motion" don't see it. To turn it off on page headers, remove `color-glitch--intro` in `src/components/PageHeader.astro`; for cards, delete the three `.card:hover .color-glitch` rules in `src/components/Card.astro`.
+
 **Team members:** the `photo` name in `src/data/team.ts`, saved in `public/images/team/` (portrait, about 800 × 1000 px). Until the file exists the card shows a panel with the person's initials.
 
 **News posts:** add `image: name.jpg` to the post and save the file in `public/images/news/`.

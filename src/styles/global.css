@@ -17,6 +17,8 @@
   --color-accent-ink: #06121f;  /* Text that sits on top of the accent color */
   --color-line: #1c3a52;        /* Dividers and borders */
   --color-white: #ffffff;       /* Pure white: the inverted wordmark over the Home video */
+  --glitch-red: #ff0000;        /* Color glitch: the red copy of the photo */
+  --glitch-cyan: #00ffff;       /* Color glitch: the cyan copy of the photo */
 
   /* Fonts (loaded from Google Fonts in BaseLayout.astro) */
   --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
@@ -265,6 +267,95 @@ h3 {
     transform: none;
     transition: none;
   }
+}
+
+/* ---------- Color glitch ----------
+   A split-second "bad signal" moment borrowed from the Home video: the photo's red and
+   cyan channels slide apart in slices, with one false-color frame.
+
+   Usage: wrap an image, and give the wrapper the same file as a CSS variable:
+     <div class="color-glitch" style="--glitch-src: url(/talosaur-site/images/x.jpg)">
+       <img src="/talosaur-site/images/x.jpg" alt="..." />
+     </div>
+   How it works: ::before and ::after are two invisible copies of the photo, tinted pure
+   red and pure cyan (background-blend-mode: luminosity keeps the photo's light and dark
+   but takes the color of the background-color underneath). During the glitch they shift
+   sideways and are added onto the photo with mix-blend-mode: screen, which makes the
+   colored fringes. (Our photos are nearly all blue, so tinting works better than
+   splitting the real red channel, which is almost empty.) The real <img> gets one
+   inverted frame and one violet frame (the false-color flash).
+   Add .color-glitch--intro to play it once on page load (page headers). Cards play it
+   on hover (Card.astro). People who ask for less motion never see it (rule above). */
+.color-glitch {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  isolation: isolate; /* the blending only mixes with this photo, nothing behind it */
+}
+
+.color-glitch img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--glitch-pos, 50% 50%);
+}
+
+.color-glitch::before,
+.color-glitch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image: var(--glitch-src);
+  background-size: cover;
+  background-position: var(--glitch-pos, 50% 50%);
+  background-blend-mode: luminosity;
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.color-glitch::before {
+  background-color: var(--glitch-red);
+}
+
+.color-glitch::after {
+  background-color: var(--glitch-cyan);
+}
+
+/* steps(1, end) makes each keyframe snap instead of sliding, like dropped video frames */
+.color-glitch--intro::before {
+  animation: glitch-red 0.75s steps(1, end) 0.3s;
+}
+
+.color-glitch--intro::after {
+  animation: glitch-cyan 0.75s steps(1, end) 0.3s;
+}
+
+/* Red slides one way, cyan the other; clip-path shows only a horizontal band at a time */
+@keyframes glitch-red {
+  0% { opacity: 0.7; transform: translateX(-2.4%); clip-path: inset(10% 0 60% 0); }
+  14% { opacity: 0.7; transform: translateX(1.8%); clip-path: inset(48% 0 20% 0); }
+  28% { opacity: 0.45; transform: translateX(-0.9%); clip-path: inset(0); }
+  42% { opacity: 0.7; transform: translateX(3.2%); clip-path: inset(72% 0 6% 0); }
+  56%, 100% { opacity: 0; transform: none; clip-path: inset(0); }
+}
+
+@keyframes glitch-cyan {
+  0% { opacity: 0.7; transform: translateX(2.4%); clip-path: inset(10% 0 60% 0); }
+  14% { opacity: 0.7; transform: translateX(-1.8%); clip-path: inset(48% 0 20% 0); }
+  28% { opacity: 0.45; transform: translateX(0.9%); clip-path: inset(0); }
+  42% { opacity: 0.7; transform: translateX(-3.2%); clip-path: inset(72% 0 6% 0); }
+  56%, 100% { opacity: 0; transform: none; clip-path: inset(0); }
+}
+
+/* The false-color flash on the photo itself: copper (inverted, like the Home logo), then violet */
+@keyframes false-color {
+  0%, 18% { filter: none; }
+  20% { filter: invert(1) saturate(1.6); }
+  30% { filter: hue-rotate(100deg) saturate(4) contrast(1.3); }
+  38%, 100% { filter: none; }
 }
 
 /* Hidden visually but still read by screen readers */

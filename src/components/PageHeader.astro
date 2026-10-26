@@ -17,18 +17,23 @@ interface Props {
   intro?: string;
   image?: string;         // filename in public/images/pages/, e.g. 'news.jpg'
   imagePosition?: string; // the part of the photo to keep when a narrow screen crops it ('50% 50%' = center)
+                          // (the photo also gets a color glitch when the page opens: see .color-glitch in global.css)
 }
 
 const { title, heading = title, href, intro, image, imagePosition = '50% 50%' } = Astro.props;
 const navIndex = mainNav.findIndex((item) => item.href === href);
 const number = navIndex >= 0 ? String(navIndex + 1).padStart(2, '0') : null;
 const hasImage = !!image && imageExists(`pages/${image}`);
+const imageUrl = url(`/images/pages/${image}`);
 ---
 
 <header class:list={['page-header', { 'page-header--image': hasImage }]}>
   {hasImage && (
     <div class="page-header-media" aria-hidden="true">
-      <img src={url(`/images/pages/${image}`)} alt="" fetchpriority="high" style={`object-position: ${imagePosition};`} />
+      <!-- color-glitch: a red/cyan "bad signal" flicker when the page opens (see global.css) -->
+      <div class="color-glitch color-glitch--intro" style={`--glitch-src: url(${imageUrl}); --glitch-pos: ${imagePosition};`}>
+        <img src={imageUrl} alt="" fetchpriority="high" />
+      </div>
     </div>
   )}
 
@@ -82,11 +87,12 @@ const hasImage = !!image && imageExists(`pages/${image}`);
     z-index: -1;
   }
 
+  /* The photo fills the band (object-fit: cover, set in global.css), fades in,
+     and gets the color glitch's false-color flash early in the fade */
   .page-header-media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* fill the band, cropping the edges; object-position picks which part stays */
-    animation: photo-in 1.4s var(--ease) both;
+    animation:
+      photo-in 1.4s var(--ease) both,
+      false-color 0.75s steps(1, end) 0.3s;
   }
 
   /* Fades so the text stays readable: dark at the bottom (where the title sits, blending
