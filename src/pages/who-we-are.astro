@@ -3,6 +3,9 @@
 // A member with a photo in public/images/team/ gets a photo card; without one, a solid panel with initials.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
+import PhotoBand from '../components/PhotoBand.astro';
+import Patch from '../components/Patch.astro';
+import { url } from '../lib/url';
 import Photo from '../components/Photo.astro';
 import { team, teamIntro } from '../data/team';
 import { isPlaceholder } from '../data/site';
@@ -46,6 +49,14 @@ const panelText = (name: string, role: string) =>
       </ul>
     </section>
   </div>
+
+  <!-- Inset photo sitting across the edge between the team and the photo below -->
+  <Patch image="ship-deck.jpg" caption="On deck" side="right" straddle />
+
+  <!-- One big photo (ocean sunfish, false colour) leading on to Positions. Copy: Content doc, "Open positions" card. -->
+  <PhotoBand image="who-we-are.jpg" position="45% 40%" heading="We're recruiting." tag="Open positions">
+    <a class="button" href={url('/positions')}>See what roles are open <span aria-hidden="true">→</span></a>
+  </PhotoBand>
 </BaseLayout>
 
 <style>

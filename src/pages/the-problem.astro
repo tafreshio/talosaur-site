@@ -4,8 +4,7 @@ import PageHeader from '../components/PageHeader.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import StatCallout from '../components/StatCallout.astro';
 import DepthBands from '../components/DepthBands.astro';
-import { problemIntro, stats, statsSource } from '../data/problem';
-import { isPlaceholder } from '../data/site';
+import { problemIntro, stats } from '../data/problem';
 ---
 
 <BaseLayout title="The Problem" description={problemIntro} headerOverlay>
@@ -26,9 +25,6 @@ import { isPlaceholder } from '../data/site';
       <div class="stats" data-reveal-group>
         {stats.map((stat, i) => <StatCallout {...stat} index={i + 1} />)}
       </div>
-      <p class:list={['label', 'source', { 'source--placeholder': isPlaceholder(statsSource) }]}>
-        Source: {statsSource}
-      </p>
     </section>
 
     <!-- Section 02 label sits just above the water line -->
@@ -58,14 +54,6 @@ import { isPlaceholder } from '../data/site';
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-lg);
-  }
-
-  .source {
-    margin: var(--space-lg) 0 0;
-  }
-
-  .source--placeholder {
-    color: var(--color-muted);
   }
 
   /* ---------- Tablet and phone ---------- */

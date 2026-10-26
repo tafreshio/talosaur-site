@@ -1,0 +1,147 @@
+---
+// An inset photo that sits across the edge between two sections, like the small photos
+// Colossal lays over the bottom of a big image. A thin accent frame and a dot mark its corner.
+// Two ways to place it:
+//   - first inside whatever comes below the edge: it pulls itself up over the edge and pushes
+//     that section's content down below it;
+//   - with `straddle`, between two sections: it takes no space and simply overlaps both.
+// Like Colossal, never on the edge right under a page header or the Home video: start at
+// the edges further down the page.
+//
+// Photos live in public/images/patches/ (1200 x 800). People, lab and machine photos stay
+// natural; only nature photos get false colour (see the photo rule in the README).
+import { url } from '../lib/url';
+
+interface Props {
+  image: string;      // file name in public/images/patches/
+  caption?: string;   // short label in [ brackets ] under the photo
+  side?: 'left' | 'right';
+  pull?: string;      // extra distance to pull up, e.g. the padding at the top of the section it sits in
+  overlap?: string;   // how far it crosses into the section above
+  straddle?: boolean; // overlap both sections without taking any space
+}
+
+const { image, caption, side = 'left', pull = '0px', overlap = 'clamp(2.5rem, 0.5rem + 6vw, 8.5rem)', straddle = false } = Astro.props;
+---
+
+<div class:list={['container', 'patch-row', `patch-row--${side}`, { 'patch-row--straddle': straddle }]} style={`--pull: ${pull}; --overlap: ${overlap};`}>
+  <figure class="patch" data-drift="40">
+    <span class="patch-frame" aria-hidden="true"></span>
+    <img src={url(`/images/patches/${image}`)} alt="" width="1200" height="800" loading="lazy" decoding="async" />
+    {caption && <figcaption class="label patch-caption">[ {caption} ]</figcaption>}
+  </figure>
+</div>
+
+<style>
+  .patch-row {
+    position: relative;
+    z-index: 2; /* above the section it crosses into */
+    display: flex;
+    justify-content: flex-start;
+    margin-top: calc(-1 * (var(--pull) + var(--overlap)));
+    margin-bottom: var(--space-lg);
+    pointer-events: none;
+  }
+
+  .patch-row--right {
+    justify-content: flex-end;
+  }
+
+  /* Straddle: a zero-height row on the edge; the photo hangs over both sections */
+  .patch-row--straddle {
+    height: 0;
+    margin: 0;
+    align-items: flex-start;
+  }
+
+  .patch-row--straddle .patch {
+    flex: none;
+    margin-top: calc(-1 * var(--overlap));
+  }
+
+  .patch {
+    position: relative;
+    width: clamp(15rem, 36%, 32rem);
+    margin: 0;
+  }
+
+  .patch img {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    box-shadow: 0 1.5rem 3rem rgb(0 0 0 / 0.25);
+  }
+
+  /* A hairline frame offset from the photo, with a dot on its corner */
+  .patch-frame {
+    position: absolute;
+    inset: -0.9rem 0.9rem 0.9rem -0.9rem;
+    border: 1px solid var(--color-accent);
+  }
+
+  .patch-row--right .patch-frame {
+    inset: -0.9rem -0.9rem 0.9rem 0.9rem;
+  }
+
+  .patch-frame::before {
+    content: '';
+    position: absolute;
+    top: -0.4rem;
+    left: -0.4rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
+
+  .patch-row--right .patch-frame::before {
+    left: auto;
+    right: -0.4rem;
+  }
+
+  .patch-caption {
+    margin-top: 0.6rem;
+    color: var(--color-muted);
+  }
+
+  .patch-row--right .patch-caption {
+    text-align: right;
+  }
+
+  /* Phones: a bit bigger relative to the screen, crossing the edge by about a quarter */
+  @media (max-width: 760px) {
+    .patch {
+      width: 68%;
+    }
+
+    .patch-row {
+      --overlap: 2.5rem !important;
+    }
+
+    /* tighter frame so it stays inside the screen edge */
+    .patch-frame {
+      inset: -0.6rem 0.6rem 0.6rem -0.6rem;
+    }
+
+    .patch-row--right .patch-frame {
+      inset: -0.6rem -0.6rem 0.6rem 0.6rem;
+    }
+
+    .patch-frame::before {
+      top: -0.3rem;
+      left: -0.3rem;
+      width: 0.6rem;
+      height: 0.6rem;
+    }
+
+    .patch-row--right .patch-frame::before {
+      right: -0.3rem;
+    }
+
+    /* a photo band right under a straddling patch starts its text below the patch */
+    :global(.patch-row--straddle + .photo-band .photo-band-inner) {
+      padding-top: calc(var(--space-2xl) + 7rem);
+    }
+  }
+</style>

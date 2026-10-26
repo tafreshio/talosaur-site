@@ -2,6 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroVideo from '../components/HeroVideo.astro';
 import SectionHeader from '../components/SectionHeader.astro';
+import PhotoBand from '../components/PhotoBand.astro';
+import Patch from '../components/Patch.astro';
 import Card from '../components/Card.astro';
 import { heroCards, featuredHeading, featuredCards, helpButtons, interestedCards } from '../data/home';
 import { getSortedNews, formatNewsDate } from '../lib/news';
@@ -57,27 +59,25 @@ const pad = (n: number) => String(n).padStart(2, '0');
     </section>
   </div>
 
-  <!-- Light band: Section 04 -->
-  <div class="band theme-light">
-    <!-- Section 04: How can we help? -->
-    <section class="container section">
-      <SectionHeader number={4} title="How can we help?" />
-      <ol class="help-list" data-reveal-group>
-        {helpButtons.map((button, i) => (
-          <li>
-            <a class="help-row" href={url(button.href)}>
-              <span class="label help-num">{pad(i + 1)}</span>
-              <span class="help-label">{button.label}</span>
-              <span class="help-arrow" aria-hidden="true">→</span>
-            </a>
-          </li>
-        ))}
-      </ol>
-    </section>
-  </div>
+  <!-- Section 04: one big photo (sand tiger shark, false colour) with the help buttons over it -->
+  <PhotoBand image="home.jpg" position="38% 50%" label="Section 04" heading="How can we help?" tag="Researchers · Sanctuaries · Offshore teams" split>
+    <ol class="help-list" data-reveal-group>
+      {helpButtons.map((button, i) => (
+        <li>
+          <a class="help-row" href={url(button.href)}>
+            <span class="label help-num">{pad(i + 1)}</span>
+            <span class="help-label">{button.label}</span>
+            <span class="help-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </PhotoBand>
 
   <!-- Dark band: Section 05 (like Colossal's black "In the news") -->
   <div class="band">
+    <!-- A fish eye crossing the edge from the photo above (Colossal-style inset) -->
+    <Patch image="fish-eye.jpg" caption="Fish eye" side="left" />
     <!-- Section 05: latest news -->
     <section class="container section">
       <SectionHeader number={5} title="Latest news">
@@ -116,6 +116,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
 <style>
   .section {
     padding-top: var(--space-2xl);
+  }
+
+  /* Less room above a section that starts right under an inset photo (Patch) */
+  :global(.patch-row) + .section {
+    padding-top: var(--space-md);
   }
 
   /* ---------- Section 01 ---------- */

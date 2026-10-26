@@ -3,6 +3,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import SectionHeader from '../components/SectionHeader.astro';
+import PhotoBand from '../components/PhotoBand.astro';
+import Patch from '../components/Patch.astro';
 import { financeContact, contactHref } from '../data/site';
 
 const intro =
@@ -34,19 +36,23 @@ const financeHref = contactHref(financeContact);
         ))}
       </ol>
     </section>
-
-    <section class="container contact">
-      <div class="contact-box" data-reveal>
-        {financeHref ? (
-          <a class="button" href={financeHref}>Contact our finance team <span aria-hidden="true">→</span></a>
-        ) : (
-          <span class="button button--disabled" aria-disabled="true">Contact our finance team</span>
-        )}
-        {!financeHref && <p class="label">Link: {financeContact}</p>}
-        <p class="contact-note">No online payments on the site for now; every donation starts with a conversation.</p>
-      </div>
-    </section>
   </div>
+
+  <!-- Inset photo sitting across the edge between the ways to help and the photo below -->
+  <Patch image="lathe.jpg" caption="Making parts" side="right" straddle />
+
+  <!-- One big photo (zoanthids and a sea slug, false colour) carrying the contact button and note -->
+  <PhotoBand image="donate.jpg" position="55% 50%" heading="Support our research">
+    <div class="contact-box">
+      {financeHref ? (
+        <a class="button" href={financeHref}>Contact our finance team <span aria-hidden="true">→</span></a>
+      ) : (
+        <span class="button button--disabled" aria-disabled="true">Contact our finance team</span>
+      )}
+      {!financeHref && <p class="label">Link: {financeContact}</p>}
+      <p class="contact-note">No online payments on the site for now; every donation starts with a conversation.</p>
+    </div>
+  </PhotoBand>
 </BaseLayout>
 
 <style>
@@ -82,10 +88,6 @@ const financeHref = contactHref(financeContact);
     color: var(--color-muted);
     font-size: var(--text-lg);
     line-height: 1.5;
-  }
-
-  .contact {
-    padding-top: var(--space-xl);
   }
 
   .contact-box {
