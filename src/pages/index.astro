@@ -74,10 +74,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
     </ol>
   </PhotoBand>
 
+  <!-- A fish eye in a lens, sitting on the edge between the photo and Latest news -->
+  <Patch variant="lens" image="fish-eye-lens.jpg" caption="Fish eye" side="center" straddle />
+
   <!-- Dark band: Section 05 (like Colossal's black "In the news") -->
   <div class="band">
-    <!-- A fish eye crossing the edge from the photo above (Colossal-style inset) -->
-    <Patch image="fish-eye.jpg" caption="Fish eye" side="left" />
     <!-- Section 05: latest news -->
     <section class="container section">
       <SectionHeader number={5} title="Latest news">
@@ -118,10 +119,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
     padding-top: var(--space-2xl);
   }
 
-  /* Less room above a section that starts right under an inset photo (Patch) */
-  :global(.patch-row) + .section {
-    padding-top: var(--space-md);
-  }
 
   /* ---------- Section 01 ---------- */
 

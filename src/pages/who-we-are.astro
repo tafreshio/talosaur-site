@@ -17,7 +17,7 @@ const panelText = (name: string, role: string) =>
 ---
 
 <BaseLayout title="Who we are" description={teamIntro} headerOverlay>
-  <PageHeader title="Who we are" href="/who-we-are" intro={teamIntro} caption="Students · College Station, Texas" image="who-we-are.jpg" imagePosition="58% 50%" />
+  <PageHeader title="Who we are" href="/who-we-are" intro={teamIntro} caption="Students · College Station, Texas" image="who-we-are.jpg" imagePosition="45% 50%" />
 
   <!-- Light band: everything below the photo header -->
   <div class="band band--top theme-light">
@@ -51,7 +51,7 @@ const panelText = (name: string, role: string) =>
   </div>
 
   <!-- Inset photo sitting across the edge between the team and the photo below -->
-  <Patch image="ship-deck.jpg" caption="On deck" side="right" straddle />
+  <Patch variant="contact" images={['frame-deck.jpg', 'frame-pipette.jpg', 'frame-rover.jpg']} captions={['On deck', 'In the lab', 'At depth']} side="right" straddle />
 
   <!-- One big photo (ocean sunfish, false colour) leading on to Positions. Copy: Content doc, "Open positions" card. -->
   <PhotoBand image="who-we-are.jpg" position="45% 40%" heading="We're recruiting." tag="Open positions">
