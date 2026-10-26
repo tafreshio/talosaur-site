@@ -100,15 +100,26 @@ const photoUrl = imageUrl(`pages/${image}`);
     animation: photo-in 1.4s var(--ease) both;
   }
 
-  /* Fades so the text stays readable: dark at the bottom (where the title sits, blending
-     into the page below) and a little at the top (behind the menu) */
+  /* Shading so the text stays readable, without a dark band at the bottom: the photo runs
+     right to its bottom edge and meets the light section below with a clean line (like
+     Colossal). Only the left side, where the title and intro sit, is darkened, plus a little
+     at the top behind the menu. */
   .page-header-media::after {
     content: '';
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(to top, var(--color-bg) 0%, color-mix(in srgb, var(--color-bg) 60%, transparent) 38%, transparent 72%),
+      linear-gradient(90deg, rgb(6 18 31 / 0.62) 0%, rgb(6 18 31 / 0.38) 38%, rgb(6 18 31 / 0.08) 68%, transparent 85%),
       linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 55%, transparent) 0%, transparent 22%);
+  }
+
+  /* Phones: the text runs the full width, so shade the whole photo evenly instead */
+  @media (max-width: 760px) {
+    .page-header-media::after {
+      background:
+        linear-gradient(rgb(6 18 31 / 0.45), rgb(6 18 31 / 0.45)),
+        linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 55%, transparent) 0%, transparent 22%);
+    }
   }
 
   .page-header--image .page-header-inner {
@@ -165,10 +176,16 @@ const photoUrl = imageUrl(`pages/${image}`);
     );
   }
 
+  /* A boxed tag: a dark glassy backing keeps it readable on any photo, bright or dark */
   .page-caption {
     margin: 0 0 0 auto;
+    padding: 0.35rem 0.65rem;
     text-align: right;
     color: var(--color-text);
+    background: rgb(6 18 31 / 0.55);
+    border: 1px solid rgb(232 241 245 / 0.25);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
   }
 
   .page-intro {
