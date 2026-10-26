@@ -39,9 +39,11 @@ export const reasons = [
   },
 ];
 
-// Depth bands graphic, top to bottom
+// Depth bands graphic, top to bottom. The graphic is drawn to scale:
+// "from" and "to" are depths in meters and decide where each band starts and ends.
+// The last band has no real bottom, so "to" is just where the drawing stops.
 export const depthBands = [
-  { depth: '0–50 m', name: 'Sunlit', text: 'Within reach of divers.', zone: 'sunlit' },
-  { depth: '50–300 m', name: 'Twilight zone', text: 'Too deep for divers, too costly to revisit.', zone: 'twilight' },
-  { depth: '300 m+', name: '', text: 'Reached by research ships and deep vehicles.', zone: 'deep' },
+  { depth: '0–50 m', name: 'Sunlit', text: 'Within reach of divers.', zone: 'sunlit', from: 0, to: 50 },
+  { depth: '50–300 m', name: 'Twilight zone', text: 'Too deep for divers, too costly to revisit.', zone: 'twilight', from: 50, to: 300 },
+  { depth: '300 m+', name: '', text: 'Reached by research ships and deep vehicles.', zone: 'deep', from: 300, to: 400 },
 ];

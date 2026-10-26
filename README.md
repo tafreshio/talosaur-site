@@ -93,6 +93,12 @@ Swap any of these for real team photos whenever you have them.
 
 **Page-header captions.** Each page header has a thin line under the title with a hatched `//////` stripe and a short caption in [ brackets ], for example `[ 50–300 M · THE TWILIGHT ZONE ]`. Change or remove it with the `caption` text where the page uses `<PageHeader>`.
 
+**The depth graphic (The Problem, Section 03).** The whole section is the sea, drawn to scale from the surface to 400 m. Its top edge is the water surface, and the research ship sits on it, poking up into the light band above. A thin line stays in the middle of the screen as you scroll and reads out the depth under it. The code is `src/components/DepthBands.astro`:
+- Band text and where each band starts and ends (`from`, `to` in meters): `depthBands` in `src/data/problem.ts`.
+- Make the whole drawing taller or shorter: change `--m` (pixels per meter) at the top of the component's styles.
+- The shark and jellyfish are false-color cut-outs in `public/images/depth/` (`shark.webp`, `jelly.webp`, transparent backgrounds). Replace them with files of the same name. Their depth is the `top: calc(85 * var(--m))` line in each `.sticker--…` style (85 = 85 m).
+- The ship is a simple drawing inside the component (the `<svg class="ship">`), not a photo.
+
 **Team members:** the `photo` name in `src/data/team.ts`, saved in `public/images/team/` (portrait, about 800 × 1000 px). Until the file exists the card shows a panel with the person's initials.
 
 **News posts:** add `image: name.jpg` to the post and save the file in `public/images/news/`.

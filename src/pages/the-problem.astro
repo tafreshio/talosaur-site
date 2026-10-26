@@ -18,8 +18,8 @@ import { isPlaceholder } from '../data/site';
     imagePosition="50% 30%"
   />
 
-  <!-- Light band: big numbers and reasons -->
-  <div class="band theme-light">
+  <!-- Light band: big numbers and reasons. It ends where the sea (Section 03) begins. -->
+  <div class="band theme-light sky">
     <!-- Section 01: big numbers -->
     <section class="container section">
       <SectionHeader number={1} />
@@ -44,21 +44,25 @@ import { isPlaceholder } from '../data/site';
         ))}
       </ol>
     </section>
+
+    <!-- Section 03 label sits just above the water line -->
+    <div class="container section">
+      <SectionHeader number={3} />
+    </div>
   </div>
 
-  <!-- Dark band: the depth graphic is drawn for a dark background -->
-  <div class="band">
-    <!-- Section 03: depth bands graphic -->
-    <section class="container section">
-      <SectionHeader number={3} />
-      <div data-reveal><DepthBands /></div>
-    </section>
-  </div>
+  <!-- Section 03: the sea itself, drawn to scale (the ship pokes up into the light band above) -->
+  <DepthBands />
 </BaseLayout>
 
 <style>
   .section {
     padding-top: var(--space-2xl);
+  }
+
+  /* The light band stops a short way under the Section 03 label, leaving room for the ship's mast */
+  .sky {
+    padding-bottom: var(--space-xl);
   }
 
   /* ---------- Stats ---------- */

@@ -1,69 +1,205 @@
 ---
-// The depth bands graphic on The Problem page: a column of water getting darker
-// as it goes deeper, with the twilight zone (50–300 m) highlighted.
-// Band text lives in src/data/problem.ts. Band heights are for looks, not to scale.
+// The depth graphic on The Problem page: a to-scale column of water from the surface to 400 m.
+//
+// How it works:
+// - The whole section is the sea. Its top edge is the water surface, and the research ship
+//   sits on it, poking up into the light section above (Colossal-style "stitched" boundary).
+// - Every depth is drawn to scale: 1 meter = var(--m) pixels. Change --m to make it taller or shorter.
+// - A thin line stays in the middle of the screen as you scroll and reads out the depth under it
+//   (the script at the bottom). Without JavaScript the line is simply not shown.
+// - Band text lives in src/data/problem.ts. Animal cut-outs live in public/images/depth/.
 import { depthBands } from '../data/problem';
+import { url } from '../lib/url';
+
+const MAX = depthBands[depthBands.length - 1].to; // where the drawing stops (meters)
+const marks = Array.from({ length: MAX / 50 + 1 }, (_, i) => i * 50); // ruler labels every 50 m
+
+// What the moving readout says in each band
+const readout = depthBands.map((b) => ({ zone: b.zone, to: b.to, label: b.name || b.depth }));
 ---
 
-<figure class="depth">
-  <ol class="depth-bands" aria-label="Ocean depth bands">
-    {depthBands.map((band) => (
-      <li class={`band band--${band.zone}`}>
-        <p class="band-depth">{band.depth}</p>
-        <p class="band-text">
-          {band.name && <strong>{band.name}.</strong>} {band.text}
-        </p>
-      </li>
-    ))}
-  </ol>
-</figure>
+<section class="depth-sea" aria-labelledby="depth-title" style={`--max: ${MAX}`}>
+  <div class="container">
+    <figure class="depth" data-depth data-max={MAX} data-bands={JSON.stringify(readout)}>
+      <h2 id="depth-title" class="visually-hidden">Depth bands, drawn to scale from the surface to {MAX} m</h2>
+
+      <div class="depth-col">
+        <!-- The moving depth readout (sticky: it stays in the middle of the screen while you scroll) -->
+        <div class="depth-gauge" aria-hidden="true">
+          <p class="gauge-num"><span data-depth-num>0</span><span class="gauge-unit">m</span></p>
+          <p class="label gauge-zone" data-depth-zone>{readout[0].label}</p>
+        </div>
+
+        <!-- Ruler down the left edge -->
+        <ol class="depth-ruler" aria-hidden="true">
+          {marks.map((d) => <li style={`--d: ${d}`}>{d} m</li>)}
+        </ol>
+
+        <!-- Research ship on the surface, with a cable down to a deep vehicle -->
+        <svg class="ship" viewBox="0 0 600 190" aria-hidden="true">
+          <path d="M4 118 L455 118 L462 104 L596 104 L570 178 L36 178 L4 146 Z" />
+          <path fill-rule="evenodd" d="M296 118 L296 82 L322 82 L322 60 L446 60 L460 84 L460 118 Z M334 66 h10 v8 h-10 Z M350 66 h10 v8 h-10 Z M366 66 h10 v8 h-10 Z M382 66 h10 v8 h-10 Z M398 66 h10 v8 h-10 Z M414 66 h10 v8 h-10 Z M430 66 h8 v8 h-8 Z" />
+          <path d="M396 60 L396 18 L402 18 L402 60 Z M382 28 L416 28 L416 32 L382 32 Z M393 10 L405 10 L405 18 L393 18 Z" />
+          <path d="M262 118 L268 74 L292 74 L292 118 Z" />
+          <path d="M16 118 L44 42 L62 42 L90 118 L80 118 L56 54 L50 54 L26 118 Z" />
+          <path d="M150 118 L154 96 L164 96 L168 118 Z M157 100 L236 62 L240 68 L161 106 Z M106 118 L106 104 L136 104 L136 118 Z" />
+        </svg>
+        <span class="tether" aria-hidden="true"></span>
+        <span class="vehicle" aria-hidden="true"></span>
+
+        <!-- False-colour animal cut-outs (stickers), drifting a little as you scroll -->
+        <img class="sticker sticker--shark" src={url('/images/depth/shark.webp')} alt="" width="1094" height="289" loading="lazy" decoding="async" />
+        <img class="sticker sticker--jelly" src={url('/images/depth/jelly.webp')} alt="" width="900" height="623" loading="lazy" decoding="async" />
+
+        <!-- Talosaur, working in the twilight zone -->
+        <div class="talosaur" aria-hidden="true">
+          <img src={url('/brand/talosaur-mark-reverse.svg')} alt="" width="64" height="64" />
+          <span class="label">[ Talosaur ]</span>
+        </div>
+
+        <!-- The three bands: the real text of the graphic -->
+        <ol class="zones" aria-label="Ocean depth bands">
+          {depthBands.map((b) => (
+            <li class={`zone zone--${b.zone}`} style={`--from: ${b.from}; --to: ${b.to}`}>
+              <div class="zone-copy">
+                <p class="zone-depth">{b.depth}</p>
+                <p class="zone-text">{b.name && <strong>{b.name}.</strong>} {b.text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </figure>
+  </div>
+</section>
 
 <style>
+  /* ---------- The sea: a full-width section whose background is the water ---------- */
+
+  .depth-sea {
+    --m: clamp(3.5px, 2.5px + 0.25vw, 5px); /* pixels per meter */
+    --rule-w: 4.5rem; /* width of the ruler on the left */
+    /* distance from the content edge to the edge of the screen, so things can bleed off it */
+    --bleed: calc(var(--gutter) + max(0px, (100vw - var(--max-width)) / 2));
+    position: relative;
+    padding-bottom: var(--space-2xl);
+    overflow-x: clip; /* hide what bleeds off the sides, but let the ship poke up */
+    background:
+      /* sunlight glow just under the surface */
+      radial-gradient(ellipse 55% calc(45 * var(--m)) at 70% 0, rgb(190 245 240 / 0.28), transparent),
+      /* the water gets darker with depth, in step with the ruler */
+      linear-gradient(
+        to bottom,
+        #3a9ea4 0,
+        #1f7480 calc(25 * var(--m)),
+        #145465 calc(50 * var(--m)),
+        #0d3a4c calc(100 * var(--m)),
+        #092737 calc(175 * var(--m)),
+        #071a29 calc(300 * var(--m)),
+        var(--color-bg) calc(var(--max) * var(--m))
+      );
+  }
+
+  /* Marine snow: faint specks that only appear below about 80 m */
+  .depth-sea::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(circle at 30% 40%, rgb(220 240 240 / 0.5) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 70% 80%, rgb(220 240 240 / 0.35) 0 1px, transparent 1.6px);
+    background-size: 97px 131px, 173px 89px;
+    mask-image: linear-gradient(to bottom, transparent calc(80 * var(--m)), #000 calc(200 * var(--m)));
+    -webkit-mask-image: linear-gradient(to bottom, transparent calc(80 * var(--m)), #000 calc(200 * var(--m)));
+  }
+
   .depth {
+    position: relative;
     margin: 0;
   }
 
-  .depth-bands {
-    display: grid;
-    /* Sunlit is thin, the twilight zone is the tall middle, deep fades out */
-    grid-template-rows: minmax(9rem, 1fr) minmax(20rem, 3fr) minmax(11rem, 1.4fr);
+  .depth-col {
+    position: relative;
+    height: calc(var(--max) * var(--m));
+  }
+
+  /* ---------- Ruler ---------- */
+
+  .depth-ruler {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--rule-w);
     margin: 0;
     padding: 0;
     list-style: none;
-    border-radius: var(--radius);
-    overflow: hidden;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: rgb(232 241 245 / 0.75);
   }
 
-  .band {
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(10rem, 1fr) 2fr;
-    align-items: start;
-    gap: var(--space-md);
-    padding: var(--space-md) var(--space-lg);
-    border-top: 1px dashed color-mix(in srgb, var(--color-text) 25%, transparent);
+  /* minor ticks every 10 m, major ticks every 50 m */
+  .depth-ruler::before,
+  .depth-ruler::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: calc(var(--max) * var(--m) + 1px);
   }
 
-  .band:first-child {
-    border-top: 0;
+  .depth-ruler::before {
+    width: 0.6rem;
+    background: repeating-linear-gradient(to bottom, rgb(232 241 245 / 0.45) 0 1px, transparent 1px calc(10 * var(--m)));
   }
 
-  /* The water gets darker with depth */
-  .band--sunlit {
-    background: linear-gradient(to bottom, #2f6f8f, #1d4c68);
+  .depth-ruler::after {
+    width: 1.4rem;
+    background: repeating-linear-gradient(to bottom, rgb(232 241 245 / 0.9) 0 1px, transparent 1px calc(50 * var(--m)));
   }
 
-  .band--twilight {
-    background: linear-gradient(to bottom, #143a54, #0a1f33);
-    /* Cyan edge marks the zone Talosaur works in */
-    box-shadow: inset 4px 0 0 var(--color-accent);
+  .depth-ruler li {
+    position: absolute;
+    top: calc(var(--d) * var(--m));
+    left: 1.8rem;
+    transform: translateY(-50%);
+    white-space: nowrap;
   }
 
-  .band--deep {
-    background: linear-gradient(to bottom, #081a2b, var(--color-bg));
+  .depth-ruler li:first-child {
+    transform: translateY(0.35rem);
   }
 
-  .band-depth {
+  /* ---------- Bands ---------- */
+
+  .zones {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .zone {
+    position: absolute;
+    top: calc(var(--from) * var(--m));
+    height: calc((var(--to) - var(--from)) * var(--m));
+    left: var(--rule-w);
+    right: 0;
+    z-index: 2;
+  }
+
+  /* dashed line where one band ends and the next begins */
+  .zone + .zone {
+    border-top: 1px dashed rgb(232 241 245 / 0.35);
+  }
+
+  .zone-copy {
+    max-width: 30rem;
+    padding: var(--space-sm) 0 0 var(--space-md);
+    transition: opacity 400ms var(--ease);
+  }
+
+  .zone-depth {
     margin: 0;
     font-family: var(--font-display);
     font-stretch: var(--display-width);
@@ -73,37 +209,330 @@ import { depthBands } from '../data/problem';
     white-space: nowrap;
   }
 
-  .band--twilight .band-depth {
-    color: var(--color-accent);
-    font-size: clamp(2.75rem, 1.5rem + 5vw, 6rem);
-  }
-
-  .band-text {
-    max-width: 26rem;
-    margin: 0.4rem 0 0;
+  .zone-text {
+    margin: 0.5rem 0 0;
     font-size: var(--text-lg);
     line-height: 1.4;
+    text-wrap: balance;
   }
 
-  .band--deep .band-text,
-  .band--deep .band-depth {
+  .zone--twilight .zone-depth {
+    color: var(--color-accent);
+    font-size: clamp(2.75rem, 1.5rem + 5vw, 6.5rem);
+  }
+
+  /* Corner brackets frame the twilight zone, the part of the ocean Talosaur is built for */
+  .zone--twilight {
+    --c: var(--color-accent);
+    --L: clamp(1.25rem, 3vw, 2.5rem);
+    border-top-color: transparent;
+    background:
+      linear-gradient(var(--c), var(--c)) top left / var(--L) 2px,
+      linear-gradient(var(--c), var(--c)) top left / 2px var(--L),
+      linear-gradient(var(--c), var(--c)) top right / var(--L) 2px,
+      linear-gradient(var(--c), var(--c)) top right / 2px var(--L),
+      linear-gradient(var(--c), var(--c)) bottom left / var(--L) 2px,
+      linear-gradient(var(--c), var(--c)) bottom left / 2px var(--L),
+      linear-gradient(var(--c), var(--c)) bottom right / var(--L) 2px,
+      linear-gradient(var(--c), var(--c)) bottom right / 2px var(--L);
+    background-repeat: no-repeat;
+  }
+
+  .zone--twilight + .zone {
+    border-top-color: transparent;
+  }
+
+  .zone--deep .zone-copy {
     color: var(--color-muted);
   }
 
-  /* Phone: depth above text */
-  @media (max-width: 700px) {
-    .depth-bands {
-      grid-template-rows: minmax(8rem, auto) minmax(16rem, auto) minmax(9rem, auto);
+  /* While the readout is running, the band you are in is bright and the others dim */
+  .is-live .zone-copy {
+    opacity: 0.4;
+  }
+
+  .is-live[data-zone='sunlit'] .zone--sunlit .zone-copy,
+  .is-live[data-zone='twilight'] .zone--twilight .zone-copy,
+  .is-live[data-zone='deep'] .zone--deep .zone-copy {
+    opacity: 1;
+  }
+
+  /* ---------- Ship, cable and deep vehicle ---------- */
+
+  .ship {
+    --ship-x: 56%;
+    --ship-w: clamp(170px, 24vw, 360px);
+    position: absolute;
+    left: var(--ship-x);
+    /* the waterline is 150 units down the 600-unit-wide drawing */
+    top: calc(var(--ship-w) * -150 / 600);
+    width: var(--ship-w);
+    height: auto;
+    z-index: 1;
+    fill: var(--light-text);
+  }
+
+  .tether {
+    position: absolute;
+    left: calc(56% + clamp(170px, 24vw, 360px) * 53 / 600);
+    top: calc(clamp(170px, 24vw, 360px) * -100 / 600);
+    height: calc(335 * var(--m) + clamp(170px, 24vw, 360px) * 100 / 600);
+    border-left: 1px dashed rgb(232 241 245 / 0.45);
+    z-index: 1;
+  }
+
+  .vehicle {
+    position: absolute;
+    left: calc(56% + clamp(170px, 24vw, 360px) * 53 / 600);
+    top: calc(335 * var(--m));
+    width: 1.5rem;
+    height: 1rem;
+    transform: translateX(-50%);
+    border: 1.5px solid rgb(232 241 245 / 0.8);
+    z-index: 1;
+  }
+
+  /* its light shining down into the dark */
+  .vehicle::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 11rem;
+    height: calc(60 * var(--m));
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse 50% 100% at 50% 0, rgb(160 245 235 / 0.22), transparent 75%);
+    clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%);
+  }
+
+  /* ---------- Stickers ---------- */
+
+  .sticker {
+    position: absolute;
+    z-index: 1;
+    max-width: none;
+    pointer-events: none;
+    /* --p (0 to 1) is how far you have scrolled through the column, set by the script below */
+    transform: translateY(calc((var(--p, 0.5) - 0.5) * var(--drift)));
+  }
+
+  .sticker--shark {
+    --drift: -90px;
+    top: calc(85 * var(--m));
+    left: 42%;
+    width: min(62%, 660px);
+  }
+
+  .sticker--jelly {
+    --drift: 120px;
+    top: calc(195 * var(--m));
+    /* its cut-off side sits exactly on the right edge of the screen */
+    right: calc(-1 * var(--bleed));
+    width: clamp(220px, 34vw, 540px);
+  }
+
+  .talosaur {
+    position: absolute;
+    top: calc(165 * var(--m));
+    left: calc(var(--rule-w) + var(--space-md));
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    animation: bob 6s ease-in-out infinite;
+  }
+
+  .talosaur img {
+    width: clamp(3rem, 2rem + 2vw, 4rem);
+    height: auto;
+  }
+
+  .talosaur .label {
+    color: var(--color-text);
+  }
+
+  @keyframes bob {
+    50% {
+      transform: translateY(-0.6rem);
+    }
+  }
+
+  /* ---------- The moving readout ---------- */
+
+  .depth-gauge {
+    display: none;
+    position: sticky;
+    top: 55svh;
+    height: 0;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  :global(.js) .depth-gauge {
+    display: block;
+  }
+
+  /* the line across, with a small pointer on the ruler */
+  .depth-gauge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid color-mix(in srgb, var(--color-accent) 75%, transparent);
+  }
+
+  .depth-gauge::after {
+    content: '';
+    position: absolute;
+    top: -0.4rem;
+    left: 0;
+    border: 0.4rem solid transparent;
+    border-left: 0.6rem solid var(--color-accent);
+  }
+
+  .gauge-num {
+    position: absolute;
+    top: 0.6rem;
+    right: 0;
+    margin: 0;
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    font-weight: 800;
+    font-size: clamp(3rem, 1.5rem + 5vw, 7.5rem);
+    font-variant-numeric: tabular-nums;
+    line-height: 0.8;
+    color: var(--color-accent);
+    text-shadow: 0 0 2rem rgb(6 18 31 / 0.6);
+  }
+
+  .gauge-unit {
+    font-size: 0.4em;
+    margin-left: 0.1em;
+  }
+
+  .gauge-zone {
+    position: absolute;
+    top: calc(0.9rem + clamp(3rem, 1.5rem + 5vw, 7.5rem) * 0.8);
+    right: 0;
+    margin: 0;
+    color: var(--color-text);
+    white-space: nowrap;
+  }
+
+  /* ---------- Phone ---------- */
+
+  @media (max-width: 760px) {
+    .depth-sea {
+      --rule-w: 2.75rem;
     }
 
-    .band {
-      grid-template-columns: 1fr;
-      gap: var(--space-xs);
-      padding: var(--space-md);
+    .depth-ruler {
+      font-size: 0.6rem;
     }
 
-    .band-text {
+    .depth-ruler li {
+      left: 1.6rem;
+    }
+
+    .zone-copy {
+      max-width: 15rem;
+      padding: 0.75rem 0 0 0.75rem;
+    }
+
+    .zone-text {
       font-size: var(--text-base);
+    }
+
+    /* Flip the ship and push it to the right edge, so its cable runs down the right side
+       instead of through the band text */
+    .ship {
+      left: auto;
+      right: 0;
+      transform: scaleX(-1);
+    }
+
+    .tether,
+    .vehicle {
+      left: auto;
+      right: calc(clamp(170px, 24vw, 360px) * 53 / 600);
+    }
+
+    .vehicle {
+      transform: translateX(50%);
+    }
+
+    .sticker--shark {
+      --drift: -50px;
+      left: 22%;
+      width: 88%;
+    }
+
+    .sticker--jelly {
+      --drift: 60px;
+      width: 62vw;
+    }
+
+    .talosaur {
+      left: calc(var(--rule-w) + 0.75rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .talosaur {
+      animation: none;
+    }
+
+    .zone-copy {
+      transition: none;
     }
   }
 </style>
+
+<script>
+  // Reads the depth under the middle-of-screen line, highlights the band you are in,
+  // and lets the stickers drift a little. Runs once per animation frame while scrolling.
+  const fig = document.querySelector<HTMLElement>('[data-depth]');
+
+  if (fig) {
+    const col = fig.querySelector<HTMLElement>('.depth-col')!;
+    const gauge = fig.querySelector<HTMLElement>('.depth-gauge')!;
+    const num = fig.querySelector<HTMLElement>('[data-depth-num]')!;
+    const zoneLabel = fig.querySelector<HTMLElement>('[data-depth-zone]')!;
+    const max = Number(fig.dataset.max);
+    const bands: { zone: string; to: number; label: string }[] = JSON.parse(fig.dataset.bands || '[]');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    fig.classList.add('is-live');
+    let queued = false;
+
+    const update = () => {
+      queued = false;
+      const c = col.getBoundingClientRect();
+      const g = gauge.getBoundingClientRect();
+      const depth = Math.min(max, Math.max(0, ((g.top - c.top) / c.height) * max));
+      const band = bands.find((b) => depth < b.to) ?? bands[bands.length - 1];
+
+      num.textContent = String(Math.round(depth));
+      if (fig.dataset.zone !== band.zone) {
+        fig.dataset.zone = band.zone;
+        zoneLabel.textContent = band.label;
+      }
+      if (!reduceMotion) {
+        const p = (window.innerHeight / 2 - c.top) / c.height;
+        fig.style.setProperty('--p', p.toFixed(3));
+      }
+    };
+
+    const queue = () => {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    window.addEventListener('scroll', queue, { passive: true });
+    window.addEventListener('resize', queue);
+    update();
+  }
+</script>
