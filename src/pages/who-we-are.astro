@@ -46,12 +46,20 @@ const panelText = (name: string, role: string) =>
             </li>
           );
         })}
+        <!-- Sixth tile: open positions (Content doc copy) -->
+        <li class="member">
+          <a class="member-join" href={url('/positions')}>
+            <span class="label member-index">{String(team.length + 1).padStart(2, '0')}</span>
+            <span class="member-join-title">Open positions <span aria-hidden="true">→</span></span>
+          </a>
+          <p class="member-join-text" style="margin-top: var(--space-sm);">We're recruiting. See what roles are open.</p>
+        </li>
       </ul>
     </section>
   </div>
 
   <!-- Inset photo sitting across the edge between the team and the photo below -->
-  <Patch variant="contact" images={['frame-deck.jpg', 'frame-pipette.jpg', 'frame-rover.jpg']} captions={['On deck', 'In the lab', 'At depth']} side="right" straddle />
+  <Patch variant="contact" images={['frame-descent.jpg', 'frame-wall.jpg', 'frame-feather-star.jpg']} captions={['Descent', 'Canyon wall', 'Feather star']} side="right" straddle />
 
   <!-- One big photo (ocean sunfish, false colour) leading on to Positions. Copy: Content doc, "Open positions" card. -->
   <PhotoBand image="who-we-are.jpg" position="45% 40%" heading="We're recruiting." tag="Open positions">
@@ -62,7 +70,7 @@ const panelText = (name: string, role: string) =>
 <style>
   .team-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space-xl) var(--space-md);
     margin: 0;
     padding: var(--space-lg) 0 0;
@@ -139,8 +147,41 @@ const panelText = (name: string, role: string) =>
 
   @media (max-width: 1023px) {
     .team-grid {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+  }
+
+  /* The last tile: an invitation to join, linking to Positions (Content doc "Open positions" card) */
+  .member-join {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    aspect-ratio: 4 / 5;
+    padding: var(--space-md);
+    border: 1px dashed var(--color-accent);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: var(--color-text);
+    transition: background var(--duration) var(--ease);
+  }
+
+  .member-join:hover {
+    background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+  }
+
+  .member-join-title {
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 0.8rem + 2vw, 2.6rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .member-join-text {
+    margin: 0;
+    color: var(--color-muted);
   }
 
   /* Phone: keep two across so each card doesn't fill the whole screen */

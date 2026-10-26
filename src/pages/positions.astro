@@ -34,6 +34,10 @@ import { positions, positionsHeadline, positionsIntro, applicationFormUrl } from
                 <dd>{role.skills}</dd>
               </div>
             </dl>
+            <a class="label role-apply" href={applicationFormUrl} target="_blank" rel="noopener noreferrer">
+              Apply <span aria-hidden="true">→</span>
+              <span class="visually-hidden">for {role.title} (opens the application form in a new tab)</span>
+            </a>
           </li>
         ))}
       </ol>
@@ -74,6 +78,23 @@ import { positions, positionsHeadline, positionsIntro, applicationFormUrl } from
 
   .role-title {
     font-size: var(--text-xl);
+  }
+
+  .role-apply {
+    grid-column: -2 / -1;
+    justify-self: start;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid var(--color-accent);
+    border-radius: 999px;
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: background var(--duration) var(--ease), color var(--duration) var(--ease);
+  }
+
+  .role-apply:hover,
+  .role-apply:focus-visible {
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
   }
 
   .role-details {
