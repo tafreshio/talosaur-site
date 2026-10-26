@@ -23,28 +23,31 @@ const items = await Promise.all(
 <BaseLayout title="News" headerOverlay>
   <PageHeader title="News" href="/news" caption="Field log · Turtle, phase 1" image="news.jpg" imagePosition="44% 50%" />
 
-  <section class="container">
-    <ol class="news-list" data-reveal-group>
-      {items.map(({ entry, Content, hasPhoto }) => (
-        <li id={entry.id} class:list={['news-item', { 'news-item--has-photo': hasPhoto }]}>
-          <p class:list={['label', 'news-date', { 'news-date--upcoming': entry.data.upcoming }]}>
-            {entry.data.date
-              ? <time datetime={entry.data.date.toISOString().slice(0, 10)}>{formatNewsDate(entry)}</time>
-              : formatNewsDate(entry)}
-          </p>
-          <div class="news-body">
-            <h2 class="news-title">{entry.data.title}</h2>
-            <div class="news-text"><Content /></div>
-          </div>
-          {hasPhoto && (
-            <div class="news-photo">
-              <Photo file={`news/${entry.data.image}`} label={entry.data.title} ratio="4 / 3" />
+  <!-- Light band: everything below the photo header -->
+  <div class="band band--top theme-light">
+    <section class="container">
+      <ol class="news-list" data-reveal-group>
+        {items.map(({ entry, Content, hasPhoto }) => (
+          <li id={entry.id} class:list={['news-item', { 'news-item--has-photo': hasPhoto }]}>
+            <p class:list={['label', 'news-date', { 'news-date--upcoming': entry.data.upcoming }]}>
+              {entry.data.date
+                ? <time datetime={entry.data.date.toISOString().slice(0, 10)}>{formatNewsDate(entry)}</time>
+                : formatNewsDate(entry)}
+            </p>
+            <div class="news-body">
+              <h2 class="news-title">{entry.data.title}</h2>
+              <div class="news-text"><Content /></div>
             </div>
-          )}
-        </li>
-      ))}
-    </ol>
-  </section>
+            {hasPhoto && (
+              <div class="news-photo">
+                <Photo file={`news/${entry.data.image}`} label={entry.data.title} ratio="4 / 3" />
+              </div>
+            )}
+          </li>
+        ))}
+      </ol>
+    </section>
+  </div>
 </BaseLayout>
 
 <style>

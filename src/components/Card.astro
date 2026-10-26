@@ -16,9 +16,10 @@ interface Props {
   index?: number;      // shows a small "01", "02"... in the card
   ratio?: string;      // photo shape, e.g. '4 / 3' or '16 / 9'
   feature?: boolean;   // true = the big lead card in a feature layout (larger title)
+  badge?: string;      // small sticker on the photo, e.g. 'Live' (shows with a red dot)
 }
 
-const { title, text, href, photo, photoLabel = title, index, ratio = '4 / 3', feature = false } = Astro.props;
+const { title, text, href, photo, photoLabel = title, index, ratio = '4 / 3', feature = false, badge } = Astro.props;
 const hasPhoto = !!photo && imageExists(photo);
 const isExternal = href.startsWith('http');
 const isPlaceholderLink = href.startsWith('[');
@@ -28,6 +29,7 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
 <article class:list={['card', { 'card--feature': feature }]}>
   <div class="card-media" style={`aspect-ratio: ${ratio};`}>
     {hasPhoto && <img src={url(`/images/${photo}`)} alt={photoLabel} loading="lazy" decoding="async" />}
+    {badge && <span class="card-badge label"><span class="card-badge-dot" aria-hidden="true"></span>{badge}</span>}
   </div>
 
   <div class="card-body">
@@ -63,6 +65,7 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
 
   /* The photo. Its color glitch is baked into the image file (static, like the page headers). */
   .card-media {
+    position: relative; /* so the badge can sit in its corner */
     width: 100%;
     overflow: hidden;
     border-radius: var(--radius);
@@ -131,6 +134,28 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
   }
 
   /* ---------- Hover ---------- */
+
+  /* Badge: a small dark pill in the photo's top-left corner, e.g. "● LIVE".
+     It always uses the dark palette, so it reads the same on light and dark bands. */
+  .card-badge {
+    position: absolute;
+    top: var(--space-sm);
+    left: var(--space-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.45em 0.9em;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--light-text) 80%, transparent);
+    color: var(--light-bg);
+  }
+
+  .card-badge-dot {
+    width: 0.6em;
+    height: 0.6em;
+    border-radius: 50%;
+    background: var(--color-live);
+  }
 
   /* Feature card: same parts, bigger title */
   .card--feature .card-title {
