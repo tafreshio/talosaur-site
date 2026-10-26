@@ -13,24 +13,27 @@ const emailHref = contactHref(teamEmail);
 <BaseLayout title="Work with us" description={intro} headerOverlay>
   <PageHeader title="Work with us" heading="Get in touch" href="/work-with-us" intro={intro} caption="Research · Conservation · Fisheries · Offshore" image="work-with-us.jpg" imagePosition="62% 50%" />
 
-  <section class="container">
-    <dl class="contact-list" data-reveal-group>
-      <div class="contact-row">
-        <dt class="label">Email</dt>
-        <dd>
-          {emailHref ? (
-            <a class="contact-value contact-email" href={emailHref}>{teamEmail} <span aria-hidden="true">→</span></a>
-          ) : (
-            <span class="contact-value contact-placeholder">{teamEmail}</span>
-          )}
-        </dd>
-      </div>
-      <div class="contact-row">
-        <dt class="label">Location</dt>
-        <dd><span class="contact-value">{location}</span></dd>
-      </div>
-    </dl>
-  </section>
+  <!-- Light band: everything below the photo header -->
+  <div class="band band--top theme-light">
+    <section class="container">
+      <dl class="contact-list" data-reveal-group>
+        <div class="contact-row">
+          <dt class="label">Email</dt>
+          <dd>
+            {emailHref ? (
+              <a class="contact-value contact-email" href={emailHref}>{teamEmail} <span aria-hidden="true">→</span></a>
+            ) : (
+              <span class="contact-value contact-placeholder">{teamEmail}</span>
+            )}
+          </dd>
+        </div>
+        <div class="contact-row">
+          <dt class="label">Location</dt>
+          <dd><span class="contact-value">{location}</span></dd>
+        </div>
+      </dl>
+    </section>
+  </div>
 </BaseLayout>
 
 <style>

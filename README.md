@@ -73,21 +73,23 @@ All photos live in `public/images/`. To swap one, overwrite the file and keep th
 
 | File | Card | What is in it now |
 |---|---|---|
-| `home-turtle.jpg` | Turtle | The 1775 Turtle illustration in violet dots on mint, with orange slices |
-| `home-edna.jpg` | Deep eDNA possibilities | DNA helix in thermal orange on violet |
-| `home-live.jpg` | Talosaur Live | Milling machine as a "LIVE" camera feed, half violet (links to Twitch) |
-| `home-team.jpg` | Who we are | Talosaur logo cut out of a school of fish, blue to thermal |
-| `home-positions.jpg` | Open positions | Pipette and well plate in violet and mint |
-| `home-build-log.jpg` | Our build log | The test ladder, Bench to Offshore, with "Now: Bench", in teal and copper |
-| `home-twilight-zone.jpg` | The twilight zone | Sea nettle jellyfish glowing orange, dissolving into cyan dots |
-| `home-meet-the-team.jpg` | Meet the team | Crew and rover on a research ship deck (NOAA), half sunset colors |
-| `home-get-in-touch.jpg` | Get in touch | A ship offshore under an orange sky |
+| `home-turtle.jpg` | Turtle | The 1775 Turtle illustration |
+| `home-edna.jpg` | Deep eDNA possibilities | DNA helix |
+| `home-live.jpg` | Talosaur Live | A lathe at work, with a "● LIVE" badge on top (links to Twitch; the badge is the `badge` line in `src/data/home.ts`) |
+| `home-team.jpg` | Who we are | A school of fish |
+| `home-positions.jpg` | Open positions | Pipette and well plate |
+| `home-build-log.jpg` | Our build log | Hands at a microscope |
+| `home-twilight-zone.jpg` | The twilight zone | Sea nettle jellyfish |
+| `home-meet-the-team.jpg` | Meet the team | Crew and rover on a research ship deck (NOAA) |
+| `home-get-in-touch.jpg` | Get in touch | A ship offshore |
 
-Swap any of these for real team photos whenever you have them. The build log image shows "Now: Bench"; when testing moves to the next step, ask for it to be regenerated (or swap in a photo from that test).
+Swap any of these for real team photos whenever you have them.
 
-**Page headers.** Every page in the top menu opens with a full-width photo band. The photos live in `public/images/pages/` and are named after the page: `who-we-are.jpg`, `the-problem.jpg`, `news.jpg`, `work-with-us.jpg`, `positions.jpg`, `donate.jpg`. Each is 2400 × 1350 and edited in the same style as the Home video (dots, smears, scan lines). The title sits over the bottom-left of the photo, so keep that area calm and darkish. To change which part of a photo stays visible on phones, edit `imagePosition` where the page uses `<PageHeader>` (for example `imagePosition="60% 50%"` keeps a bit right of center). Delete a page's photo and that page goes back to a plain title.
+**Page headers.** Every page in the top menu opens with a full-width photo band. The photos live in `public/images/pages/` and are named after the page: `who-we-are.jpg`, `the-problem.jpg`, `news.jpg`, `work-with-us.jpg`, `positions.jpg`, `donate.jpg`. Each is 2400 × 1350 (see the photo rule below for which ones are edited). The title sits over the bottom-left of the photo, so keep that area calm and darkish. To change which part of a photo stays visible on phones, edit `imagePosition` where the page uses `<PageHeader>` (for example `imagePosition="60% 50%"` keeps a bit right of center). Delete a page's photo and that page goes back to a plain title.
 
-**Color glitch.** Like Colossal's, the page-header photos and the Home card photos are permanently false-colored: a gradient map swaps the photo's light and dark for bold colors (violet and mint, sunset orange and magenta, thermal, copper, teal), in zones that fade into the natural photo, with halftone dots, shifted slices and color-split bands. It's baked into the image files (nothing moves), so a replacement photo needs the same treatment: ask for it, or use a gradient map in any photo app.
+**Photo rule (natural vs edited).** Like Colossal: photos of people, lab work and machines stay natural, with no filter. False-color edits (gradient maps, halftone dots, shifted slices) are only for nature and animals and for graphic "stickers". So the Home cards are all natural photos, and of the page headers only Who we are (fish school), The Problem (sunbeams) and Donate (reef) are edited; News, Work with us and Positions are natural. The halftone Talosaur disc on the News header is a sticker on top of a natural photo. A replacement for an edited header needs the same treatment (ask for it, or use a gradient map in any photo app).
+
+**Light and dark bands.** Like Colossal's pages, the site switches between light and dark stretches. Home: dark video, then light (Sections 01 and 02), dark (03), light (04), dark (05), light (06), dark footer. Inner pages: dark photo header, then a light band for the content. A band is a `<div class="band theme-light">` (light) or `<div class="band">` (dark) around sections; the light colors are the `--light-...` variables in `src/styles/global.css`.
 
 **Page-header captions.** Each page header has a thin line under the title with a hatched `//////` stripe and a short caption in [ brackets ], for example `[ 50–300 M · THE TWILIGHT ZONE ]`. Change or remove it with the `caption` text where the page uses `<PageHeader>`.
 

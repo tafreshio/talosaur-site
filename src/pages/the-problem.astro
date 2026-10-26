@@ -18,36 +18,42 @@ import { isPlaceholder } from '../data/site';
     imagePosition="50% 30%"
   />
 
-  <!-- Section 01: big numbers -->
-  <section class="container section">
-    <SectionHeader number={1} />
-    <div class="stats" data-reveal-group>
-      {stats.map((stat, i) => <StatCallout {...stat} index={i + 1} />)}
-    </div>
-    <p class:list={['label', 'source', { 'source--placeholder': isPlaceholder(statsSource) }]}>
-      Source: {statsSource}
-    </p>
-  </section>
+  <!-- Light band: big numbers and reasons -->
+  <div class="band theme-light">
+    <!-- Section 01: big numbers -->
+    <section class="container section">
+      <SectionHeader number={1} />
+      <div class="stats" data-reveal-group>
+        {stats.map((stat, i) => <StatCallout {...stat} index={i + 1} />)}
+      </div>
+      <p class:list={['label', 'source', { 'source--placeholder': isPlaceholder(statsSource) }]}>
+        Source: {statsSource}
+      </p>
+    </section>
 
-  <!-- Section 02: why it's hard to study -->
-  <section class="container section">
-    <SectionHeader number={2} />
-    <ol class="reasons" data-reveal-group>
-      {reasons.map((reason, i) => (
-        <li class="reason">
-          <p class="label reason-num">{String(i + 1).padStart(2, '0')}</p>
-          <h2 class="reason-title">{reason.title}</h2>
-          <p class="reason-text">{reason.text}</p>
-        </li>
-      ))}
-    </ol>
-  </section>
+    <!-- Section 02: why it's hard to study -->
+    <section class="container section">
+      <SectionHeader number={2} />
+      <ol class="reasons" data-reveal-group>
+        {reasons.map((reason, i) => (
+          <li class="reason">
+            <p class="label reason-num">{String(i + 1).padStart(2, '0')}</p>
+            <h2 class="reason-title">{reason.title}</h2>
+            <p class="reason-text">{reason.text}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+  </div>
 
-  <!-- Section 03: depth bands graphic -->
-  <section class="container section">
-    <SectionHeader number={3} />
-    <div data-reveal><DepthBands /></div>
-  </section>
+  <!-- Dark band: the depth graphic is drawn for a dark background -->
+  <div class="band">
+    <!-- Section 03: depth bands graphic -->
+    <section class="container section">
+      <SectionHeader number={3} />
+      <div data-reveal><DepthBands /></div>
+    </section>
+  </div>
 </BaseLayout>
 
 <style>

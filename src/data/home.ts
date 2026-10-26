@@ -24,6 +24,7 @@ export const heroCards = [
     title: 'Talosaur Live',
     text: 'Join the live build stream and see our engineers at work.',
     href: twitchUrl, // set in src/data/site.ts
+    badge: 'Live', // small "● LIVE" sticker on the photo
     photo: 'home-live.jpg',
     photoLabel: 'Live build stream',
   },

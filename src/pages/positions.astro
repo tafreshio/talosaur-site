@@ -13,26 +13,29 @@ import { positions, positionsHeadline, positionsIntro, applicationFormUrl } from
     </a>
   </PageHeader>
 
-  <section class="container">
-    <ol class="roles" data-reveal-group>
-      {positions.map((role, i) => (
-        <li class="role">
-          <p class="label role-num">{String(i + 1).padStart(2, '0')}</p>
-          <h2 class="role-title">{role.title}</h2>
-          <dl class="role-details">
-            <div>
-              <dt class="label">What you'd do</dt>
-              <dd>{role.whatYoullDo}</dd>
-            </div>
-            <div>
-              <dt class="label">Helpful skills</dt>
-              <dd>{role.skills}</dd>
-            </div>
-          </dl>
-        </li>
-      ))}
-    </ol>
-  </section>
+  <!-- Light band: everything below the photo header -->
+  <div class="band band--top theme-light">
+    <section class="container">
+      <ol class="roles" data-reveal-group>
+        {positions.map((role, i) => (
+          <li class="role">
+            <p class="label role-num">{String(i + 1).padStart(2, '0')}</p>
+            <h2 class="role-title">{role.title}</h2>
+            <dl class="role-details">
+              <div>
+                <dt class="label">What you'd do</dt>
+                <dd>{role.whatYoullDo}</dd>
+              </div>
+              <div>
+                <dt class="label">Helpful skills</dt>
+                <dd>{role.skills}</dd>
+              </div>
+            </dl>
+          </li>
+        ))}
+      </ol>
+    </section>
+  </div>
 </BaseLayout>
 
 <style>

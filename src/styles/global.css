@@ -18,6 +18,15 @@
   --color-line: #1c3a52;        /* Dividers and borders */
   --color-white: #ffffff;       /* Pure white: the inverted wordmark over the Home video */
 
+  /* Light stretches of the page (see .theme-light below): foam white with deep-water text */
+  --light-bg: #eef3f2;          /* Foam: light section background */
+  --light-surface: #dde6e6;     /* Panels on light sections */
+  --light-text: #0b1620;        /* Deep navy text */
+  --light-muted: #4f626d;       /* Secondary text on light */
+  --light-accent: #0b7480;      /* Deeper cyan that stays readable on white */
+  --light-line: #c3d0d1;        /* Dividers on light */
+  --color-live: #e5484d;        /* The red "live" dot on the Talosaur Live card */
+
   /* Fonts (loaded from Google Fonts in BaseLayout.astro) */
   --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -265,6 +274,34 @@ h3 {
     transform: none;
     transition: none;
   }
+}
+
+/* ---------- Bands: light and dark stretches ----------
+   Like Colossal's pages, the site switches between light and dark stretches instead of
+   one color all the way down. Group sections in a band:
+     <div class="band theme-light"> ...sections... </div>   light stretch
+     <div class="band"> ...sections... </div>               dark stretch
+   .theme-light works by redefining the color variables inside it, so everything in the
+   band (cards, labels, buttons, lines) switches to its light version automatically. */
+.band {
+  padding-bottom: var(--space-2xl);
+}
+
+/* Inner pages: a little room between the photo header and the first section */
+.band--top {
+  padding-top: var(--space-xl);
+}
+
+.theme-light {
+  --color-bg: var(--light-bg);
+  --color-surface: var(--light-surface);
+  --color-text: var(--light-text);
+  --color-muted: var(--light-muted);
+  --color-accent: var(--light-accent);
+  --color-accent-ink: var(--light-bg);
+  --color-line: var(--light-line);
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 /* Hidden visually but still read by screen readers */

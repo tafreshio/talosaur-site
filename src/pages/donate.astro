@@ -20,30 +20,33 @@ const financeHref = contactHref(financeContact);
 <BaseLayout title="Donate" description={intro} headerOverlay>
   <PageHeader title="Donate" heading="Support our research" href="/donate" intro={intro} caption="Parts · Testing · Field trips" image="donate.jpg" imagePosition="40% 50%" />
 
-  <section class="container">
-    <SectionHeader number={1} title="Ways to help" />
-    <ol class="ways" data-reveal-group>
-      {waysToHelp.map((way, i) => (
-        <li class="way">
-          <p class="label way-num">{String(i + 1).padStart(2, '0')}</p>
-          <h3 class="way-title">{way.title}</h3>
-          <p class="way-text">{way.text}</p>
-        </li>
-      ))}
-    </ol>
-  </section>
+  <!-- Light band: everything below the photo header -->
+  <div class="band band--top theme-light">
+    <section class="container">
+      <SectionHeader number={1} title="Ways to help" />
+      <ol class="ways" data-reveal-group>
+        {waysToHelp.map((way, i) => (
+          <li class="way">
+            <p class="label way-num">{String(i + 1).padStart(2, '0')}</p>
+            <h3 class="way-title">{way.title}</h3>
+            <p class="way-text">{way.text}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
 
-  <section class="container contact">
-    <div class="contact-box" data-reveal>
-      {financeHref ? (
-        <a class="button" href={financeHref}>Contact our finance team <span aria-hidden="true">→</span></a>
-      ) : (
-        <span class="button button--disabled" aria-disabled="true">Contact our finance team</span>
-      )}
-      {!financeHref && <p class="label">Link: {financeContact}</p>}
-      <p class="contact-note">No online payments on the site for now; every donation starts with a conversation.</p>
-    </div>
-  </section>
+    <section class="container contact">
+      <div class="contact-box" data-reveal>
+        {financeHref ? (
+          <a class="button" href={financeHref}>Contact our finance team <span aria-hidden="true">→</span></a>
+        ) : (
+          <span class="button button--disabled" aria-disabled="true">Contact our finance team</span>
+        )}
+        {!financeHref && <p class="label">Link: {financeContact}</p>}
+        <p class="contact-note">No online payments on the site for now; every donation starts with a conversation.</p>
+      </div>
+    </section>
+  </div>
 </BaseLayout>
 
 <style>
