@@ -4,6 +4,7 @@
 export const teamEmail = '[team email]'; // PLACEHOLDER: replace with the real address, e.g. 'team@talosaur.org'
 export const financeContact = '[finance email or form]'; // PLACEHOLDER: an email address or a form link (https://...)
 export const location = 'College Station, Texas';
+export const twitchUrl = 'https://www.twitch.tv/nand0guz'; // live build stream (footer and the Home "Talosaur Live" card)
 
 // Top navigation, in order. Numbers ("01", "02"...) are added automatically.
 export const mainNav = [
@@ -40,6 +41,7 @@ export const socialLinks = [
   { label: 'Instagram', href: '' }, // PLACEHOLDER: Instagram URL
   { label: 'LinkedIn', href: '' },  // PLACEHOLDER: LinkedIn URL
   { label: 'YouTube', href: '' },   // PLACEHOLDER: YouTube URL
+  { label: 'Twitch', href: twitchUrl }, // the live build stream
 ];
 
 // Bottom row of the footer
