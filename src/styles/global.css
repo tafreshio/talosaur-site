@@ -27,6 +27,14 @@
   --light-line: #c3d0d1;        /* Dividers on light */
   --color-live: #e5484d;        /* The red "live" dot on the Talosaur Live card */
 
+  /* Accent colours from the false-colour photo edits (Colossal-style colour blocks and dots).
+     Used sparingly: the lime block in the Work with us collage, small dots and tags on edited photos.
+     The images in public/images/accents/ were made with these same colours. */
+  --color-lime: #c6f04a;
+  --color-orange: #ff7a2f;
+  --color-violet: #5b2be0;
+  --color-magenta: #e14bff;
+
   /* Fonts (loaded from Google Fonts in BaseLayout.astro) */
   --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;

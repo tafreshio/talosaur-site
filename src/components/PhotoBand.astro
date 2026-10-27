@@ -8,6 +8,7 @@
 // To cross the edge below the band with an inset photo, put a <Patch> right after it.
 import { url } from '../lib/url';
 import { imageUrl } from '../lib/images';
+import { keepDots } from '../lib/text';
 
 interface Props {
   image: string;              // file name in public/images/bands/
@@ -35,7 +36,7 @@ const hasSlot = Astro.slots.has('default');
       {tag && (
         <div class="photo-band-meta">
           <span class="photo-band-hatch" aria-hidden="true"></span>
-          <p class="label photo-band-tag">[ {tag} ]</p>
+          <p class="label photo-band-tag">[ {keepDots(tag)} ]</p>
         </div>
       )}
     </div>
@@ -124,6 +125,7 @@ const hasSlot = Astro.slots.has('default');
   .photo-band-tag {
     margin: 0;
     padding: 0.3rem 0.55rem;
+    text-wrap: balance; /* if it wraps, both lines get a similar length (no lone "]") */
     color: var(--color-white);
     background: rgb(6 18 31 / 0.55);
     border: 1px solid rgb(232 241 245 / 0.22);

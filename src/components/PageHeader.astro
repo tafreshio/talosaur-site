@@ -9,6 +9,7 @@
 import { mainNav } from '../data/site';
 import { imageExists, imageUrl } from '../lib/images';
 import { url } from '../lib/url';
+import { keepDots } from '../lib/text';
 
 interface Props {
   title: string;          // the page name, shown in the small label ("02 · The Problem")
@@ -41,7 +42,7 @@ const photoUrl = imageUrl(`pages/${image}`);
     {caption && (
       <div class="page-meta">
         <span class="page-hatch" aria-hidden="true"></span>
-        <p class="label page-caption">[ {caption} ]</p>
+        <p class="label page-caption">[ {keepDots(caption)} ]</p>
       </div>
     )}
     {intro && <p class="page-intro">{intro}</p>}
@@ -180,6 +181,7 @@ const photoUrl = imageUrl(`pages/${image}`);
   .page-caption {
     margin: 0 0 0 auto;
     padding: 0.35rem 0.65rem;
+    text-wrap: balance; /* if it wraps, both lines get a similar length (no lone "]") */
     text-align: right;
     color: var(--color-text);
     background: rgb(6 18 31 / 0.55);

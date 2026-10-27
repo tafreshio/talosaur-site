@@ -5,6 +5,7 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { url } from '../lib/url';
+import { location, socialLinks } from '../data/site';
 import '../styles/global.css';
 
 interface Props {
@@ -12,20 +13,60 @@ interface Props {
   description?: string;
   // true = the header floats transparently over the top of the page (used with a full-screen hero)
   headerOverlay?: boolean;
+  // true = ask search engines to leave this page out of their results (used by the 404 page)
+  noindex?: boolean;
 }
+
+const defaultDescription =
+  'Talosaur is a Texas-based student team building a low-cost underwater robot that finds, follows and films marine life in the ocean\'s twilight zone.';
 
 const {
   title,
   headerOverlay = false,
-  description = 'Talosaur is a Texas-based student team building a low-cost underwater robot that finds, follows and films marine life in the ocean\'s twilight zone.',
+  noindex = false,
+  description = defaultDescription,
 } = Astro.props;
 
-const fullTitle = title ? `${title} | Talosaur` : 'Talosaur';
+// The tab title, which is also the blue link text in search results.
+// Inner pages: "News | Talosaur". Home: the name first, then a few words on what Talosaur is,
+// so a search for "talosaur" finds a page that is clearly about Talosaur.
+const fullTitle = title ? `${title} | Talosaur` : 'Talosaur | Low-cost underwater robot for the twilight zone';
 
-// Full addresses for the social-share preview (uses "site" and "base" in astro.config.mjs).
+// Full addresses (uses "site" and "base" in astro.config.mjs).
 // Astro.url.pathname already includes the base; the image path gets it from url().
 const pageUrl = new URL(Astro.url.pathname, Astro.site);
 const shareImage = new URL(url('/images/og-image.jpg'), Astro.site);
+const homeUrl = new URL(url('/'), Astro.site);
+const isHome = pageUrl.href === homeUrl.href;
+
+// Structured data for search engines, on the Home page only: tells Google the site is called
+// "Talosaur", who runs it, and which logo and social accounts belong to it.
+// It isn't shown on the page. Social accounts are added automatically once their links are filled
+// in src/data/site.ts. Twitch is left out because that channel belongs to a team member, not the team.
+const [city, region] = location.split(',').map((part) => part.trim());
+const sameAs = socialLinks.filter((link) => link.href && link.label !== 'Twitch').map((link) => link.href);
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${homeUrl.href}#website`,
+      name: 'Talosaur',
+      url: homeUrl.href,
+      publisher: { '@id': `${homeUrl.href}#organization` },
+    },
+    {
+      '@type': 'Organization',
+      '@id': `${homeUrl.href}#organization`,
+      name: 'Talosaur',
+      url: homeUrl.href,
+      logo: new URL(url('/apple-touch-icon.png'), Astro.site).href,
+      description: defaultDescription,
+      address: { '@type': 'PostalAddress', addressLocality: city, addressRegion: region, addressCountry: 'US' },
+      ...(sameAs.length ? { sameAs } : {}),
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -36,6 +77,12 @@ const shareImage = new URL(url('/images/og-image.jpg'), Astro.site);
     <meta name="description" content={description} />
     <meta name="theme-color" content="#06121f" />
     <title>{fullTitle}</title>
+
+    <!-- Search engines: the one official address for this page (so http://, www. and https://
+         versions all count as the same page), and whether to list it at all -->
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={pageUrl} />}
+    <link rel="sitemap" href={url('/sitemap-index.xml')} />
+    {isHome && <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
 
     <!-- Icons: the striped-disc mark on a navy tile, from the brand pack (public/favicon.*, public/apple-touch-icon.png) -->
     <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />

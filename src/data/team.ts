@@ -4,17 +4,32 @@
 // photo:    filename in public/images/team/ (portrait, about 800 x 1000 px). Until the file exists,
 //           the card shows a panel with the person's initials instead.
 // linkedin: full LinkedIn URL, or leave as '' to hide the link
+// lead:     true for the one person shown on their own at the top, with a description box beside them
+// bio:      the text in that description box (only used for the lead)
 
 export const teamIntro =
   "We're a team of students from Texas A&M and UT Austin. Most of us build in College Station.";
 
-export const team = [
+export interface TeamMember {
+  name: string;
+  role: string;
+  majorYear: string;
+  photo: string;
+  linkedin: string;
+  lead?: boolean;
+  bio?: string;
+}
+
+export const team: TeamMember[] = [
   {
     name: 'Fernando Guzman',
     role: 'Project Lead',
     majorYear: '[Major, year]', // PLACEHOLDER
     photo: 'fernando-guzman.jpg',
     linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
+    lead: true,
+    // PLACEHOLDER: two or three sentences about Fernando
+    bio: '[Two or three sentences about Fernando: what he leads on the team, his background, and what drew him to Talosaur.]',
   },
   {
     name: 'Omeed Tafreshi',

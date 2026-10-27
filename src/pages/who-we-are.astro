@@ -1,6 +1,14 @@
 ---
-// Who we are: team cards. Team members are listed in src/data/team.ts.
-// A member with a photo in public/images/team/ gets a photo card; without one, a solid panel with initials.
+// Who we are: the team, in the style of the people sections on Colossal's Company page.
+//   - The lead (lead: true in src/data/team.ts) gets a row of their own: a big portrait with their name
+//     in violet boxes over its corner, and a description box beside it (like Colossal's chairman feature).
+//   - Everyone else is a staggered collage below: cards of different sizes, columns at different
+//     heights, colour blocks and frames offset behind the photos, and each card drifting at its own
+//     speed as you scroll.
+//
+// Team members are listed in src/data/team.ts. A member with a photo in public/images/team/ gets a
+// photo card; without one, a plain panel with their initials. People's photos stay natural (no colour
+// edits): the colour is only in the blocks behind them.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import PhotoBand from '../components/PhotoBand.astro';
@@ -9,57 +17,128 @@ import { url } from '../lib/url';
 import Photo from '../components/Photo.astro';
 import { team, teamIntro } from '../data/team';
 import { isPlaceholder } from '../data/site';
-import { imageExists } from '../lib/images';
+import { imageExists, imageUrl } from '../lib/images';
 
 // Big faded text on a panel: "Fernando Guzman" -> "FG". A [Name] placeholder shows the role instead.
 const panelText = (name: string, role: string) =>
   isPlaceholder(name) ? role : name.split(/\s+/).map((part) => part[0]).join('').slice(0, 3).toUpperCase();
+
+const pad = (n: number) => String(n).padStart(2, '0');
+
+// The lead goes on top on their own; the rest of the team follows in the collage
+const lead = team.find((member) => member.lead);
+const rest = team.filter((member) => member !== lead);
+const firstNumber = lead ? 2 : 1; // the lead is 01, the collage carries on from 02
+const leadHasPhoto = lead ? imageExists(`team/${lead.photo}`) : false;
+
+// How each collage card looks, in order. With more people the pattern starts again.
+//   ratio:  the photo's shape (width / height)
+//   accent: what sits behind the photo: a solid colour block or a thin offset frame
+//   drift:  how far it drifts as you scroll (different speeds make the collage move; see BaseLayout.astro)
+const looks = [
+  { ratio: '3 / 4', accent: 'block-violet', drift: 60 },
+  { ratio: '1 / 1', accent: 'frame-orange', drift: 120 },
+  { ratio: '4 / 5', accent: 'block-magenta', drift: 80 },
+  { ratio: '4 / 3', accent: 'frame-violet', drift: 100 },
+];
+const lookFor = (i: number) => looks[i % looks.length];
 ---
 
 <BaseLayout title="Who we are" description={teamIntro} headerOverlay>
   <PageHeader title="Who we are" href="/who-we-are" intro={teamIntro} caption="Students · College Station, Texas" image="who-we-are.jpg" imagePosition="45% 50%" />
 
-  <!-- Light band: everything below the photo header -->
+  <!-- Light band: the team collage -->
   <div class="band band--top theme-light">
-    <section class="container">
-      <ul class="team-grid" data-reveal-group>
-        {team.map((member, i) => {
-          const hasPhoto = imageExists(`team/${member.photo}`);
-          return (
-            <li class="member">
-              {hasPhoto ? (
-                <Photo file={`team/${member.photo}`} label={member.name} ratio="4 / 5" />
-              ) : (
-                <div class="member-panel" aria-hidden="true">
-                  <span class="label member-index">{String(i + 1).padStart(2, '0')}</span>
-                  <span class:list={['member-initials', { 'member-initials--role': isPlaceholder(member.name) }]}>{panelText(member.name, member.role)}</span>
-                </div>
-              )}
-              <h2 class="member-name">{member.name}</h2>
-              <p class="member-role">{member.role}</p>
-              <p class="member-major">{member.majorYear}</p>
-              {member.linkedin && (
-                <a class="member-linkedin label" href={member.linkedin} target="_blank" rel="noopener noreferrer">
+    <section class="container team">
+      <!-- Margin note, like the sideways labels in Colossal's left margin -->
+      <p class="label team-rail" aria-hidden="true">[ Team · {pad(team.length)} ]</p>
+      <span class="team-plus team-plus--a" aria-hidden="true">+</span>
+
+      <!-- The lead, on a row of their own -->
+      {lead && (
+        <article class="lead">
+          <div class="lead-media" data-drift="40">
+            <span class="member-accent member-accent--block-lime" aria-hidden="true"></span>
+            {leadHasPhoto ? (
+              <Photo file={`team/${lead.photo}`} label={lead.name} ratio="4 / 5" />
+            ) : (
+              <div class="member-panel" style="aspect-ratio: 4 / 5;" aria-hidden="true">
+                <span class="member-initials">{panelText(lead.name, lead.role)}</span>
+              </div>
+            )}
+            <p class="label member-tag">01 · {lead.role}</p>
+            <!-- Name in violet boxes over the photo's corner, one box per word -->
+            <h2 class="lead-name">
+              {lead.name.split(/\s+/).map((word) => <span>{word}</span>)}
+            </h2>
+          </div>
+
+          <!-- Description box -->
+          <div class="lead-box" data-drift="100">
+            <p class="label lead-role"><span aria-hidden="true">+</span> {lead.role}</p>
+            {lead.bio && <p class="lead-bio">{lead.bio}</p>}
+            <div class="lead-foot">
+              <p class="lead-major">{lead.majorYear}</p>
+              {lead.linkedin && (
+                <a class="lead-linkedin label" href={lead.linkedin} target="_blank" rel="noopener noreferrer">
                   LinkedIn <span aria-hidden="true">↗</span>
                 </a>
               )}
+            </div>
+          </div>
+        </article>
+      )}
+
+      <!-- Everyone else -->
+      <ul class="crew" data-reveal-group>
+        {rest.map((member, i) => {
+          const hasPhoto = imageExists(`team/${member.photo}`);
+          const look = lookFor(i);
+          return (
+            <li class="member">
+              <div class="member-card" data-drift={look.drift}>
+                <div class="member-media">
+                  <span class:list={['member-accent', `member-accent--${look.accent}`]} aria-hidden="true"></span>
+                  {hasPhoto ? (
+                    <Photo file={`team/${member.photo}`} label={member.name} ratio={look.ratio} />
+                  ) : (
+                    <div class="member-panel" style={`aspect-ratio: ${look.ratio};`} aria-hidden="true">
+                      <span class:list={['member-initials', { 'member-initials--role': isPlaceholder(member.name) }]}>{panelText(member.name, member.role)}</span>
+                    </div>
+                  )}
+                  <!-- Orange tag on the photo's corner, like Colossal's role tags -->
+                  <p class="label member-tag">{pad(i + firstNumber)} · {member.role}</p>
+                </div>
+                <h2 class="member-name">{member.name}</h2>
+                <p class="member-major">{member.majorYear}</p>
+                {member.linkedin && (
+                  <a class="member-linkedin label" href={member.linkedin} target="_blank" rel="noopener noreferrer">
+                    LinkedIn <span aria-hidden="true">↗</span>
+                  </a>
+                )}
+              </div>
             </li>
           );
         })}
-        <!-- Sixth tile: open positions (Content doc copy) -->
+        <!-- Last card: open positions (Content doc copy). Behind the words: a 1900 engraving of a fish
+             skeleton in Colossal's orange-to-violet gradient (their Careers page has a gradient skull).
+             Picture: public/images/accents/skeleton-tile.jpg -->
         <li class="member">
-          <a class="member-join" href={url('/positions')}>
-            <span class="label member-index">{String(team.length + 1).padStart(2, '0')}</span>
-            <span class="member-join-title">Open positions <span aria-hidden="true">→</span></span>
-          </a>
-          <p class="member-join-text" style="margin-top: var(--space-sm);">We're recruiting. See what roles are open.</p>
+          <div class="member-card" data-drift="140">
+            <a class="member-join" href={url('/positions')}>
+              <img class="member-join-art" src={imageUrl('accents/skeleton-tile.jpg')} alt="" width="1000" height="1250" loading="lazy" decoding="async" />
+              <span class="label member-join-index">{pad(team.length + 1)}</span>
+              <span class="member-join-title">Open positions <span aria-hidden="true">→</span></span>
+            </a>
+            <p class="member-join-text">We're recruiting. See what roles are open.</p>
+          </div>
         </li>
       </ul>
     </section>
   </div>
 
-  <!-- Inset photo sitting across the edge between the team and the photo below -->
-  <Patch variant="contact" images={['frame-descent.jpg', 'frame-wall.jpg', 'frame-feather-star.jpg']} captions={['Descent', 'Canyon wall', 'Feather star']} side="right" straddle />
+  <!-- One photo with an offset frame across the edge into the photo below (natural NOAA footage) -->
+  <Patch variant="frame" image="feather-star-wide.jpg" caption="Feather star · NOAA" side="right" straddle />
 
   <!-- One big photo (ocean sunfish, false colour) leading on to Positions. Copy: Content doc, "Open positions" card. -->
   <PhotoBand image="who-we-are.jpg" position="45% 40%" heading="We're recruiting." tag="Open positions">
@@ -68,34 +147,214 @@ const panelText = (name: string, role: string) =>
 </BaseLayout>
 
 <style>
-  .team-grid {
+  /* ---------- The collage ---------- */
+
+  .team {
+    position: relative;
+  }
+
+  /* Three columns of different widths. Cards fill them left to right, row by row (so screen readers
+     still read the team in order); the middle and right columns are pushed down by different amounts,
+     so no two cards line up. */
+  .crew {
+    --step-2: clamp(4rem, 8vw, 8rem);    /* how far the middle column sits lower */
+    --step-3: clamp(1.5rem, 3vw, 3rem);  /* how far the right column sits lower */
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-xl) var(--space-md);
+    grid-template-columns: minmax(0, 4.4fr) minmax(0, 3.6fr) minmax(0, 4fr);
+    align-items: start;
+    gap: clamp(5rem, 8vw, 8rem) clamp(2rem, 4vw, 4.5rem);
     margin: 0;
-    padding: var(--space-lg) 0 0;
+    padding: var(--space-xl) 0 var(--step-2);
     border-top: 1px solid var(--color-line);
     list-style: none;
   }
 
-  .member {
-    display: flex;
-    flex-direction: column;
+  /* "translate" (not "transform"), so it adds to the fade-in animation instead of being replaced by it */
+  .member:nth-child(3n + 2) {
+    translate: 0 var(--step-2);
   }
 
-  /* Stand-in for a portrait: same shape as a photo, with the person's initials */
-  .member-panel {
+  .member:nth-child(3n) {
+    translate: 0 var(--step-3);
+  }
+
+  /* The fourth card (bottom left) is narrower and sits to the right of its column */
+  .member:nth-child(4) .member-card {
+    width: 78%;
+    margin-left: auto;
+  }
+
+  .member-card {
+    position: relative;
+  }
+
+  /* ---------- The lead: big portrait on the left, description box on the right ---------- */
+
+  .lead {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    align-items: start;
+    gap: clamp(3rem, 7vw, 7rem);
+    padding: var(--space-xl) 0 clamp(6rem, 10vw, 9rem);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .lead-media {
+    position: relative;
+  }
+
+  /* Name in stacked violet boxes hanging over the photo's bottom right corner (Colossal's chairman) */
+  .lead-name {
+    position: absolute;
+    z-index: 3;
+    right: calc(-1 * clamp(1rem, 3vw, 3rem));
+    bottom: clamp(1.5rem, 3vw, 3rem);
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    margin: 0;
+    font-size: clamp(2rem, 1rem + 3vw, 4rem);
+    line-height: 1;
+  }
+
+  .lead-name span {
+    padding: 0.08em 0.22em 0.04em;
+    color: var(--color-white);
+    background: var(--color-violet);
+  }
+
+  /* The description box: dark, so it stands out on the light band */
+  .lead-box {
+    position: relative;
+    z-index: 2;
+    align-self: center;
+    max-width: 38rem;
+    padding: clamp(1.75rem, 3vw, 3rem);
+    color: var(--light-bg);
+    background: var(--light-text);
+  }
+
+  /* lime square on the box's corner, like the dots on Colossal's photos */
+  .lead-box::before {
+    content: '';
+    position: absolute;
+    top: -0.5rem;
+    left: -0.5rem;
+    width: 1rem;
+    height: 1rem;
+    background: var(--color-lime);
+  }
+
+  .lead-role {
+    margin: 0;
+    color: var(--light-bg);
+  }
+
+  .lead-role span {
+    margin-right: 0.4rem;
+    color: var(--color-lime);
+  }
+
+  .lead-bio {
+    margin: var(--space-md) 0 0;
+    font-size: clamp(1.2rem, 1rem + 0.7vw, 1.6rem);
+    line-height: 1.45;
+  }
+
+  /* major and year (and LinkedIn) along the bottom, under a hairline */
+  .lead-foot {
+    display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    aspect-ratio: 4 / 5;
+    align-items: baseline;
+    gap: var(--space-xs) var(--space-md);
+    margin-top: var(--space-lg);
+    padding-top: var(--space-sm);
+    border-top: 1px solid color-mix(in srgb, var(--light-bg) 25%, transparent);
+  }
+
+  .lead-major {
+    margin: 0;
+    color: color-mix(in srgb, var(--light-bg) 65%, transparent);
+  }
+
+  .lead-linkedin {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  /* ---------- Photo, colour accents and tag ---------- */
+
+  .member-media {
+    position: relative;
+  }
+
+  .member-media > :global(.photo),
+  .member-panel {
+    position: relative;
+    z-index: 1;
+  }
+
+  .member-accent {
+    position: absolute;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .member-accent--block-lime {
+    left: -1.25rem;
+    bottom: -1.25rem;
+    width: 58%;
+    height: 46%;
+    background: var(--color-lime);
+  }
+
+  .member-accent--block-violet {
+    right: -1.25rem;
+    top: -1.25rem;
+    width: 46%;
+    height: 58%;
+    background: var(--color-violet);
+  }
+
+  .member-accent--block-magenta {
+    left: -1rem;
+    top: -1rem;
+    width: 40%;
+    height: 50%;
+    background: var(--color-magenta);
+  }
+
+  /* thin frames offset from the photo, like the outlined photos in Colossal's culture collage */
+  .member-accent--frame-orange {
+    inset: -0.9rem 0.9rem 0.9rem -0.9rem;
+    border: 1px solid var(--color-orange);
+  }
+
+  .member-accent--frame-violet {
+    inset: 0.9rem -0.9rem -0.9rem 0.9rem;
+    border: 1px solid var(--color-violet);
+  }
+
+  .member-tag {
+    position: absolute;
+    z-index: 2;
+    top: 0.75rem;
+    left: 0.75rem;
+    margin: 0;
+    padding: 0.3rem 0.55rem;
+    color: var(--color-accent-ink);
+    background: var(--color-orange);
+  }
+
+  /* Stand-in for a portrait: the right shape, with the person's initials */
+  .member-panel {
+    display: flex;
+    align-items: flex-end;
     padding: var(--space-md);
     border-radius: var(--radius);
     background: linear-gradient(160deg, var(--color-surface), color-mix(in srgb, var(--color-surface) 70%, var(--color-bg)));
-  }
-
-  .member-index {
-    color: var(--color-accent);
   }
 
   .member-initials {
@@ -110,32 +369,25 @@ const panelText = (name: string, role: string) =>
 
   /* Role text is longer than initials, so it's smaller and wraps */
   .member-initials--role {
-    font-size: clamp(1.6rem, 0.8rem + 2vw, 2.6rem);
+    font-size: clamp(1.4rem, 0.8rem + 1.6vw, 2.4rem);
     line-height: 0.95;
     text-transform: uppercase;
   }
 
-  /* Name sits under a thin line, like the captions on the Home cards */
-  .member-name {
-    margin-top: var(--space-sm);
-    padding-top: var(--space-sm);
-    border-top: 1px solid var(--color-line);
-    font-size: clamp(1.5rem, 1.1rem + 1vw, 2rem);
-  }
+  /* ---------- Name and details ---------- */
 
-  .member-role {
-    margin: var(--space-xs) 0 0;
-    font-weight: 600;
-    color: var(--color-accent);
+  .member-name {
+    margin-top: calc(var(--space-md) + 0.5rem);
+    font-size: clamp(1.5rem, 1.1rem + 1vw, 2.25rem);
   }
 
   .member-major {
-    margin: 0.15rem 0 0;
+    margin: var(--space-xs) 0 0;
     color: var(--color-muted);
   }
 
   .member-linkedin {
-    align-self: flex-start;
+    display: inline-block;
     margin-top: var(--space-sm);
     color: var(--color-text);
     text-decoration: none;
@@ -145,28 +397,67 @@ const panelText = (name: string, role: string) =>
     color: var(--color-accent);
   }
 
-  @media (max-width: 1023px) {
-    .team-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+  /* ---------- Margin note and "+" marks ---------- */
+
+  .team-rail {
+    position: absolute;
+    top: var(--space-xl);
+    left: calc(var(--gutter) * -0.65);
+    margin: 0;
+    color: var(--color-muted);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
   }
 
-  /* The last tile: an invitation to join, linking to Positions (Content doc "Open positions" card) */
+  .team-plus {
+    position: absolute;
+    font-family: var(--font-mono);
+    color: var(--color-muted);
+    line-height: 1;
+  }
+
+  .team-plus--a {
+    top: calc(var(--space-xl) - 0.6rem);
+    right: 0;
+  }
+
+  /* ---------- Open positions card ---------- */
+
   .member-join {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     aspect-ratio: 4 / 5;
     padding: var(--space-md);
-    border: 1px dashed var(--color-accent);
+    overflow: hidden;
     border-radius: var(--radius);
     text-decoration: none;
-    color: var(--color-text);
-    transition: background var(--duration) var(--ease);
+    color: var(--color-white);
+    background: var(--color-violet);
   }
 
-  .member-join:hover {
-    background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+  /* The edited engraving fills the card; the words sit on top of it */
+  .member-join-art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 600ms var(--ease);
+  }
+
+  .member-join > :not(.member-join-art) {
+    position: relative;
+  }
+
+  .member-join-index {
+    color: var(--color-white);
+  }
+
+  .member-join:hover .member-join-art {
+    transform: scale(1.04);
   }
 
   .member-join-title {
@@ -176,27 +467,133 @@ const panelText = (name: string, role: string) =>
     font-size: clamp(1.6rem, 0.8rem + 2vw, 2.6rem);
     line-height: 0.95;
     text-transform: uppercase;
-    color: var(--color-accent);
+    color: var(--color-white);
+  }
+
+  .member-join-title span {
+    display: inline-block;
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .member-join:hover .member-join-title span {
+    transform: translateX(6px);
   }
 
   .member-join-text {
-    margin: 0;
+    margin: var(--space-sm) 0 0;
     color: var(--color-muted);
   }
 
-  /* Phone: keep two across so each card doesn't fill the whole screen */
-  @media (max-width: 480px) {
-    .team-grid {
-      gap: var(--space-lg) var(--space-sm);
+  /* ---------- Tablet and phone: the lead stacks, the collage becomes two staggered columns ---------- */
+
+  @media (max-width: 900px) {
+    .lead {
+      grid-template-columns: 1fr;
+      gap: 0;
+      padding-bottom: var(--space-2xl);
+    }
+
+    .lead-media {
+      width: min(30rem, 84%);
+    }
+
+    /* the box tucks up under the photo, a little to the right */
+    .lead-box {
+      margin: calc(-1 * var(--space-md)) 0 0 auto;
+      width: min(34rem, 88%);
+    }
+
+    /* the name sits higher, clear of the box */
+    .lead-name {
+      bottom: calc(var(--space-md) + 1.5rem);
+    }
+  }
+
+  @media (max-width: 1099px) {
+    .crew {
+      --step-2: clamp(3rem, 10vw, 6rem);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-xl) var(--space-lg);
+    }
+
+    /* every second card sits lower */
+    .member:nth-child(3n + 2),
+    .member:nth-child(3n) {
+      translate: none;
+    }
+
+    .member:nth-child(2n) {
+      translate: 0 var(--step-2);
+    }
+
+    .member:nth-child(4) .member-card {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .lead-name {
+      right: -0.75rem;
+      font-size: 1.75rem;
+    }
+
+    .lead-bio {
+      font-size: var(--text-base);
+    }
+
+    .crew {
+      gap: var(--space-xl) var(--space-md);
+    }
+
+    .member-accent--block-lime,
+    .member-accent--block-magenta {
+      left: -0.6rem;
+    }
+
+    .member-accent--block-lime {
+      bottom: -0.6rem;
+    }
+
+    .member-accent--block-violet {
+      right: -0.6rem;
+      top: -0.6rem;
+    }
+
+    .member-accent--block-magenta {
+      top: -0.6rem;
+    }
+
+    .member-accent--frame-orange {
+      inset: -0.5rem 0.5rem 0.5rem -0.5rem;
+    }
+
+    .member-accent--frame-violet {
+      inset: 0.5rem -0.5rem -0.5rem 0.5rem;
+    }
+
+    .member-tag {
+      top: 0.4rem;
+      left: 0.4rem;
+      padding: 0.2rem 0.4rem;
+      font-size: 0.6rem;
+    }
+
+    .member-panel {
+      padding: var(--space-sm);
     }
 
     .member-name {
+      margin-top: var(--space-md);
       font-size: 1.25rem;
     }
 
-    .member-role,
-    .member-major {
+    .member-major,
+    .member-join-text {
       font-size: var(--text-sm);
+    }
+
+    .team-rail {
+      display: none;
     }
   }
 </style>
