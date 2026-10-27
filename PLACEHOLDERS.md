@@ -12,6 +12,7 @@ and the README's "Add or swap a photo" section says which file is which so they 
 | `[Name]` (3 people) and `[Major, year]` (all 5) | Who we are | `src/data/team.ts` |
 | Team photos (initials show until a photo is added) | Who we are | `public/images/team/` (file names are in `src/data/team.ts`) |
 | Team LinkedIn links (optional, hidden until filled in) | Who we are | `src/data/team.ts` (`linkedin`) |
+| `[Two or three sentences about Fernando...]` | Who we are, the description box beside the Project Lead | `src/data/team.ts` (`bio`) |
 | `[Date]` and `[One line on how Talosaur started.]` | "Project kicks off" news entry | `src/content/news/project-kicks-off.md` |
 | `[Credits for the remaining third-party stills...]` | Image credits page | `src/pages/image-credits.astro` |
 | `[Photographer and source for these four photos.]` (zoanthids, porcelain crab, soft coral, pygmy seahorse headers) | Image credits page | `src/pages/image-credits.astro` |
