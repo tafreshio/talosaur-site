@@ -230,6 +230,27 @@ The domain is managed in **Cloudflare**; the site itself is still built and host
 
 Internal links and image paths are written as plain addresses (`'/news'` in `src/data/site.ts`) and passed through `url()` from `src/lib/url.ts`. **If you add a new link or image in a page or component, wrap it in `url()`**: today it changes nothing, but if the site ever moves into a folder again, only `astro.config.mjs` needs editing. Outside links (`https://...`) and email links don't need it.
 
+## Search engines (showing up on Google)
+
+**Already built into the site (nothing to do when you add pages):**
+
+- **Sitemap:** a list of every page, made on every build at `https://talosaur.com/sitemap-index.xml` by the `@astrojs/sitemap` integration (set up in `astro.config.mjs`). New pages appear in it automatically. The 404 page is left out.
+- **`public/robots.txt`:** tells search engines they may read every page and where the sitemap is.
+- **Page titles:** each page's tab title (and its link text in search results) is `Page name | Talosaur`. The Home page's title starts with "Talosaur" followed by a few words on what it is. Both are set in `src/layouts/BaseLayout.astro`.
+- **Descriptions:** the short text under the link in search results. Pages pass their intro as `description` to `BaseLayout`; pages without one use the default in `BaseLayout.astro`.
+- **Canonical links:** every page names its one official address (`https://talosaur.com/news/`), so `http://`, `www.` and `https://` versions count as the same page instead of competing with each other.
+- **Structured data** (Home page only): hidden information in the page that tells Google the site is called "Talosaur", who runs it, where, and which logo and social accounts belong to it. When you fill in the Instagram, LinkedIn or YouTube links in `src/data/site.ts`, they're added to it automatically. To check it, paste `https://talosaur.com` into Google's [Rich Results Test](https://search.google.com/test/rich-results).
+- **The 404 page** asks search engines not to list it (`noindex` in `src/pages/404.astro`).
+
+**One-time setup outside the code:**
+
+1. **Google Search Console** ([search.google.com/search-console](https://search.google.com/search-console)): add a **Domain** property for `talosaur.com`. Google gives you a TXT record; add it in Cloudflare (talosaur.com → DNS → Records → Add record, type TXT, name `@`) and click Verify.
+2. In Search Console, open **Sitemaps** and submit `sitemap-index.xml`.
+3. In Search Console, use **URL inspection** on `https://talosaur.com/` and click **Request indexing**.
+4. **Bing Webmaster Tools** ([bing.com/webmasters](https://www.bing.com/webmasters)): sign in and import the site from Google Search Console. Bing also feeds DuckDuckGo and Yahoo.
+
+**What helps most after that:** links to talosaur.com from places search engines already know. Put the link in the team's Instagram, LinkedIn and Twitch bios, in the GitHub repository's **About → Website** field, on the team's Texas A&M student organization listing, and on team members' LinkedIn profiles. A brand-new domain usually takes days to a few weeks to appear in results.
+
 ## Placeholders
 
 See `PLACEHOLDERS.md` for everything that still needs real content.
