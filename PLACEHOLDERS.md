@@ -9,7 +9,7 @@ and the README's "Add or swap a photo" section says which file is which so they 
 | `[team email]` | Footer, Work with us page, Privacy page | `src/data/site.ts` (`teamEmail`) |
 | `[finance email or form]` | Donate, "Contact our finance team" button (greyed out until filled in) | `src/data/site.ts` (`financeContact`) |
 | Instagram, LinkedIn, YouTube links | Footer, "Connect with us" (plain text until filled in) | `src/data/site.ts` (`socialLinks`) |
-| `[Name]` (3 people) and `[Major, year]` (all 5) | Who we are | `src/data/team.ts` |
+| `[Major, year]` (all 5 people) | Who we are | `src/data/team.ts` |
 | Team photos (initials show until a photo is added) | Who we are | `public/images/team/` (file names are in `src/data/team.ts`) |
 | Team LinkedIn links (optional, hidden until filled in) | Who we are | `src/data/team.ts` (`linkedin`) |
 | `[Two or three sentences about Fernando...]` | Who we are, the description box beside the Project Lead | `src/data/team.ts` (`bio`) |

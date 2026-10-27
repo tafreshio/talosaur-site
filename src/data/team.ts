@@ -32,31 +32,31 @@ export const team: TeamMember[] = [
     bio: '[Two or three sentences about Fernando: what he leads on the team, his background, and what drew him to Talosaur.]',
   },
   {
+    name: 'Sam Cakici',
+    role: 'Mechanical Engineer',
+    majorYear: '[Major, year]', // PLACEHOLDER
+    photo: 'sam-cakici.jpg',
+    linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
+  },
+  {
+    name: 'Kabir Muzumdar',
+    role: 'Hydraulics Engineer',
+    majorYear: '[Major, year]', // PLACEHOLDER
+    photo: 'kabir-muzumdar.jpg',
+    linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
+  },
+  {
+    name: 'Nicholas Khu',
+    role: 'Electrical Engineer',
+    majorYear: '[Major, year]', // PLACEHOLDER
+    photo: 'nicholas-khu.jpg',
+    linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
+  },
+  {
     name: 'Omeed Tafreshi',
     role: 'Software Engineer',
     majorYear: '[Major, year]', // PLACEHOLDER
     photo: 'omeed-tafreshi.jpg',
     linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
-  },
-  {
-    name: '[Name]', // PLACEHOLDER
-    role: 'Ocean Engineer',
-    majorYear: '[Major, year]', // PLACEHOLDER
-    photo: 'ocean-engineer.jpg',
-    linkedin: '',
-  },
-  {
-    name: '[Name]', // PLACEHOLDER
-    role: 'Electrical Engineer',
-    majorYear: '[Major, year]', // PLACEHOLDER
-    photo: 'electrical-engineer.jpg',
-    linkedin: '',
-  },
-  {
-    name: '[Name]', // PLACEHOLDER
-    role: 'CAD Lead',
-    majorYear: '[Major, year]', // PLACEHOLDER
-    photo: 'cad-lead.jpg',
-    linkedin: '',
   },
 ];
