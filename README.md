@@ -104,9 +104,9 @@ Swap any of these for real team photos whenever you have them.
 |---|---|---|
 | `radiolarian.webp` | Home, Section 03, running off the right edge behind the cards | A radiolarian (plankton) from the 1887 HMS Challenger plates: neon lime lines on a violet shell, magenta inside. Transparent background. Placed with `src/components/Specimen.astro` |
 | `sonar.jpg` | Home, Section 05, behind Latest news | NOAA sonar data of the seafloor, recoloured violet, teal and magenta and kept dark so the news reads on top |
-| `news-rail.jpg` | News, beside the list (wide screens only) | A rainbow "field log" strip with four small NOAA photos. The numbered dots are drawn by the page at the heights in `railStops` in `src/pages/news.astro` |
+| `news-rail.jpg`, `news-rail-wide.jpg` | News: the tall one beside the list on wide screens, the sideways one above the list on phones and tablets | A rainbow "field log" strip with four small NOAA photos. The numbered dots are drawn by the page at the positions in `railStops` in `src/pages/news.astro` |
 | `jelly.jpg`, `ship-inset.jpg` | Work with us, beside the contact details | Collage: a jellyfish in magenta and orange, a lime block with a notch behind it, an orange dot and a natural photo of a ship |
-| `tile-coral.jpg`, `tile-sea-pen.jpg`, `tile-basket-star.jpg` | Donate, one above each way to help | NOAA dive footage turned into colour blocks: lime, violet and orange to magenta. The file names and tags are in `waysToHelp` at the top of `src/pages/donate.astro` |
+| `tile-coral.jpg`, `tile-sea-pen.jpg`, `tile-ray.jpg` | Donate, one above each way to help | NOAA dive footage turned into colour blocks: lime, violet and orange to magenta. The file names and tags are in `waysToHelp` at the top of `src/pages/donate.astro` |
 | `skeleton-tile.jpg` | Who we are, the "Open positions" tile | A 1900 engraving of a fish skeleton in an orange to violet gradient |
 
 The accent colours used in these edits (lime, orange, violet, magenta) are CSS variables in `src/styles/global.css` (`--color-lime` and so on), so the colour blocks and dots on the page match the pictures. To replace one, keep the same file name and size (and the transparent background for the `.webp`).

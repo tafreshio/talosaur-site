@@ -32,6 +32,17 @@ const items = await Promise.all(
   <!-- Light band: everything below the photo header -->
   <div class="band band--top theme-light">
     <section class="container news-layout">
+      <!-- The same field log strip lying on its side, above the list on phones and tablets
+           (public/images/accents/news-rail-wide.jpg). The tall one beside the list is for wide screens. -->
+      <figure class="field-log field-log--wide" aria-hidden="true">
+        <div class="field-log-strip">
+          <img src={imageUrl('accents/news-rail-wide.jpg')} alt="" width="1600" height="440" loading="lazy" decoding="async" />
+          {railStops.map((stop, i) => (
+            <span class="label field-log-dot" style={`left: ${stop * 100}%; top: 15.9%`}>{String(i + 1).padStart(2, '0')}</span>
+          ))}
+        </div>
+      </figure>
+
       <ol class="news-list" data-reveal-group>
         {items.map(({ entry, Content, hasPhoto }) => (
           <li id={entry.id} class:list={['news-item', { 'news-item--has-photo': hasPhoto }]}>
@@ -61,7 +72,7 @@ const items = await Promise.all(
         <div class="field-log-strip">
           <img src={imageUrl('accents/news-rail.jpg')} alt="" width="480" height="1600" loading="lazy" decoding="async" />
           {railStops.map((stop, i) => (
-            <span class="label field-log-dot" style={`top: ${stop * 100}%`}>{String(i + 1).padStart(2, '0')}</span>
+            <span class="label field-log-dot" style={`left: 13.3%; top: ${stop * 100}%`}>{String(i + 1).padStart(2, '0')}</span>
           ))}
         </div>
         <figcaption class="label field-log-tag">[ Field log · NOAA ]</figcaption>
@@ -99,10 +110,9 @@ const items = await Promise.all(
     height: auto;
   }
 
-  /* Numbered dots on the strip's line (the line is 13.3% from its left edge) */
+  /* Numbered dots on the strip's line (where they go is set on each dot in the markup) */
   .field-log-dot {
     position: absolute;
-    left: 13.3%;
     display: grid;
     place-items: center;
     width: 2rem;
@@ -118,14 +128,32 @@ const items = await Promise.all(
     color: var(--color-muted);
   }
 
-  /* Narrower screens: the list takes the whole width and the strip is left out */
+  /* the sideways strip is only for narrower screens */
+  .field-log--wide {
+    display: none;
+  }
+
+  /* Narrower screens: the list takes the whole width, with the sideways strip above it */
   @media (max-width: 1099px) {
     .news-layout {
       grid-template-columns: 1fr;
+      gap: var(--space-lg);
     }
 
     .field-log {
       display: none;
+    }
+
+    .field-log--wide {
+      display: block;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .field-log--wide .field-log-dot {
+      width: 1.5rem;
+      height: 1.5rem;
+      font-size: 0.6rem;
     }
   }
 

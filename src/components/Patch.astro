@@ -17,6 +17,7 @@
 // Photos live in public/images/patches/. People, lab and machine photos stay natural; only
 // nature photos get false colour (see the photo rule in the README).
 import { imageUrl } from '../lib/images';
+import { keepDots } from '../lib/text';
 
 type Variant = 'frame' | 'lens' | 'contact' | 'strip' | 'pano' | 'stack';
 
@@ -55,7 +56,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     <figure class="patch patch--frame" data-drift="40">
       <span class="frame-line"></span>
       <img src={src(images[0])} alt="" width="1200" height="800" loading="lazy" decoding="async" />
-      {caption && <figcaption class="label patch-caption">[ {caption} ]</figcaption>}
+      {caption && <figcaption class="label patch-caption">[ {keepDots(caption)} ]</figcaption>}
     </figure>
   )}
 
@@ -65,7 +66,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         <span class="lens-ring"></span>
         <img src={src(images[0])} alt="" width="900" height="900" loading="lazy" decoding="async" />
       </span>
-      {caption && <figcaption class="label patch-caption">[ {caption} ]</figcaption>}
+      {caption && <figcaption class="label patch-caption">[ {keepDots(caption)} ]</figcaption>}
     </figure>
   )}
 
@@ -94,7 +95,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     <figure class="patch patch--pano" data-drift="30">
       <span class="pano-corners"></span>
       <img src={src(images[0])} alt="" width="1800" height="500" loading="lazy" decoding="async" />
-      {caption && <figcaption class="label patch-caption">[ {caption} ]</figcaption>}
+      {caption && <figcaption class="label patch-caption">[ {keepDots(caption)} ]</figcaption>}
     </figure>
   )}
 
@@ -103,7 +104,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       {images[1] && <img class="stack-back" src={src(images[1])} alt="" width="900" height="600" loading="lazy" decoding="async" />}
       <img class="stack-front" src={src(images[0])} alt="" width="1200" height="800" loading="lazy" decoding="async" />
       <span class="stack-mark"></span>
-      {caption && <figcaption class="label patch-caption">[ {caption} ]</figcaption>}
+      {caption && <figcaption class="label patch-caption">[ {keepDots(caption)} ]</figcaption>}
     </figure>
   )}
 </div>
@@ -168,6 +169,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .patch-caption {
     display: inline-block;
     margin-top: 0.6rem;
+    text-wrap: balance; /* if it wraps, both lines get a similar length (no lone "]") */
   }
 
   .patch-row--right .patch {
@@ -426,6 +428,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
     .contact-frames {
       --frame: 24vw;
+    }
+
+    /* frame labels stay on one line, smaller, so they don't cover the photos */
+    .contact-cap {
+      font-size: 0.55rem;
+      white-space: nowrap;
     }
 
     .patch--strip {

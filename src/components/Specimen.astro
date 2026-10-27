@@ -18,6 +18,7 @@ interface Props {
   size?: string;              // width, e.g. 'clamp(16rem, 34vw, 32rem)'
   width?: number;             // the picture's real size in pixels (keeps the page from jumping as it loads)
   height?: number;
+  drift?: number;             // how far it drifts as you scroll (data-drift, see BaseLayout.astro)
 }
 
 const {
@@ -28,11 +29,12 @@ const {
   size = 'clamp(15rem, 34vw, 32rem)',
   width = 1080,
   height = 1060,
+  drift = 60,
 } = Astro.props;
 ---
 
 <figure class:list={['specimen', `specimen--${side}`]} style={`--top: ${top}; --size: ${size};`} aria-hidden="true">
-  <img src={imageUrl(`accents/${image}`)} alt="" width={width} height={height} loading="lazy" decoding="async" data-drift="110" />
+  <img src={imageUrl(`accents/${image}`)} alt="" width={width} height={height} loading="lazy" decoding="async" data-drift={drift} />
   {label && <figcaption class="label specimen-label">[ {label} ]</figcaption>}
 </figure>
 
