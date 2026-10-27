@@ -6,14 +6,17 @@ import SectionHeader from '../components/SectionHeader.astro';
 import PhotoBand from '../components/PhotoBand.astro';
 import Patch from '../components/Patch.astro';
 import { financeContact, contactHref } from '../data/site';
+import { imageUrl } from '../lib/images';
 
 const intro =
   'Talosaur is student-built and runs on a tight budget. Your support funds parts, testing and field trips, and helps us bring affordable ocean exploration to more people.';
 
+// Each way to help has a tile on top: an animal from NOAA Ocean Exploration dive video, edited in
+// Colossal's colour blocks (public/images/accents/). "animal" is the small tag on the tile.
 const waysToHelp = [
-  { title: 'Fund research', text: 'Support a specific study or field test' },
-  { title: 'Sponsor a project', text: 'Back a build like Turtle or our eDNA sampler' },
-  { title: 'Give in kind', text: 'Parts, equipment, pool or boat time' },
+  { title: 'Fund research', text: 'Support a specific study or field test', image: 'tile-coral.jpg', animal: 'Iridogorgia coral' },
+  { title: 'Sponsor a project', text: 'Back a build like Turtle or our eDNA sampler', image: 'tile-sea-pen.jpg', animal: 'Sea pen' },
+  { title: 'Give in kind', text: 'Parts, equipment, pool or boat time', image: 'tile-basket-star.jpg', animal: 'Feather star' },
 ];
 
 const financeHref = contactHref(financeContact);
@@ -29,6 +32,10 @@ const financeHref = contactHref(financeContact);
       <ol class="ways" data-reveal-group>
         {waysToHelp.map((way, i) => (
           <li class="way">
+            <figure class="way-tile" aria-hidden="true">
+              <img src={imageUrl(`accents/${way.image}`)} alt="" width="900" height="675" loading="lazy" decoding="async" />
+              <span class="label way-tag">[ {way.animal} · NOAA ]</span>
+            </figure>
             <p class="label way-num">{String(i + 1).padStart(2, '0')}</p>
             <h3 class="way-title">{way.title}</h3>
             <p class="way-text">{way.text}</p>
@@ -65,11 +72,53 @@ const financeHref = contactHref(financeContact);
     list-style: none;
   }
 
-  /* Each way to help is a column with a thin line on top */
+  /* Each way to help is a column: a colour tile, then a thin line, the number and the text */
   .way {
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
+  }
+
+  .way-tile {
+    position: relative;
+    margin: 0 0 var(--space-xs);
+  }
+
+  .way-tile img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  /* the small square on the tile's corner, a different colour per tile (Colossal's corner dots) */
+  .way-tile::after {
+    content: '';
+    position: absolute;
+    right: -0.45rem;
+    bottom: -0.45rem;
+    width: 0.9rem;
+    height: 0.9rem;
+    background: var(--color-orange);
+  }
+
+  .way:nth-child(2) .way-tile::after {
+    background: var(--color-lime);
+  }
+
+  .way:nth-child(3) .way-tile::after {
+    background: var(--color-violet);
+  }
+
+  .way-tag {
+    position: absolute;
+    top: 0.6rem;
+    left: 0.6rem;
+    padding: 0.25rem 0.5rem;
+    color: var(--color-white);
+    background: rgb(6 18 31 / 0.6);
+  }
+
+  .way-num {
     padding-top: var(--space-sm);
     border-top: 1px solid var(--color-accent);
   }
@@ -111,6 +160,12 @@ const financeHref = contactHref(financeContact);
   @media (max-width: 760px) {
     .ways {
       grid-template-columns: 1fr;
+      gap: var(--space-xl);
+    }
+
+    /* tiles a little shorter on phones so the three ways don't take several screens */
+    .way-tile img {
+      aspect-ratio: 16 / 9;
     }
 
     .way-text {

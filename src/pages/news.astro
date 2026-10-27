@@ -8,9 +8,13 @@ import Photo from '../components/Photo.astro';
 import PhotoBand from '../components/PhotoBand.astro';
 import { twitchUrl } from '../data/site';
 import { getSortedNews, formatNewsDate } from '../lib/news';
-import { imageExists } from '../lib/images';
+import { imageExists, imageUrl } from '../lib/images';
 
 const entries = await getSortedNews();
+
+// Heights (0 = top, 1 = bottom) of the four photos on the field log strip. They match the picture,
+// so only change them if you remake news-rail.jpg.
+const railStops = [0.12, 0.37, 0.62, 0.86];
 
 // Turn each entry's Markdown body into HTML we can place on the page
 const items = await Promise.all(
@@ -27,7 +31,7 @@ const items = await Promise.all(
 
   <!-- Light band: everything below the photo header -->
   <div class="band band--top theme-light">
-    <section class="container">
+    <section class="container news-layout">
       <ol class="news-list" data-reveal-group>
         {items.map(({ entry, Content, hasPhoto }) => (
           <li id={entry.id} class:list={['news-item', { 'news-item--has-photo': hasPhoto }]}>
@@ -48,6 +52,20 @@ const items = await Promise.all(
           </li>
         ))}
       </ol>
+
+      <!-- Field log strip beside the list (wide screens only), like the timelines on Colossal's
+           species pages: lime at the top (the surface) to violet at the bottom (deeper), with four
+           photos from NOAA dive video. The picture is public/images/accents/news-rail.jpg;
+           the numbered dots below sit on its line at the heights the photos were drawn at. -->
+      <figure class="field-log" aria-hidden="true">
+        <div class="field-log-strip">
+          <img src={imageUrl('accents/news-rail.jpg')} alt="" width="480" height="1600" loading="lazy" decoding="async" />
+          {railStops.map((stop, i) => (
+            <span class="label field-log-dot" style={`top: ${stop * 100}%`}>{String(i + 1).padStart(2, '0')}</span>
+          ))}
+        </div>
+        <figcaption class="label field-log-tag">[ Field log · NOAA ]</figcaption>
+      </figure>
     </section>
   </div>
 
@@ -58,6 +76,59 @@ const items = await Promise.all(
 </BaseLayout>
 
 <style>
+  /* The list on the left, the field log strip on the right (wide screens) */
+  .news-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(11rem, 15vw, 15rem);
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .field-log {
+    margin: 0;
+  }
+
+  /* the dots are placed in % of this box, which is exactly the picture */
+  .field-log-strip {
+    position: relative;
+  }
+
+  .field-log img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* Numbered dots on the strip's line (the line is 13.3% from its left edge) */
+  .field-log-dot {
+    position: absolute;
+    left: 13.3%;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--color-white);
+    color: var(--light-text);
+    transform: translate(-50%, -50%);
+  }
+
+  .field-log-tag {
+    margin-top: var(--space-sm);
+    color: var(--color-muted);
+  }
+
+  /* Narrower screens: the list takes the whole width and the strip is left out */
+  @media (max-width: 1099px) {
+    .news-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .field-log {
+      display: none;
+    }
+  }
+
   .news-list {
     margin: 0;
     padding: 0;

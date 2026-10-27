@@ -32,6 +32,8 @@ npm run check    # looks for mistakes in the code (typos in data files, missing 
 | Top navigation and footer links, team email, social links, Twitch link | `src/data/site.ts` |
 | Logo files and browser-tab icons | `public/brand/`, `public/favicon.*`, `public/apple-touch-icon.png` |
 | Page-header photos | `public/images/pages/` |
+| Colour-edited accent pictures (collage, tiles, field log strip, specimen) | `public/images/accents/` |
+| Big cut-out specimen that runs off the screen edge | `src/components/Specimen.astro` |
 | Top navigation design | `src/components/Header.astro` |
 | Footer design | `src/components/Footer.astro` |
 | Home page video hero | `src/components/HeroVideo.astro` |
@@ -88,11 +90,26 @@ Swap any of these for real team photos whenever you have them.
 
 **Page headers.** Every page in the top menu opens with a full-width photo band. The photos live in `public/images/pages/` and are named after the page: `who-we-are.jpg`, `the-problem.jpg`, `news.jpg`, `work-with-us.jpg`, `positions.jpg`, `donate.jpg`. Each is 2400 × 1350 and is a nature photo with an edit: Who we are (zoanthids, a full negative through a violet-to-lime gradient map: the background turns soft green and the polyps deep violet), The Problem (sunbeams, false color), News (porcelain crab, a negative lens around it), Work with us (soft coral, a full negative recoloured with a left-to-right colour sweep: teal, then sand, then magenta and blue, like Colossal's "Gratitude is in our genes" page), Positions (pygmy seahorse, negative glitch slices) and Donate (anemone, false color). The script that makes the inverted ones keeps the original's dark lower-left so the white title stays readable. The title sits over the bottom-left of the photo, so keep that area calm and darkish. To change which part of a photo stays visible on phones, edit `imagePosition` where the page uses `<PageHeader>` (for example `imagePosition="60% 50%"` keeps a bit right of center). Delete a page's photo and that page goes back to a plain title.
 
-**Photo rule (natural vs edited).** Like Colossal: photos of people, lab work and machines stay natural, with no filter. False-color edits (gradient maps, halftone dots, shifted slices) are only for nature and animals and for graphic "stickers". So the Home cards and the inset photos are natural (except the fish eye on Home), while every page header and every big photo band is a nature photo with a false-color edit. A replacement for an edited photo needs the same treatment (ask for it, or use a gradient map in any photo app).
+**Photo rule (natural vs edited).** Like Colossal: photos of people, lab work and machines stay natural, with no filter. False-color edits (gradient maps, halftone dots, shifted slices) are only for nature and animals and for graphic "stickers". So the Home cards and the inset photos are natural (except the fish eye on Home), while every page header, every big photo band and every picture in `public/images/accents/` is nature (or an old engraving) with a false-color edit.
+
+**Image rights.** Only edit pictures whose licence allows changes: public-domain sources (NOAA, old engravings and plates), Pexels, or the team's own. The MBARI / FathomNet video stills the team collected are CC BY-NC-ND ("no derivatives"), so they can't be colour-edited or cut out for the site. A replacement for an edited photo needs the same treatment (ask for it, or use a gradient map in any photo app).
 
 **Big photo bands.** Like Colossal's elephant and mammoth sections, some pages give one good photo a whole screen, with a headline and button over it: Home (Section 04, "How can we help?"), and the end of every inner page (Who we are, The Problem, News, Work with us, Positions, Donate). For a whole sentence as the headline, add `size="md"`. The component is `src/components/PhotoBand.astro`; the photos are in `public/images/bands/` (2400 × 1500, named after the page) and pan slowly as you scroll. Each headline reuses copy from the Content doc or the page.
 
 **Inset photos across section edges ("patches").** Smaller photos sit across the edge between two sections, each in a different shape so they don't repeat: a round lens with crosshair ticks (Home, under the shark photo), a film strip of three frames (Who we are), a tall strip running off the edge of the screen (Work with us), a panoramic strip with corner brackets (Positions) and two stacked photos (Donate). Like Colossal, never on the edge right under a page header or the Home video. The component is `src/components/Patch.astro` (the top of the file lists the shapes); photos are in `public/images/patches/`. Example: `<Patch variant="lens" image="fish-eye-lens.jpg" caption="Fish eye" side="center" straddle />` between two sections.
+
+**Colour-shift accents (`public/images/accents/`).** Smaller edited pictures in the style of Colossal's species pages, each a different idea. All are nature or old engravings (the photo rule above), and each is decorative, so screen readers skip it:
+
+| File | Where | What it is |
+|---|---|---|
+| `radiolarian.webp` | Home, Section 03, running off the right edge behind the cards | A radiolarian (plankton) from the 1887 HMS Challenger plates: neon lime lines on a violet shell, magenta inside. Transparent background. Placed with `src/components/Specimen.astro` |
+| `sonar.jpg` | Home, Section 05, behind Latest news | NOAA sonar data of the seafloor, recoloured violet, teal and magenta and kept dark so the news reads on top |
+| `news-rail.jpg` | News, beside the list (wide screens only) | A rainbow "field log" strip with four small NOAA photos. The numbered dots are drawn by the page at the heights in `railStops` in `src/pages/news.astro` |
+| `jelly.jpg`, `ship-inset.jpg` | Work with us, beside the contact details | Collage: a jellyfish in magenta and orange, a lime block with a notch behind it, an orange dot and a natural photo of a ship |
+| `tile-coral.jpg`, `tile-sea-pen.jpg`, `tile-basket-star.jpg` | Donate, one above each way to help | NOAA dive footage turned into colour blocks: lime, violet and orange to magenta. The file names and tags are in `waysToHelp` at the top of `src/pages/donate.astro` |
+| `skeleton-tile.jpg` | Who we are, the "Open positions" tile | A 1900 engraving of a fish skeleton in an orange to violet gradient |
+
+The accent colours used in these edits (lime, orange, violet, magenta) are CSS variables in `src/styles/global.css` (`--color-lime` and so on), so the colour blocks and dots on the page match the pictures. To replace one, keep the same file name and size (and the transparent background for the `.webp`).
 
 **Page headers meet the page with a clean edge.** There is no dark fade at the bottom of a header photo: the photo runs to its bottom edge and meets the light section below with a clean line, like Colossal. Readability comes from shading on the left side only (where the title sits; even shading on phones), and the caption sits in a boxed tag. When making a new header photo, keep the bottom edge in the photo's own colours (don't darken it to navy).
 
