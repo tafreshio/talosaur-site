@@ -50,10 +50,6 @@ const lookFor = (i: number) => looks[i % looks.length];
   <!-- Light band: the team collage -->
   <div class="band band--top theme-light">
     <section class="container team">
-      <!-- Margin note, like the sideways labels in Colossal's left margin -->
-      <p class="label team-rail" aria-hidden="true">[ Team · {pad(team.length)} ]</p>
-      <span class="team-plus team-plus--a" aria-hidden="true">+</span>
-
       <!-- The lead, on a row of their own -->
       {lead && (
         <article class="lead">
@@ -120,13 +116,13 @@ const lookFor = (i: number) => looks[i % looks.length];
             </li>
           );
         })}
-        <!-- Last card: open positions (Content doc copy). Behind the words: a 1900 engraving of a fish
-             skeleton in Colossal's orange-to-violet gradient (their Careers page has a gradient skull).
-             Picture: public/images/accents/skeleton-tile.jpg -->
-        <li class="member">
+        <!-- Last card: open positions (Content doc copy), wide, across two columns. Behind the words:
+             a 1900 engraving of a fish skeleton in Colossal's orange-to-violet gradient (their Careers
+             page has a gradient skull). Picture: public/images/accents/skeleton-wide.jpg -->
+        <li class="member member--join">
           <div class="member-card" data-drift="140">
             <a class="member-join" href={url('/positions')}>
-              <img class="member-join-art" src={imageUrl('accents/skeleton-tile.jpg')} alt="" width="1000" height="1250" loading="lazy" decoding="async" />
+              <img class="member-join-art" src={imageUrl('accents/skeleton-wide.jpg')} alt="" width="1600" height="900" loading="lazy" decoding="async" />
               <span class="label member-join-index">{pad(team.length + 1)}</span>
               <span class="member-join-title">Open positions <span aria-hidden="true">→</span></span>
             </a>
@@ -397,39 +393,18 @@ const lookFor = (i: number) => looks[i % looks.length];
     color: var(--color-accent);
   }
 
-  /* ---------- Margin note and "+" marks ---------- */
+  /* ---------- Open positions card (wide, across two columns) ---------- */
 
-  .team-rail {
-    position: absolute;
-    top: var(--space-xl);
-    left: calc(var(--gutter) * -0.65);
-    margin: 0;
-    color: var(--color-muted);
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    white-space: nowrap;
+  .member--join {
+    grid-column: span 2;
   }
-
-  .team-plus {
-    position: absolute;
-    font-family: var(--font-mono);
-    color: var(--color-muted);
-    line-height: 1;
-  }
-
-  .team-plus--a {
-    top: calc(var(--space-xl) - 0.6rem);
-    right: 0;
-  }
-
-  /* ---------- Open positions card ---------- */
 
   .member-join {
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 16 / 9;
     padding: var(--space-md);
     overflow: hidden;
     border-radius: var(--radius);
@@ -592,8 +567,5 @@ const lookFor = (i: number) => looks[i % looks.length];
       font-size: var(--text-sm);
     }
 
-    .team-rail {
-      display: none;
-    }
   }
 </style>

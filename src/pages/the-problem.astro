@@ -5,8 +5,10 @@ import SectionHeader from '../components/SectionHeader.astro';
 import StatCallout from '../components/StatCallout.astro';
 import DepthBands from '../components/DepthBands.astro';
 import PhotoBand from '../components/PhotoBand.astro';
+import SpecList from '../components/SpecList.astro';
 import { url } from '../lib/url';
-import { problemIntro, stats } from '../data/problem';
+import { imageUrl } from '../lib/images';
+import { problemIntro, stats, habitat, glance } from '../data/problem';
 ---
 
 <BaseLayout title="The Problem" description={problemIntro} headerOverlay>
@@ -39,6 +41,47 @@ import { problemIntro, stats } from '../data/problem';
        (Content doc) sit inside it at the depths they are about. -->
   <DepthBands />
 
+  <!-- Section 03: Habitat (light). Like the "Habitat / Arctic + Tundra" section on Colossal's mammoth
+       page: a wide strip of open water, the place in big type, a short text and a map. -->
+  <div class="band theme-light">
+    <section class="container section habitat">
+      <SectionHeader number={3} title="Habitat" />
+      <img class="habitat-pano" src={imageUrl('sections/habitat-pano.jpg')} alt="Open water offshore" width="2400" height="600" loading="lazy" decoding="async" />
+      <div class="habitat-grid">
+        <div class="habitat-copy" data-reveal>
+          <h3 class="habitat-title">{habitat.title}</h3>
+          {habitat.paragraphs.map((text) => <p class="habitat-text">{text}</p>)}
+          <dl class="habitat-facts">
+            {habitat.facts.map((fact) => (
+              <div class="habitat-fact">
+                <dt class="label">{fact.label}</dt>
+                <dd>
+                  {fact.value}
+                  {fact.source && <a class="label habitat-src" href={fact.source.href} target="_blank" rel="noopener">[ {fact.source.label} ]</a>}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+        <!-- Map of the coast: Flower Garden Banks in magenta, College Station as a dot.
+             The labels sit at the same spots as on the picture (left %, top %). -->
+        <figure class="habitat-map" data-drift="50">
+          <img src={imageUrl('sections/habitat-map.png')} alt="Map of the Texas and Louisiana coast with Flower Garden Banks offshore and College Station inland" width="1600" height="1100" loading="lazy" decoding="async" />
+          <span class="map-pin map-pin--fgb" style="left: 50.3%; top: 65.1%;"><span class="label">Flower Garden Banks</span></span>
+          <span class="map-pin map-pin--home" style="left: 25.4%; top: 21.9%;"><span class="label">College Station</span></span>
+        </figure>
+      </div>
+    </section>
+  </div>
+
+  <!-- Section 04: At a glance (dark). Colossal's fact sheet: white boxed labels and a big cut-out. -->
+  <div class="band">
+    <section class="container section">
+      <SectionHeader number={4} title="At a glance" />
+      <SpecList items={glance} image="glance-jelly.webp" />
+    </section>
+  </div>
+
   <!-- Closing photo (octopus on a reef, in the teal-sand-magenta colour sweep). Copy: Content doc Home headline and "Get in touch" card. -->
   <PhotoBand image="the-problem.jpg" position="70% 50%" heading="Life at 50–300 m is barely watched." size="md" tag="Researchers · Sanctuaries · Offshore teams">
     <a class="button" href={url('/work-with-us')}>Get in touch <span aria-hidden="true">→</span></a>
@@ -63,17 +106,133 @@ import { problemIntro, stats } from '../data/problem';
     gap: var(--space-lg);
   }
 
+  /* ---------- Section 03: Habitat ---------- */
+
+  .habitat-pano {
+    width: 100%;
+    aspect-ratio: 4 / 1;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+
+  .habitat-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--space-xl);
+    align-items: start;
+    margin-top: var(--space-xl);
+  }
+
+  .habitat-title {
+    font-size: clamp(2.5rem, 1rem + 5vw, 5.5rem);
+    line-height: 0.92;
+  }
+
+  .habitat-text {
+    margin: var(--space-md) 0 0;
+    font-size: var(--text-lg);
+    line-height: 1.55;
+  }
+
+  .habitat-facts {
+    margin: var(--space-lg) 0 0;
+  }
+
+  .habitat-fact {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    gap: var(--space-sm);
+    padding-block: var(--space-sm);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .habitat-fact dt {
+    color: var(--color-muted);
+  }
+
+  .habitat-fact dd {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .habitat-src {
+    margin-left: 0.5rem;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .habitat-map {
+    position: relative;
+    margin: 0;
+  }
+
+  .habitat-map img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Labels on the map: a dot with a small boxed tag beside it */
+  .map-pin {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transform: translate(-0.4rem, -50%);
+  }
+
+  .map-pin::before {
+    content: '';
+    flex: none;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    background: var(--color-orange);
+    box-shadow: 0 0 0 3px var(--light-bg);
+  }
+
+  .map-pin--fgb::before {
+    background: var(--color-magenta);
+  }
+
+  .map-pin .label {
+    padding: 0.2rem 0.45rem;
+    color: var(--light-bg);
+    background: var(--light-text);
+    white-space: nowrap;
+  }
+
   /* ---------- Tablet and phone ---------- */
 
   @media (max-width: 1023px) {
     .stats {
       grid-template-columns: 1fr 1fr;
     }
+
+    .habitat-grid {
+      grid-template-columns: 1fr;
+    }
   }
 
   @media (max-width: 760px) {
     .stats {
       grid-template-columns: 1fr;
+    }
+
+    .habitat-pano {
+      aspect-ratio: 5 / 2;
+    }
+
+    .habitat-text {
+      font-size: var(--text-base);
+    }
+
+    .habitat-fact {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
+    }
+
+    .map-pin .label {
+      font-size: 0.6rem;
     }
   }
 </style>

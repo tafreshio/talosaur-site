@@ -175,18 +175,19 @@ const posterSrc = url(`/${posterFile}`);
     }
   }
 
-  /* Same invert as the wordmark, so it doesn't disappear on bright shots */
+  /* In a dark glassy box like the caption tags, so it shows on bright and dark shots alike */
   .hero-scroll {
-    padding-bottom: 0.35em;
+    padding: 0.3rem 0.55rem;
     color: var(--color-white);
-    mix-blend-mode: difference;
+    background: rgb(6 18 31 / 0.55);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
     text-decoration: none;
     animation: rise 1.2s 400ms var(--ease) both;
   }
 
   .hero-scroll:hover {
     color: var(--color-accent);
-    mix-blend-mode: normal; /* show the real accent color on hover, not its inverse */
   }
 
   .hero-scroll span {

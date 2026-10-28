@@ -98,3 +98,31 @@ export const depthBands = [
   { depth: '50–300 m', name: 'Twilight zone', text: 'Too deep for divers, too costly to revisit.', zone: 'twilight', from: 50, to: 300 },
   { depth: '300 m+', name: '', text: 'Reached by research ships and deep vehicles.', zone: 'deep', from: 300, to: 380 },
 ];
+
+// ---------------------------------------------------------------- Section 03: Habitat
+// Text in [brackets] is a placeholder to fill in later. The map is public/images/sections/habitat-map.png;
+// the two labels on it are placed in src/pages/the-problem.astro.
+export const habitat = {
+  title: 'Flower Garden Banks',
+  // PLACEHOLDER: two short paragraphs
+  paragraphs: [
+    '[A short paragraph about the deep reefs at Flower Garden Banks: where they are, what lives there and why they matter.]',
+    "[A second paragraph on why they're hard to visit, and what regular filming there could show.]",
+  ],
+  facts: [
+    { label: 'Reef depth', value: '40–221 m', source: sources.fgb },
+    { label: 'Off the coast of', value: 'Texas and Louisiana' },
+    { label: 'From College Station', value: '[distance] km' }, // PLACEHOLDER
+  ],
+};
+
+// ---------------------------------------------------------------- Section 04: At a glance
+// The twilight zone as a fact sheet (Colossal's mammoth page style). Values in [brackets] are placeholders.
+export const glance = [
+  { label: 'Depth', value: '50–300 m' },
+  { label: 'Sunlight', value: 'Rarely any significant sunlight below 200 m', source: sources.light },
+  { label: 'Pressure', value: 'About 6 to 31 times the surface', source: sources.pressure },
+  { label: 'Temperature', value: '[Typical temperature range]' }, // PLACEHOLDER
+  { label: 'Who lives here', value: '[A few of the animals found at these depths]' }, // PLACEHOLDER
+  { label: 'Surveys a year', value: '[How often this zone gets surveyed]' }, // PLACEHOLDER
+];

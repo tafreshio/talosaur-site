@@ -75,7 +75,7 @@ const animals = [
           <path d="M150 118 L154 96 L164 96 L168 118 Z M157 100 L236 62 L240 68 L161 106 Z M106 118 L106 104 L136 104 L136 118 Z" />
         </svg>
         <span class="tether" aria-hidden="true"></span>
-        <span class="vehicle" aria-hidden="true"></span>
+        <span class="vehicle" aria-hidden="true"><span class="label vehicle-label">[ Deep vehicle ]</span></span>
 
         <!-- Animal cut-outs, drifting a little as you scroll -->
         {animals.map((a) => (
@@ -187,7 +187,7 @@ const animals = [
   }
 
   .is-live [data-zone] {
-    opacity: 0.62;
+    opacity: 0.75;
   }
 
   .is-live[data-zone='sunlit'] [data-zone='sunlit'],
@@ -360,7 +360,7 @@ const animals = [
   }
 
   .zone--deep .zone-copy {
-    color: var(--color-muted);
+    color: var(--color-text);
   }
 
   /* ---------- Notes ---------- */
@@ -470,9 +470,20 @@ const animals = [
     width: 1.5rem;
     height: 1rem;
     transform: translateX(-50%);
-    border: 1.5px solid rgb(232 241 245 / 0.8);
-    background: var(--color-bg);
+    border-radius: 3px;
+    background: rgb(232 241 245 / 0.9);
+    /* its lights */
+    box-shadow: 0 0.6rem 1.2rem -0.2rem rgb(61 224 208 / 0.55);
     z-index: 1;
+  }
+
+  .vehicle-label {
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 0.6rem);
+    transform: translateY(-50%);
+    color: var(--color-text);
+    white-space: nowrap;
   }
 
   /* ---------- Animals ---------- */
@@ -686,9 +697,17 @@ const animals = [
       transform: translateX(50%);
     }
 
-    /* Animals sit behind the text on the right, partly off the screen */
+    /* On narrower screens the text runs the full width, so only the jellyfish stays (small, in the sunlit band) */
     .animal {
-      opacity: 0.3;
+      opacity: 0.45;
+    }
+
+    .animal--larva,
+    .animal--squid,
+    .animal--oval,
+    .animal--long,
+    .vehicle-label {
+      display: none;
     }
 
     .animal-label {
@@ -697,8 +716,8 @@ const animals = [
 
     .animal--jelly {
       left: auto;
-      right: -6%;
-      width: 30vw;
+      right: -8%;
+      width: 22vw;
     }
 
     .animal--larva {

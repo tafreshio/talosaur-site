@@ -34,6 +34,8 @@ npm run check    # looks for mistakes in the code (typos in data files, missing 
 | Page-header photos | `public/images/pages/` |
 | Colour-edited accent pictures (collage, tiles, field log strip, specimen) | `public/images/accents/` |
 | Big cut-out specimen that runs off the screen edge | `src/components/Specimen.astro` |
+| Photos for the content sections (habitat map, fact sheet, photo cards) | `public/images/sections/` |
+| Fact sheet and photo-card building blocks | `src/components/SpecList.astro`, `src/components/PictureCards.astro` |
 | Top navigation design | `src/components/Header.astro` |
 | Footer design | `src/components/Footer.astro` |
 | Home page video hero | `src/components/HeroVideo.astro` |
@@ -107,9 +109,21 @@ Swap any of these for real team photos whenever you have them.
 | `news-rail.jpg`, `news-rail-wide.jpg` | News: the tall one beside the list on wide screens, the sideways one above the list on phones and tablets | A rainbow "field log" strip with four small NOAA photos. The numbered dots are drawn by the page at the positions in `railStops` in `src/pages/news.astro` |
 | `jelly.jpg`, `ship-inset.jpg` | Work with us, beside the contact details | Collage: a jellyfish in magenta and orange, a lime block with a notch behind it, an orange dot and a natural photo of a ship |
 | `tile-coral.jpg`, `tile-sea-pen.jpg`, `tile-ray.jpg` | Donate, one above each way to help | NOAA dive footage turned into colour blocks: lime, violet and orange to magenta. The file names and tags are in `waysToHelp` at the top of `src/pages/donate.astro` |
-| `skeleton-tile.jpg` | Who we are, the "Open positions" tile | A 1900 engraving of a fish skeleton in an orange to violet gradient |
+| `skeleton-wide.jpg` | Who we are, the wide "Open positions" card at the end of the team | A 1900 engraving of a fish skeleton in an orange to violet gradient |
 
 The accent colours used in these edits (lime, orange, violet, magenta) are CSS variables in `src/styles/global.css` (`--color-lime` and so on), so the colour blocks and dots on the page match the pictures. To replace one, keep the same file name and size (and the transparent background for the `.webp`).
+
+**Content sections with photos (`public/images/sections/`).** Like the species pages on Colossal (a section about the habitat has a map, a section about the team has team photos), these sections each carry pictures that go with what they say. Their text is mostly [bracket] placeholders to fill in later (listed in `PLACEHOLDERS.md`):
+
+| Section | Where the text lives | Pictures |
+|---|---|---|
+| The Problem, 03 Habitat: a strip of open water, "Flower Garden Banks", two paragraphs, three facts and a map with Flower Garden Banks and College Station | `habitat` in `src/data/problem.ts` | `habitat-pano.jpg`, `habitat-map.png` (the two map labels are placed by % in `src/pages/the-problem.astro`) |
+| The Problem, 04 At a glance: a fact sheet in white boxed labels beside a big jellyfish cut-out (`src/components/SpecList.astro`) | `glance` in `src/data/problem.ts` | `glance-jelly.webp` |
+| Work with us, 01 Who we work with: four photo cards (`src/components/PictureCards.astro`) | `audiences` at the top of `src/pages/work-with-us.astro` | `aud-research.jpg`, `aud-conservation.jpg`, `aud-fisheries.jpg`, `aud-offshore.jpg` |
+| Donate, 02 Where it goes: three photo cards | `support` at the top of `src/pages/donate.astro` | `support-parts.jpg`, `support-testing.jpg`, `support-field-trips.jpg` |
+| Positions, 01 Life on the team: text and an Apply button beside a big photo with a smaller one in an orange frame | `life` at the top of `src/pages/positions.astro` | `team-build.jpg`, `team-lab.jpg` |
+
+The photos of people, labs and machines are natural; the reef and the fish in "Who we work with" have false-colour edits. Most are stand-ins from NOAA and Pexels footage: replace them with the team's own photos using the same file names.
 
 **Page headers meet the page with a clean edge.** There is no dark fade at the bottom of a header photo: the photo runs to its bottom edge and meets the light section below with a clean line, like Colossal. Readability comes from shading on the left side only (where the title sits; even shading on phones), and the caption sits in a boxed tag. When making a new header photo, keep the bottom edge in the photo's own colours (don't darken it to navy).
 
