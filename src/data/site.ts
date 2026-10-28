@@ -10,7 +10,7 @@ export const supportEmail = 'support@talosaur.com';
 // The contact list on Work with us and in the footer, in order: what each address is for, then the address
 export const contactEmails = [
   { label: 'General inquiries', email: teamEmail },
-  { label: 'Donations and sponsorship', email: financeContact },
+  { label: 'Sales, donations and sponsorship', email: financeContact },
   { label: 'Technical questions', email: supportEmail },
 ];
 export const location = 'College Station, Texas';

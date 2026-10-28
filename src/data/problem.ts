@@ -155,7 +155,7 @@ export const glance = [
 export const plan = {
   tag: 'Our plan',
   headline: 'A low-cost robot that **finds, follows and films** marine life in the **twilight zone**.',
-  text: "Divers can't reach the twilight zone, and robots and research ships cost too much to send often. We're building a robot that costs far less, and testing it a step at a time, from the pool to the reef.",
+  text: "Divers can't reach the twilight zone, and robots and research ships cost too much to send often. We're building a robot that costs far less, testing it a step at a time from the pool to the reef, and then putting it in other people's hands.",
   depth: '50–300 m',
   steps: [
     {
@@ -177,8 +177,20 @@ export const plan = {
     {
       status: 'The goal',
       title: 'Affordable ocean exploration',
-      text: 'Footage and samples that researchers, sanctuaries, fisheries and offshore teams can use, at a cost that lets them go back again and again.',
-      link: { label: 'Work with us', href: '/work-with-us' },
+      text: 'Vehicles, research and surveys that researchers, sanctuaries, fisheries and offshore teams can afford, so they can go back again and again.',
+      link: { label: "What we'll offer", href: '#offer' },
     },
   ],
+  // The dark panel under the steps: what Talosaur will offer once the vehicles work. Nothing is for
+  // sale on the site (no online payments); the button goes to Work with us.
+  offer: {
+    tag: 'Eventually',
+    title: "What we'll offer",
+    items: [
+      { tag: 'To buy', title: 'Vehicles', text: 'Low-cost underwater vehicles that research teams, sanctuaries and companies can buy and run themselves.' },
+      { tag: 'To use', title: 'Research', text: 'What we find in the twilight zone: footage, eDNA results and reports on the life we document.' },
+      { tag: 'On request', title: 'Surveys', text: "Name the site and we'll go and look, for research, conservation, fisheries and offshore energy." },
+    ],
+    cta: { label: 'Talk to us', href: '/work-with-us' },
+  },
 };

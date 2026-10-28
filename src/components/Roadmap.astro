@@ -3,6 +3,10 @@
 // a dive profile (along, then down to the next stop), ending flat at the depth we're aiming for.
 // On tablets and phones it becomes a plain list with the line running down the left.
 //
+// A silhouette of Turtle (its outside shape only, traced from the team's side view, the same outline
+// as the Home Turtle drawing) rides the line: as you scroll through, it dives from the first stop to
+// the last. With "reduce motion" turned on it stays at the first stop.
+//
 //   <Roadmap steps={[{ status: 'Building now', title: 'Turtle', text: '...', link: { label: 'Build log', href: '/news' } }]} depth="50–300 m" />
 //
 // Used on The Problem, Section 06 "What we're doing" (the steps are `plan.steps` in src/data/problem.ts).
@@ -30,7 +34,26 @@ const KEEP_CASE = /(eDNA)/;
 const titleParts = (title: string) => title.split(KEEP_CASE).map((part) => ({ part, keep: KEEP_CASE.test(part) }));
 ---
 
-<div class="roadmap" style={`--steps: ${steps.length};`}>
+<div class="roadmap" data-roadmap style={`--steps: ${steps.length};`}>
+  <!-- Turtle's side view as one solid shape: hull, front collar and dome, the clamps and rail on top,
+       the housing on top, two weights underneath and the fittings at the back -->
+  <svg class="roadmap-sub" viewBox="248 134 962 380" aria-hidden="true">
+    <rect x="277" y="250" width="738" height="238" rx="14" />
+    <rect x="1015" y="236" width="40" height="266" />
+    <rect x="1055" y="230" width="30" height="278" />
+    <path d="M1085 250 A120 120 0 0 1 1085 490 Z" />
+    <rect x="252" y="289" width="26" height="22" />
+    <rect x="252" y="339" width="26" height="22" />
+    <rect x="252" y="384" width="26" height="22" />
+    <rect x="252" y="426" width="26" height="22" />
+    <rect x="470" y="230" width="385" height="21" />
+    <rect x="470" y="230" width="45" height="262" />
+    <rect x="810" y="230" width="45" height="262" />
+    <rect x="590" y="138" width="148" height="84" />
+    <rect x="658" y="220" width="12" height="12" />
+    <rect x="540" y="458" width="65" height="52" rx="6" />
+    <rect x="715" y="458" width="65" height="52" rx="6" />
+  </svg>
   <ol class="roadmap-steps" data-reveal-group>
     {steps.map((step, i) => (
       <li class="step" style={`--i: ${i};`}>
@@ -112,13 +135,30 @@ const titleParts = (title: string) => title.split(KEEP_CASE).map((part) => ({ pa
     stroke-width: 1;
   }
 
-  /* not in capitals, so the unit stays "m" */
+  /* under the flat end of the line (Turtle rides above it); not in capitals, so the unit stays "m" */
   .step-depth {
     position: absolute;
-    top: -1.6rem;
+    top: 0.6rem;
     right: 0;
     color: var(--color-accent);
     text-transform: none;
+  }
+
+  /* Turtle's silhouette. The script below moves it along the line; without the script it waits
+     just above the first stop. */
+  .roadmap-sub {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    width: clamp(4rem, 5.5vw, 6rem);
+    height: auto;
+    overflow: visible;
+    fill: var(--color-text);
+    pointer-events: none;
+    transform-origin: 50% 100%;
+    transform: translate(0.75rem, calc(0.5rem - 100% - 0.35rem));
+    will-change: transform;
   }
 
   .step-status {
@@ -194,6 +234,13 @@ const titleParts = (title: string) => title.split(KEEP_CASE).map((part) => ({ pa
       display: none;
     }
 
+    /* here it rides down the line on the left, nose first */
+    .roadmap-sub {
+      width: 3.4rem;
+      transform-origin: 50% 50%;
+      transform: translate(calc(0.5rem - 50%), 0) rotate(90deg);
+    }
+
     .step-depth {
       position: static;
       display: block;
@@ -201,3 +248,115 @@ const titleParts = (title: string) => title.split(KEEP_CASE).map((part) => ({ pa
     }
   }
 </style>
+
+<script>
+  // Move Turtle's silhouette along the dive line as the plan scrolls through the screen.
+  // The line is rebuilt from where the stops actually are each time, so it always matches the layout.
+  type Pt = { x: number; y: number };
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const narrow = window.matchMedia('(max-width: 1099px)');
+
+  document.querySelectorAll<HTMLElement>('[data-roadmap]').forEach((map) => {
+    const sub = map.querySelector<SVGSVGElement>('.roadmap-sub');
+    const dots = [...map.querySelectorAll<HTMLElement>('.step-dot')];
+    if (!sub || dots.length < 2) return;
+
+    // The points of the line, relative to the top left of the plan
+    const linePoints = (): Pt[] => {
+      const box = map.getBoundingClientRect();
+      const c = dots.map((dot) => {
+        const r = dot.getBoundingClientRect();
+        return { x: r.left + r.width / 2 - box.left, y: r.top + r.height / 2 - box.top };
+      });
+      if (narrow.matches) {
+        // straight down the left, through every stop, to the end of the list
+        return [...c, { x: c[0].x, y: box.height - 8 }];
+      }
+      // along, then down to the next stop (the knee is 62% of the way, as in the drawn line), then flat to the end
+      const pts: Pt[] = [];
+      c.forEach((p, i) => {
+        pts.push(p);
+        const next = c[i + 1];
+        if (next) pts.push({ x: p.x + 0.62 * (next.x - p.x), y: p.y });
+      });
+      pts.push({ x: box.width, y: c[c.length - 1].y });
+      return pts;
+    };
+
+    // The point a distance d along the line
+    const pointAt = (pts: Pt[], d: number): Pt => {
+      for (let i = 1; i < pts.length; i++) {
+        const a = pts[i - 1], b = pts[i];
+        const len = Math.hypot(b.x - a.x, b.y - a.y);
+        if (d <= len || i === pts.length - 1) {
+          const t = len ? Math.min(1, Math.max(0, d / len)) : 0;
+          return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+        }
+        d -= len;
+      }
+      return pts[pts.length - 1];
+    };
+
+    const place = () => {
+      const box = map.getBoundingClientRect();
+      const vh = window.innerHeight;
+      if (box.bottom < -200 || box.top > vh + 200) return;
+
+      const pts = linePoints();
+      let total = 0;
+      for (let i = 1; i < pts.length; i++) total += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
+
+      // 0 when the plan's top is 80% of the way down the screen, 1 when its bottom is 55% of the way down
+      const progress = reduceMotion ? 0 : Math.min(1, Math.max(0, (vh * 0.8 - box.top) / (vh * 0.25 + box.height)));
+
+      // Turtle's own size, before turning (on the vertical line it's turned on its side, but its
+      // length along the line is the same)
+      const W = sub.clientWidth || 64;
+      const H = sub.clientHeight || 25;
+      const half = W / 2;
+      // keep the whole silhouette on the line: start half a length in, stop half a length before the end
+      const d = half + progress * Math.max(0, total - 2 * half);
+      const p = pointAt(pts, d);
+      // the direction, looking a little ahead and behind, so it turns smoothly at the corners
+      const ahead = pointAt(pts, d + 28), behind = pointAt(pts, Math.max(0, d - 28));
+      const angle = (Math.atan2(ahead.y - behind.y, ahead.x - behind.x) * 180) / Math.PI;
+
+      if (narrow.matches) {
+        // centred on the line
+        sub.style.transform = `translate(${(p.x - W / 2).toFixed(1)}px, ${(p.y - H / 2).toFixed(1)}px) rotate(${angle.toFixed(1)}deg)`;
+      } else {
+        // riding just above the line, turning about the middle of its underside
+        sub.style.transform = `translate(${(p.x - W / 2).toFixed(1)}px, ${(p.y - H - 5).toFixed(1)}px) rotate(${angle.toFixed(1)}deg)`;
+      }
+    };
+
+    let queued = false;
+    const queue = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        place();
+      });
+    };
+
+    place();
+    window.addEventListener('resize', queue);
+    narrow.addEventListener('change', queue);
+    if (!reduceMotion) {
+      window.addEventListener('scroll', queue, { passive: true });
+      // the stops fade up into place when they first appear, so follow them for a moment
+      const settle = (until: number) => {
+        place();
+        if (performance.now() < until) requestAnimationFrame(() => settle(until));
+      };
+      new IntersectionObserver((entries, obs) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          settle(performance.now() + 1500);
+          obs.disconnect();
+        }
+      }).observe(map);
+    }
+  });
+</script>
