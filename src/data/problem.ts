@@ -43,11 +43,12 @@ export const problemIntro =
 // Three still pictures, one per figure:
 //   mapped  a dotted Earth with 28.7% of its sea dots lit (public/images/figures/globe-mapped.svg,
 //           made by stills_site/make_globe.py; the lit dots show the share, not the places)
-//   seen    a football field with a sheet of paper drawn to scale (src/components/SeenField.astro).
-//           Worked out here: a field with end zones is 360 x 160 ft = 57,600 sq ft; 0.001% of that is
+//   seen    1,000 dots and a magnifier showing one of them holds 100 more, one lit: 1 in 100,000 is
+//           0.001% (src/components/SeenPorthole.astro). The football field line in the aside is
+//           worked out here: a field with end zones is 360 x 160 ft = 57,600 sq ft; 0.001% of that is
 //           0.58 sq ft, less than a letter-size sheet (8.5 x 11 in = 0.65 sq ft)
-//   named   100 sea animals: 9 named by any count, 24 more by NOAA's, the rest still unnamed
-//           (src/components/SpeciesGrid.astro)
+//   named   a school of 100 sea animals: 9 named by any count, 24 more by NOAA's, the rest still
+//           unnamed (src/components/SpeciesSchool.astro)
 export const explored = {
   mapped: {
     label: 'Mapped',
@@ -58,8 +59,8 @@ export const explored = {
   seen: {
     label: 'Seen',
     value: '<0.001%',
-    caption: 'of the deep seafloor has ever been seen. If it were a football field, everything anyone has looked at would be smaller than a sheet of paper.',
-    aside: 'In real life, that is an area about the size of Rhode Island.',
+    caption: 'of the deep seafloor has ever been seen. Split it into 1,000 dots, then split one dot into 100: everything anyone has looked at would fit inside a single speck.',
+    aside: 'On a football field, that would be less than a sheet of paper. In real life, it is an area about the size of Rhode Island.',
     sources: [sources.explored],
   },
   named: {

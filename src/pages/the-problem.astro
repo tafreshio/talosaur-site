@@ -9,8 +9,8 @@ import SpecList from '../components/SpecList.astro';
 import StoryBand from '../components/StoryBand.astro';
 import PictureCards from '../components/PictureCards.astro';
 import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
-import SeenField from '../components/SeenField.astro';
-import SpeciesGrid from '../components/SpeciesGrid.astro';
+import SeenPorthole from '../components/SeenPorthole.astro';
+import SpeciesSchool from '../components/SpeciesSchool.astro';
 import { url } from '../lib/url';
 import { imageExists, imageUrl } from '../lib/images';
 import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources, explored, naming } from '../data/problem';
@@ -31,9 +31,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
   <!-- Light band: how little we've seen, then the big numbers on cost. It ends where the sea
        (Section 03) begins. -->
   <div class="band theme-light sky">
-    <!-- Section 01: barely explored. Three still pictures, zig-zagging left and right: a dotted Earth
-         (mapped), a football field with a sheet of paper to scale (seen) and a grid of 100 sea animals
-         (named). Then why formally naming a species matters. Text and sources: explored and naming in
+    <!-- Section 01: barely explored. Three still pictures in one style, round "portholes" in dark glass
+         with faint sonar rings around them, zig-zagging left and right: the dotted Earth (mapped), 1,000
+         dots and a magnifier (seen) and a swirling school of 100 sea animals (named). Then why formally
+         naming a species matters. Text and sources: explored and naming in
          src/data/problem.ts -->
     <section class="container section">
       <SectionHeader number={1} title="Barely explored" />
@@ -57,10 +58,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
         </div>
       </div>
 
-      <!-- 02 Seen: a football field with a sheet of paper to scale (SeenField.astro) -->
+      <!-- 02 Seen: 1,000 dots and a magnifier (SeenPorthole.astro) -->
       <div class="fig-row fig-row--flip">
-        <figure class="fig-art fig-field">
-          <SeenField />
+        <figure class="fig-art fig-porthole">
+          <SeenPorthole />
         </figure>
         <div class="fig-text">
           <p class="label fig-tag">[ 02 · {explored.seen.label} ]</p>
@@ -71,10 +72,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
         </div>
       </div>
 
-      <!-- 03 Named: 100 sea animals (SpeciesGrid.astro) -->
+      <!-- 03 Named: a school of 100 sea animals (SpeciesSchool.astro) -->
       <div class="fig-row">
         <figure class="fig-art fig-species">
-          <SpeciesGrid />
+          <SpeciesSchool />
         </figure>
         <div class="fig-text">
           <p class="label fig-tag">[ 03 · {explored.named.label} ]</p>
@@ -95,7 +96,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         <ol class="naming-list" data-reveal-group>
           {naming.reasons.map((reason, i) => (
             <li class="naming-item">
-              <p class="label naming-num">{pad(i + 1)}</p>
+              <p class="naming-num" aria-hidden="true">{pad(i + 1)}</p>
               <div>
                 <h4 class="naming-item-title">{reason.title}</h4>
                 <p class="naming-item-text">{reason.text}</p>
@@ -228,18 +229,17 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   /* each figure is a row: the picture on one side, the number and words on the other, swapping sides
      from row to row */
+  /* no rules between the rows: the sonar rings around each porthole need the room */
   .fig-row {
     display: grid;
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     gap: var(--space-lg) var(--space-xl);
     align-items: center;
-    padding-block: var(--space-xl);
-    border-top: 1px solid var(--color-line);
+    padding-block: clamp(3rem, 6vw, 6rem);
   }
 
   .fig-row:first-of-type {
-    border-top: 0;
-    padding-top: var(--space-md);
+    padding-top: clamp(4rem, 8vw, 8rem);
   }
 
   .fig-row--flip {
@@ -251,12 +251,19 @@ const pad = (n: number) => String(n).padStart(2, '0');
   }
 
   .fig-art {
+    position: relative;
+    justify-self: center;
     margin: 0;
   }
 
-  .fig-globe {
-    justify-self: center;
-    width: min(100%, 34rem);
+  /* the three portholes are the same size; the magnifier sticks out to the right of the second */
+  .fig-globe,
+  .fig-species {
+    width: min(74%, 32rem);   /* 74%: room in the column for the outer ring (15% out on each side) */
+  }
+
+  .fig-porthole {
+    width: min(100%, 41.6rem);   /* 780 wide for a 600 porthole, so the porthole matches the others */
   }
 
   .fig-globe img {
@@ -265,9 +272,54 @@ const pad = (n: number) => String(n).padStart(2, '0');
     height: auto;
   }
 
-  .fig-species {
-    justify-self: center;
-    width: min(100%, 30rem);
+  /* faint sonar rings around each porthole (still, no motion) */
+  .fig-globe::before,
+  .fig-globe::after,
+  .fig-species::before,
+  .fig-species::after,
+  .fig-porthole::before,
+  .fig-porthole::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    aspect-ratio: 1;
+    border: 1px solid var(--color-line);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .fig-globe::before,
+  .fig-species::before {
+    inset: -7%;
+  }
+
+  .fig-globe::after,
+  .fig-species::after {
+    inset: -15%;
+    border-style: dashed;
+  }
+
+  /* the second picture is wider than it is tall, so its rings are placed on the porthole itself */
+  .fig-porthole::before,
+  .fig-porthole::after {
+    top: 0;
+    left: 0;
+    width: calc(600 / 780 * 100%);
+    height: auto;
+  }
+
+  .fig-porthole::before {
+    translate: 0 0;
+    scale: 1.14;
+  }
+
+  .fig-porthole::after {
+    scale: 1.3;
+    border-style: dashed;
+  }
+
+  .fig-row {
+    isolation: isolate;
   }
 
   .fig-text {
@@ -359,17 +411,36 @@ const pad = (n: number) => String(n).padStart(2, '0');
   }
 
   /* Why naming matters: the heading and intro on the left, three numbered reasons on the right */
+  /* a dark glass panel, like the portholes above it, with a cyan corner square */
   .naming {
+    position: relative;
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     gap: var(--space-lg) var(--space-xl);
-    margin-top: var(--space-2xl);
-    padding-top: var(--space-lg);
-    border-top: 1px solid var(--color-text);
+    margin-top: var(--space-xl);
+    padding: clamp(1.75rem, 4vw, 4rem);
+    color: var(--light-bg);
+    background: radial-gradient(120% 140% at 15% 0%, #13324a, #0b1620 60%);
+    /* inside the panel, lines and labels switch to their versions for dark */
+    --color-line: rgb(232 241 245 / 0.2);
+    --color-accent: #3de0d0;
+    --color-muted: #8fa8b8;
+    --color-text: var(--light-bg);
+  }
+
+  .naming::before {
+    content: '';
+    position: absolute;
+    top: -0.5rem;
+    left: -0.5rem;
+    width: 1rem;
+    height: 1rem;
+    background: #3de0d0;
   }
 
   .naming-title {
     font-size: var(--text-xl);
+    color: var(--light-bg);
   }
 
   .naming-intro {
@@ -386,7 +457,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   .naming-item {
     display: grid;
-    grid-template-columns: 3rem minmax(0, 1fr);
+    grid-template-columns: 4.5rem minmax(0, 1fr);
     gap: var(--space-sm);
     padding-block: var(--space-md);
     border-bottom: 1px solid var(--color-line);
@@ -396,9 +467,20 @@ const pad = (n: number) => String(n).padStart(2, '0');
     padding-top: 0;
   }
 
+  .naming-item:last-child {
+    border-bottom: 0;
+  }
+
+  /* big thin numerals, like the story bands */
   .naming-num {
-    margin: 0.2rem 0 0;
-    color: var(--color-orange);
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-stretch: 125%;
+    font-size: 2.6rem;
+    line-height: 0.9;
+    letter-spacing: 0;
+    color: #ff7a2f;
   }
 
   .naming-item-title {
@@ -557,6 +639,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
       order: 0;
     }
 
+    /* stacked, the second picture is centred on its whole width (porthole and magnifier), so its
+       rings would run off the left edge: leave them out */
+    .fig-porthole::before,
+    .fig-porthole::after {
+      display: none;
+    }
+
     .naming {
       grid-template-columns: 1fr;
     }
@@ -571,6 +660,33 @@ const pad = (n: number) => String(n).padStart(2, '0');
   }
 
   @media (max-width: 760px) {
+    /* on phones the portholes shrink a little so their rings stay inside the page margin; the outer
+       dashed ring and the second picture's rings are left out */
+    .fig-globe,
+    .fig-species {
+      width: 82%;
+    }
+
+    .fig-globe::after,
+    .fig-species::after,
+    .fig-porthole::before,
+    .fig-porthole::after {
+      display: none;
+    }
+
+    /* the corner square stays inside the page margin, and the numerals take less room */
+    .naming::before {
+      left: 0;
+    }
+
+    .naming-item {
+      grid-template-columns: 3rem minmax(0, 1fr);
+    }
+
+    .naming-num {
+      font-size: 2rem;
+    }
+
     .fig-caption,
     .naming-intro {
       font-size: var(--text-base);
