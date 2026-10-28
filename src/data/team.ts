@@ -23,13 +23,13 @@ export interface TeamMember {
 export const team: TeamMember[] = [
   {
     name: 'Fernando Guzman',
-    role: 'Project Lead',
+    role: 'Founder',
     majorYear: '[Major, year]', // PLACEHOLDER
     photo: 'fernando-guzman.jpg',
     linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
     lead: true,
     // PLACEHOLDER: two or three sentences about Fernando
-    bio: '[Two or three sentences about Fernando: what he leads on the team, his background, and what drew him to Talosaur.]',
+    bio: '[Two or three sentences about Fernando: why he started Talosaur, his background, and what he works on now.]',
   },
   {
     name: 'Sam Cakici',
