@@ -5,6 +5,7 @@
 // "standIn" says what the photo should show. Until that file is in public/images/, the card shows a
 // "photo to come" panel with these words (no borrowed picture). Once the photo is in, the line can go.
 import { twitchUrl } from './site';
+import { sources as problemSources } from './problem';
 
 // Three cards under the hero
 export const heroCards = [
@@ -143,3 +144,28 @@ export const plan = {
     cta: { label: 'Talk to us', href: '/work-with-us' },
   },
 };
+
+// ---------------------------------------------------------------- Under FIND / FOLLOW / FILM
+// Three boxed numbers under the stacked words, one for each word (sources in src/data/problem.ts)
+
+export const echoFigures = [
+  {
+    label: 'Find',
+    value: '67–91%',
+    text: 'of ocean species have yet to be formally described.',
+    sources: [problemSources.explored, problemSources.mora],
+  },
+  {
+    label: 'Follow',
+    value: '40 m',
+    text: 'is as deep as recreational divers go. The twilight zone runs on to 300 m.',
+    sources: [problemSources.diving],
+  },
+  {
+    label: 'Film',
+    value: '$10K+',
+    unit: 'a day',
+    text: 'for ship time alone, on a research trip.',
+    sources: [problemSources.ship],
+  },
+];

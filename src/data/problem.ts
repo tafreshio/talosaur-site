@@ -11,11 +11,88 @@ export const sources = {
   pressure: { label: 'NOAA', href: 'https://oceanservice.noaa.gov/facts/pressure.html' },
   // NOAA's 2023 Flower Garden Banks National Marine Sanctuary poster (also the source of its photos)
   poster: { label: 'NOAA poster', href: 'https://sanctuaries.noaa.gov/media/posters/2023-flower-garden-banks-national-marine-sanctuary-poster.pdf' },
+  // NOAA Ocean Exploration, "How much of the ocean has been explored?" (updated April 20, 2026):
+  // 28.7% of the seafloor mapped to modern high-resolution standards; explorers have seen less than
+  // 0.001% of the deep seafloor (deeper than 200 m), about the size of Rhode Island; an estimated
+  // 700,000 to 1 million ocean species, roughly two-thirds or more not yet discovered or described;
+  // about 2,000 new species accepted each year
+  explored: { label: 'NOAA', href: 'https://oceanexplorer.noaa.gov/facts/explored.html' },
+  // Mora et al. 2011, "How many species are there on Earth and in the ocean?", PLoS Biology:
+  // about 2.2 million ocean species, 91% still awaiting description
+  mora: { label: 'PLoS Biology', href: 'https://doi.org/10.1371/journal.pbio.1001127' },
+  // Liu et al. 2022, "Undescribed species have higher extinction risk than known species",
+  // Conservation Letters: 30% of vertebrates described 2011–2020 are threatened, against 11.9% of those
+  // described 1758–1767 (summary: phys.org/news/2022-03-newly-species-higher-extinction.html)
+  liu: { label: 'Conservation Letters', href: 'https://doi.org/10.1111/conl.12876' },
+  // Ocean Census: fewer than 250,000 ocean species known; some may go extinct before they're found
+  census: { label: 'Ocean Census', href: 'https://oceancensus.org/how-many-ocean-species-remain-undiscovered/' },
+  // Strona (University of Helsinki), 360info, 2022: knowing a species exists isn't knowing if it's
+  // endangered; DNA traces can't replace a formal species description
+  strona: { label: '360info', href: 'https://360info.org/a-rose-by-any-other-name-would-be-as-endangered/' },
 };
 
 export const problemIntro =
   "Between 50 and 300 meters lies the ocean's twilight zone. It's full of marine life, yet few people ever get to look at it.";
 
+// ---------------------------------------------------------------- Section 01: Barely explored
+// How little of the ocean has been mapped and seen, and how many of its animals still have no name.
+// Each figure has a small drawing (src/components/OceanFigure.astro):
+//   ring   a ring filled to `percent`
+//   dot    a square standing for the whole deep seafloor, with what's been seen drawn to scale
+//   range  a bar of the share still unnamed: solid to `low`%, hatched on to `high`%
+export const explored = {
+  figures: [
+    {
+      kind: 'ring',
+      value: '28.7%',
+      percent: 28.7,
+      caption: 'of the seafloor has been mapped in detail, as of April 2026.',
+      sources: [sources.explored],
+    },
+    {
+      kind: 'dot',
+      value: '<0.001%',
+      caption: 'of the deep seafloor has ever been seen. All of it together is about the size of Rhode Island.',
+      sources: [sources.explored],
+    },
+    {
+      kind: 'range',
+      value: '67–91%',
+      low: 67,
+      high: 91,
+      caption: "of ocean species have yet to be formally described: about two in three by NOAA's count, up to nine in ten by another estimate.",
+      sources: [sources.explored, sources.mora],
+    },
+  ],
+  note: 'About 2,000 new ocean species are named each year. At that pace, naming the rest would take centuries.',
+  noteSource: sources.explored,
+};
+
+// Why formally describing a species matters (under the figures in Section 01)
+export const naming = {
+  title: 'Why naming a species matters',
+  intro:
+    'Formally describing a species means giving it a scientific name, keeping a reference specimen and publishing what sets it apart from every other species. It sounds like paperwork, but a lot depends on it.',
+  reasons: [
+    {
+      title: "You can't protect what you can't name",
+      text: "Whether an animal is endangered is assessed species by species. DNA traces in the water can show something is there, but they don't replace a formal description.",
+      source: sources.strona,
+    },
+    {
+      title: 'The newest names are the most at risk',
+      text: 'Of vertebrates described in 2011–2020, 30% are threatened, against 12% of those described in 1758–1767, the first decade of scientific names.',
+      source: sources.liu,
+    },
+    {
+      title: "Some may vanish before they're found",
+      text: 'With the ocean changing fast, some species may be going extinct before anyone finds them, let alone names them.',
+      source: sources.census,
+    },
+  ],
+};
+
+// ---------------------------------------------------------------- Section 02: What it takes
 // Big number callouts. "value" is the big text, "caption" explains it.
 export const stats = [
   {

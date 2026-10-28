@@ -15,6 +15,9 @@
 //              thin offset frame, untouched (no type over it, no colour shift). The colour-shifted
 //              picture still fills the band behind it.
 //
+// Any layout can also take `figures`: a row of boxed numbers under it, each with a short line and its
+// source (used under FIND / FOLLOW / FILM on Home), joined to the words above by a thin line.
+//
 // Pictures: public/images/bands/story-*.jpg (2400 x 1350, made by stills_site/make_story.py).
 // Text in [brackets] is a placeholder to fill in later.
 import { imageUrl } from '../lib/images';
@@ -23,6 +26,14 @@ import { keepDots, keepUnits } from '../lib/text';
 interface Item {
   title: string;    // a number for stats ('05'), a word for echo ('Find'), a short heading for statement
   text?: string;    // the line under it
+}
+
+interface Figure {
+  label: string;    // small [ label ] at the top of the box, e.g. 'Find'
+  value: string;    // the number
+  unit?: string;    // smaller text after it, e.g. 'a day'
+  text: string;
+  sources?: { label: string; href: string }[];
 }
 
 interface Art {
@@ -42,10 +53,11 @@ interface Props {
   subtitle?: string;       // a sentence beside or under the big line
   items?: Item[];
   art?: Art;               // the artwork for the 'art' layout
+  figures?: Figure[];      // a boxed row of numbers under the layout
   source?: { label: string; href: string };  // where the facts come from, shown small at the bottom
 }
 
-const { variant, image, position = '50% 50%', tag, title, subtitle, items = [], art, source } = Astro.props;
+const { variant, image, position = '50% 50%', tag, title, subtitle, items = [], art, figures = [], source } = Astro.props;
 const hasSlot = Astro.slots.has('default');
 const pad = (n: number) => String(n + 1).padStart(2, '0');
 ---
@@ -148,6 +160,25 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
           </dl>
         )}
       </div>
+    )}
+
+    {figures.length > 0 && (
+      <dl class="story-figures" data-reveal-group>
+        {figures.map((figure, i) => (
+          <div class="story-figure">
+            <dt class="label story-figure-label">[ {pad(i)} · {figure.label} ]</dt>
+            <dd class="story-figure-value">{keepUnits(figure.value)}{figure.unit && <span class="story-figure-unit"> {figure.unit}</span>}</dd>
+            <dd class="story-figure-text">{keepUnits(figure.text)}</dd>
+            {figure.sources && figure.sources.length > 0 && (
+              <dd class="story-figure-srcs">
+                {figure.sources.map((src) => (
+                  <a class="label story-figure-src" href={src.href} target="_blank" rel="noopener">[ Source: {src.label} ]</a>
+                ))}
+              </dd>
+            )}
+          </div>
+        ))}
+      </dl>
     )}
 
     {hasSlot && variant !== 'split' && <div class="story-slot"><slot /></div>}
@@ -528,6 +559,99 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     color: var(--color-white);
   }
 
+  /* ---------- figures: boxed numbers under the layout ---------- */
+
+  .story-figures {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    max-width: 68rem;
+    margin: calc(var(--space-xl) + 2rem) auto 0;
+    border: 1px solid rgb(255 255 255 / 0.6);
+    background: rgb(6 18 31 / 0.55);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+
+  /* a thin line down from the words to the box, with a small square where it lands */
+  .story-figures::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    height: calc(var(--space-xl) + 2rem);
+    border-left: 1px solid rgb(255 255 255 / 0.6);
+  }
+
+  .story-figures::after {
+    content: '';
+    position: absolute;
+    top: -0.3rem;
+    left: calc(50% - 0.3rem);
+    width: 0.6rem;
+    height: 0.6rem;
+    background: var(--color-lime);
+  }
+
+  .story-figure {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-md) var(--space-md) var(--space-sm);
+    text-align: left;
+  }
+
+  .story-figure + .story-figure {
+    border-left: 1px solid rgb(255 255 255 / 0.35);
+  }
+
+  .story-figure dd {
+    margin: 0;
+  }
+
+  .story-figure-label {
+    color: var(--color-lime);
+  }
+
+  .story-figure-value {
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-stretch: 125%;
+    font-size: clamp(2.4rem, 1.2rem + 2.4vw, 3.75rem);
+    line-height: 1;
+    color: var(--color-white);
+    white-space: nowrap;
+  }
+
+  .story-figure-unit {
+    font-size: 0.4em;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .story-figure-text {
+    line-height: 1.45;
+  }
+
+  .story-figure-srcs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.75rem;
+    margin-top: auto !important;
+  }
+
+  .story-figure-src {
+    display: inline-block;
+    padding-block: 0.3rem; /* an easier tap target on phones */
+    color: var(--color-white);
+    text-decoration: none;
+  }
+
+  .story-figure-src:hover {
+    text-decoration: underline;
+  }
+
   .story-src {
     display: inline-block;
     margin-top: var(--space-lg);
@@ -602,6 +726,15 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
 
     .stat-num {
       font-size: 5rem;
+    }
+
+    .story-figures {
+      grid-template-columns: 1fr;
+    }
+
+    .story-figure + .story-figure {
+      border-left: 0;
+      border-top: 1px solid rgb(255 255 255 / 0.35);
     }
 
     .art-stat {

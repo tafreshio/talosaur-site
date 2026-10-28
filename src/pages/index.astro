@@ -9,7 +9,9 @@ import Patch from '../components/Patch.astro';
 import Card from '../components/Card.astro';
 import Specimen from '../components/Specimen.astro';
 import { imageUrl } from '../lib/images';
-import { heroCards, featuredHeading, featuredCards, helpButtons, interestedCards } from '../data/home';
+import { heroCards, featuredHeading, featuredCards, helpButtons, interestedCards, echoFigures } from '../data/home';
+import { explored } from '../data/problem';
+import OceanFigure from '../components/OceanFigure.astro';
 import { getSortedNews, formatNewsDate } from '../lib/news';
 import { url } from '../lib/url';
 
@@ -35,6 +37,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
             finds, follows and films marine life there.
           </p>
           <a class="button" href={url('/the-problem')}>Read more <span aria-hidden="true">→</span></a>
+          <!-- two figures from The Problem (explored in src/data/problem.ts): how much of the seafloor is
+               mapped, and how little of the deep seafloor anyone has seen -->
+          <div class="intro-figures" data-reveal-group>
+            {explored.figures.slice(0, 2).map((figure) => <OceanFigure {...figure} size="sm" />)}
+          </div>
         </div>
       </div>
     </section>
@@ -61,7 +68,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   <!-- Story band: FIND / FOLLOW / FILM (the three verbs of the intro, Content doc) stacked over the
        spiral coral (NOAA) in magenta and green, like the "Lost but not gone forever" band on
-       Colossal's mammoth page -->
+       Colossal's mammoth page. Under the words, a boxed number for each (echoFigures in src/data/home.ts). -->
   <StoryBand
     variant="echo"
     image="story-find.jpg"
@@ -71,13 +78,14 @@ const pad = (n: number) => String(n).padStart(2, '0');
       { title: 'Follow', text: '50–300 m down' },
       { title: 'Film', text: 'at low cost' },
     ]}
+    figures={echoFigures}
   />
 
   <!-- Light band: Section 03 -->
   <div class="band theme-light">
     <!-- Section 03: three cards -->
     <section class="container section">
-      <SectionHeader number={3} />
+      <SectionHeader number={3} title="In the works" />
       <!-- Feature layout: the first card (Turtle) is big and square, the other two stack beside it -->
       <div class="card-grid card-grid--feature" data-reveal-group data-drift="90">
         {heroCards.map((card, i) => (
@@ -166,7 +174,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   /* ---------- The thin picture between Section 01 and 02 ---------- */
 
   .strip-wrap {
-    padding-top: var(--space-2xl);
+    padding-top: var(--space-xl);
   }
 
   .strip {
@@ -256,7 +264,16 @@ const pad = (n: number) => String(n).padStart(2, '0');
     line-height: 1.5;
   }
 
-  /* ---------- Card grids (sections 02, 03, 06) ---------- */
+  /* two small figures side by side under the button, filling the space beside the tall headline */
+  .intro-figures {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-md);
+    width: 100%;
+    margin-top: var(--space-md);
+  }
+
+  /* ---------- Card grids (sections 03, 04, 07) ---------- */
 
   .card-grid {
     display: grid;

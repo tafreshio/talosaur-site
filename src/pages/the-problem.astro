@@ -9,9 +9,12 @@ import SpecList from '../components/SpecList.astro';
 import StoryBand from '../components/StoryBand.astro';
 import PictureCards from '../components/PictureCards.astro';
 import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
+import OceanFigure from '../components/OceanFigure.astro';
 import { url } from '../lib/url';
 import { imageExists, imageUrl } from '../lib/images';
-import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } from '../data/problem';
+import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources, explored, naming } from '../data/problem';
+
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
 <BaseLayout title="The Problem" description={problemIntro} headerOverlay>
@@ -24,40 +27,73 @@ import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } f
     imagePosition="50% 30%"
   />
 
-  <!-- Light band: the big numbers. It ends where the sea (Section 02) begins. -->
+  <!-- Light band: how little we've seen, then the big numbers on cost. It ends where the sea
+       (Section 03) begins. -->
   <div class="band theme-light sky">
-    <!-- Section 01: big numbers (drifts a little as you scroll, see BaseLayout) -->
+    <!-- Section 01: barely explored. Three figures, each with a small drawing (OceanFigure.astro), and
+         why formally naming a species matters. Text and sources: explored and naming in src/data/problem.ts -->
+    <section class="container section">
+      <SectionHeader number={1} title="Barely explored" />
+      <div class="figures" data-reveal-group>
+        {explored.figures.map((figure) => <OceanFigure {...figure} />)}
+      </div>
+      <p class="figures-note" data-reveal>
+        {explored.note}
+        <a class="label figures-src" href={explored.noteSource.href} target="_blank" rel="noopener">[ Source: {explored.noteSource.label} ]</a>
+      </p>
+
+      <div class="naming">
+        <div class="naming-head" data-reveal>
+          <h3 class="naming-title">{naming.title}</h3>
+          <p class="naming-intro">{naming.intro}</p>
+        </div>
+        <ol class="naming-list" data-reveal-group>
+          {naming.reasons.map((reason, i) => (
+            <li class="naming-item">
+              <p class="label naming-num">{pad(i + 1)}</p>
+              <div>
+                <h4 class="naming-item-title">{reason.title}</h4>
+                <p class="naming-item-text">{reason.text}</p>
+                <a class="label figures-src" href={reason.source.href} target="_blank" rel="noopener">[ Source: {reason.source.label} ]</a>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- Section 02: what it takes to look, big numbers (drifts a little as you scroll, see BaseLayout) -->
     <section class="container section" data-drift="60">
-      <SectionHeader number={1} />
+      <SectionHeader number={2} title="What it takes" />
       <div class="stats" data-reveal-group>
         {stats.map((stat, i) => <StatCallout {...stat} index={i + 1} />)}
       </div>
     </section>
 
-    <!-- Section 02 label sits just above the water line -->
+    <!-- Section 03 label sits just above the water line -->
     <div class="container section">
-      <SectionHeader number={2} />
+      <SectionHeader number={3} title="Out of reach" />
     </div>
   </div>
 
-  <!-- Section 02: the sea itself, drawn to scale. The three reasons it is hard to study
+  <!-- Section 03: the sea itself, drawn to scale. The three reasons it is hard to study
        (Content doc) sit inside it at the depths they are about. -->
   <DepthBands />
 
-  <!-- Section 03: At a glance. It carries on the dark water of the depth graphic above, so the page
+  <!-- Section 04: At a glance. It carries on the dark water of the depth graphic above, so the page
        goes light, dark, light, dark. Colossal's fact sheet: white boxed labels and a big cut-out. -->
   <div class="band">
     <section class="container section">
-      <SectionHeader number={3} title="At a glance" />
+      <SectionHeader number={4} title="At a glance" />
       <SpecList items={glance} image="glance-jelly.webp" width={1745} height={939} />
     </section>
   </div>
 
-  <!-- Section 04: Habitat (light). Like the "Habitat / Arctic + Tundra" section on Colossal's mammoth
+  <!-- Section 05: Habitat (light). Like the "Habitat / Arctic + Tundra" section on Colossal's mammoth
        page: a wide strip of the reef, the place in big type, a short text and a map. -->
   <div class="band theme-light">
     <section class="container section habitat">
-      <SectionHeader number={4} title="Habitat" />
+      <SectionHeader number={5} title="Habitat" />
       <!-- A wide picture of the reef at Flower Garden Banks (sections/habitat-pano.jpg, 1800 x 900): a big
            brain coral on its pedestal of reef, photo supplied by the team. If the file is missing, a
            "photo to come" panel says what goes there. -->
@@ -119,10 +155,10 @@ import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } f
     source={sources.poster}
   />
 
-  <!-- Section 05: who lives here, four animals from the poster with NOAA photos (natural colour) -->
+  <!-- Section 06: who lives here, four animals from the poster with NOAA photos (natural colour) -->
   <div class="band band--top theme-light">
     <section class="container species">
-      <SectionHeader number={5} title="Who lives here" />
+      <SectionHeader number={6} title="Who lives here" />
       <PictureCards items={fgbSpecies} columns={4} ratio="4 / 3" />
     </section>
   </div>
@@ -138,9 +174,98 @@ import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } f
     padding-top: var(--space-2xl);
   }
 
-  /* The light band stops a short way under the Section 02 label, leaving room for the ship's mast */
+  /* The light band stops a short way under the Section 03 label, leaving room for the ship's mast */
   .sky {
     padding-bottom: var(--space-xl);
+  }
+
+  /* ---------- Section 01: Barely explored ---------- */
+
+  .figures {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-lg);
+  }
+
+  .figures-note {
+    max-width: 44rem;
+    margin: var(--space-xl) 0 0;
+    font-size: var(--text-lg);
+    line-height: 1.5;
+  }
+
+  .figures-src {
+    display: inline-block;
+    margin-left: 0.4rem;
+    padding-block: 0.3rem; /* an easier tap target on phones */
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .figures-src:hover {
+    text-decoration: underline;
+  }
+
+  /* Why naming matters: the heading and intro on the left, three numbered reasons on the right */
+  .naming {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--space-lg) var(--space-xl);
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-text);
+  }
+
+  .naming-title {
+    font-size: var(--text-xl);
+  }
+
+  .naming-intro {
+    margin: var(--space-md) 0 0;
+    font-size: var(--text-lg);
+    line-height: 1.5;
+  }
+
+  .naming-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .naming-item {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    gap: var(--space-sm);
+    padding-block: var(--space-md);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .naming-item:first-child {
+    padding-top: 0;
+  }
+
+  .naming-num {
+    margin: 0.2rem 0 0;
+    color: var(--color-orange);
+  }
+
+  .naming-item-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    font-weight: 800;
+    font-size: clamp(1.3rem, 1rem + 0.8vw, 1.75rem);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .naming-item-text {
+    margin: var(--space-xs) 0 0;
+    line-height: 1.5;
+  }
+
+  .naming-item .figures-src {
+    margin-left: 0;
   }
 
   /* ---------- Stats ---------- */
@@ -151,7 +276,7 @@ import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } f
     gap: var(--space-lg);
   }
 
-  /* ---------- Section 03: Habitat ---------- */
+  /* ---------- Section 05: Habitat ---------- */
 
   .habitat-pano {
     position: relative;
@@ -271,6 +396,14 @@ import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } f
   /* ---------- Tablet and phone ---------- */
 
   @media (max-width: 1023px) {
+    .figures {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .naming {
+      grid-template-columns: 1fr;
+    }
+
     .stats {
       grid-template-columns: 1fr 1fr;
     }
@@ -281,6 +414,16 @@ import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } f
   }
 
   @media (max-width: 760px) {
+    .figures {
+      grid-template-columns: 1fr;
+      gap: var(--space-xl);
+    }
+
+    .figures-note,
+    .naming-intro {
+      font-size: var(--text-base);
+    }
+
     .stats {
       grid-template-columns: 1fr;
     }
