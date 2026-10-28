@@ -107,7 +107,7 @@ Swap any of these for real team photos whenever you have them.
 | `radiolarian.webp` | Home, Section 03, running off the right edge behind the cards | A radiolarian (plankton) from the 1887 HMS Challenger plates: neon lime lines on a violet shell, magenta inside. Transparent background. Placed with `src/components/Specimen.astro` |
 | `sonar.jpg` | Home, Section 05, behind Latest news | NOAA sonar data of the seafloor, recoloured violet, teal and magenta and kept dark so the news reads on top |
 | `news-rail.jpg`, `news-rail-wide.jpg` | News: the tall one beside the list on wide screens, the sideways one above the list on phones and tablets | A rainbow "field log" strip with four small NOAA photos. The numbered dots are drawn by the page at the positions in `railStops` in `src/pages/news.astro` |
-| `jelly.jpg`, `ship-inset.jpg` | Work with us, beside the contact details | Collage: a jellyfish in magenta and orange, a lime block with a notch behind it, an orange dot and a natural photo of a ship |
+| `jelly.jpg` (and `sections/contact-inset.jpg`) | Work with us, beside the contact details | Collage: a jellyfish in magenta and orange, a lime block with a notch behind it, an orange dot and a small natural photo of a ray (NOAA) |
 | `tile-coral.jpg`, `tile-sea-pen.jpg`, `tile-ray.jpg` | Donate, one above each way to help | NOAA dive footage turned into colour blocks: lime, violet and orange to magenta. The file names and tags are in `waysToHelp` at the top of `src/pages/donate.astro` |
 | `skeleton-wide.jpg` | Who we are, the wide "Open positions" card at the end of the team | A 1900 engraving of a fish skeleton in an orange to violet gradient |
 
@@ -122,7 +122,7 @@ The accent colours used in these edits (lime, orange, violet, magenta) are CSS v
 | Work with us, 01 Who we work with: four photo cards (`src/components/PictureCards.astro`) | `audiences` at the top of `src/pages/work-with-us.astro` | `aud-research.jpg`, `aud-conservation.jpg`, `aud-fisheries.jpg`, `aud-offshore.jpg` |
 | Donate, 02 Where it goes: three photo cards | `support` at the top of `src/pages/donate.astro` | `support-parts.jpg`, `support-testing.jpg`, `support-field-trips.jpg` |
 | Positions, 01 Life on the team: text and an Apply button beside a big photo with a smaller one in an orange frame | `life` at the top of `src/pages/positions.astro` | `team-build.jpg`, `team-lab.jpg` |
-| News, 01 Where we test: four photo cards, from the pool down to the reef | `tests` at the top of `src/pages/news.astro` | `test-pool.jpg`, `test-lake.jpg`, `test-gulf.jpg`, `test-reef.jpg` |
+| News, 01 Where we test: four photo cards, from the pool out to open water (the same steps as the test ladder on the Turtle drawing) | `tests` at the top of `src/pages/news.astro` | `test-pool.jpg`, `test-lake.jpg`, `test-gulf.jpg`, `test-reef.jpg` |
 
 The photos of people, labs and machines are natural; the reef and the fish in "Who we work with" have false-colour edits. Most are stand-ins from NOAA and Pexels footage: replace them with the team's own photos using the same file names. Where a tag on a photo starts with "Photo:" (for example `[ Photo: Turtle in the pool ]`), it says what the real photo should show; change the tag in the page's list once it's in.
 

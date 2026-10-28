@@ -21,9 +21,9 @@ and the README's "Add or swap a photo" section says which file is which so they 
 | Four `[One or two sentences on...]` lines (Research, Conservation, Fisheries, Offshore energy) | Work with us, Section 01 "Who we work with" | `src/pages/work-with-us.astro` (`audiences`) |
 | Three `[What ... costs]` lines (Parts, Testing, Field trips) | Donate, Section 02 "Where it goes" | `src/pages/donate.astro` (`support`) |
 | `[A few lines on what being on the team is like...]` and `[A line on who to ask...]` | Positions, Section 01 "Life on the team" | `src/pages/positions.astro` (`life`) |
-| Four `[When, and what this test shows.]` lines (Pool, Lake, Gulf of Mexico, Flower Garden Banks) | News, Section 01 "Where we test" | `src/pages/news.astro` (`tests`) |
+| Four `[When, and what this test shows.]` lines (Pool, Lake Bryan and Lake Travis, Galveston, Offshore) | News, Section 01 "Where we test" | `src/pages/news.astro` (`tests`) |
 | Stand-in photos in the new sections (NOAA and Pexels footage); swap for the team's own when you have them | Work with us, Donate, Positions, News | `public/images/sections/` (same file names) |
-| Photos whose tag says what should go there: `[ Photo: Turtle in the pool ]` (`support-testing.jpg`, a NOAA vehicle for now), `[ Photo: the team at a build day ]` (`team-build.jpg`, a lathe for now; `team-lab.jpg` beside it is a microscope), and `[ Photo: pool test ]`, `[ Photo: lake test ]`, `[ Photo: out on the Gulf ]`, `[ Photo: first reef footage ]` (`test-*.jpg`) | Donate, Positions, News | `public/images/sections/` (same file names); change the tag text in the page's list when the real photo is in |
+| Photos whose tag says what should go there: `[ Photo: Turtle in the pool ]` (`support-testing.jpg`, a NOAA vehicle for now), `[ Photo: the team at a build day ]` (`team-build.jpg`, a lathe for now; `team-lab.jpg` beside it is a microscope), and `[ Photo: pool test ]`, `[ Photo: lake test ]`, `[ Photo: Galveston ]`, `[ Photo: first offshore footage ]` (`test-*.jpg`) | Donate, Positions, News | `public/images/sections/` (same file names); change the tag text in the page's list when the real photo is in |
 
 ## To confirm
 

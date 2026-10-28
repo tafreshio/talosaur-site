@@ -146,7 +146,7 @@ const animals = [
     /* distance from the content edge to the edge of the screen, so things can bleed off it */
     --bleed: calc(var(--gutter) + max(0px, (100vw - var(--max-width)) / 2));
     position: relative;
-    padding-bottom: var(--space-2xl);
+    padding-bottom: 0; /* the section after it (At a glance) brings its own space */
     overflow-x: clip; /* hide what bleeds off the sides, but let the ship poke up */
     background:
       /* sunlight glow just under the surface */
@@ -395,9 +395,11 @@ const animals = [
     color: rgb(232 241 245 / 0.78);
   }
 
+  /* padded so each source link is a comfortable tap target on a phone */
   .src {
     display: inline-block;
-    margin-top: 0.6rem;
+    margin-top: 0.3rem;
+    padding-block: 0.3rem;
     color: var(--color-accent);
     text-decoration: none;
   }
@@ -720,9 +722,23 @@ const animals = [
       opacity: 0.4;
     }
 
-    .animal--larva,
-    .vehicle-label {
+    .animal--larva {
       display: none;
+    }
+
+    /* the deep vehicle's label sits just above it, right-aligned, since the vehicle is at the right edge */
+    .vehicle-label {
+      top: auto;
+      bottom: calc(100% + 0.5rem);
+      left: auto;
+      right: 0;
+      transform: none;
+    }
+
+    /* the readout's line only runs across the ruler, so it never strikes through the text */
+    .depth-gauge::before {
+      right: auto;
+      width: var(--rule-w);
     }
 
     .animal-label {

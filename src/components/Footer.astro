@@ -125,8 +125,9 @@ const year = new Date().getFullYear();
   .footer-bottom {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-xs) var(--space-md);
-    padding-block: var(--space-md);
+    align-items: center;
+    gap: 0 var(--space-md);
+    padding-block: var(--space-sm);
     border-top: 1px solid var(--color-line);
     font-family: var(--font-mono);
     font-size: 0.75rem;
@@ -135,7 +136,10 @@ const year = new Date().getFullYear();
     color: var(--color-muted);
   }
 
+  /* padded so each link is a comfortable tap target on a phone (about 30 px tall) */
   .footer-bottom a {
+    display: inline-block;
+    padding-block: 0.5rem;
     text-decoration: none;
   }
 

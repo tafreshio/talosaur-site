@@ -2,6 +2,8 @@
 // "photo" is a filename in public/images/. Every card shows its photo; to swap one, replace the
 // file and keep the same name. If a file is missing, the card shows a plain dark panel of the same shape.
 // A link in [brackets] is a placeholder: the card shows but isn't clickable yet.
+// "standIn" marks a stock stand-in photo: the card shows a small "[ Photo: ... ]" tag saying what
+// the real photo should be. Delete the line once the team's own photo is in.
 import { twitchUrl } from './site';
 
 // Three cards under the hero
@@ -38,6 +40,7 @@ export const featuredCards = [
     text: 'A Texas-based student team, mostly in College Station.',
     href: '/who-we-are',
     photo: 'home-team.jpg',
+    standIn: 'the team', // the photo is a stand-in until the team has its own
     photoLabel: 'The team',
   },
   {
@@ -45,6 +48,7 @@ export const featuredCards = [
     text: "We're recruiting. See what roles are open.",
     href: '/positions',
     photo: 'home-positions.jpg',
+    standIn: 'team members at work', // the photo is a stand-in until the team has its own
     photoLabel: 'Team members at work',
   },
   {
@@ -52,6 +56,7 @@ export const featuredCards = [
     text: 'Updates, photos and videos from every stage.',
     href: '/news',
     photo: 'home-build-log.jpg',
+    standIn: 'the build in progress', // the photo is a stand-in until the team has its own
     photoLabel: 'Build in progress',
   },
 ];
@@ -77,6 +82,7 @@ export const interestedCards = [
     text: 'The people behind Talosaur.',
     href: '/who-we-are',
     photo: 'home-meet-the-team.jpg',
+    standIn: 'a team portrait', // the photo is a stand-in until the team has its own
     photoLabel: 'Team portrait',
   },
   {

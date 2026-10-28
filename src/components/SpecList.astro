@@ -80,7 +80,10 @@ const { items, image, width = 1522, height = 959 } = Astro.props;
     line-height: 1.6;
   }
 
+  /* source link: padded so it's an easier tap target on phones */
   .spec-src {
+    display: inline-block;
+    padding-block: 0.35rem;
     margin-left: 0.6rem;
     color: var(--color-accent);
     text-decoration: none;
@@ -110,12 +113,13 @@ const { items, image, width = 1522, height = 959 } = Astro.props;
 
   /* Narrower screens: the list first, the cut-out under it */
   @media (max-width: 1023px) {
+    /* ...and runs off the right edge of the screen, instead of stopping at the page margin */
     .spec-figure {
       position: relative;
       top: auto;
       right: auto;
-      width: 100%;
-      margin-top: var(--space-lg);
+      width: calc(100% + var(--gutter));
+      margin: var(--space-lg) calc(-1 * var(--gutter)) 0 0;
       translate: none;
     }
   }

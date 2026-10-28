@@ -62,7 +62,7 @@ const lookFor = (i: number) => looks[i % looks.length];
                 <span class="member-initials">{panelText(lead.name, lead.role)}</span>
               </div>
             )}
-            <p class="label member-tag">01 · {lead.role}</p>
+            <p class="label member-tag"><span class="member-tag-num">01 · </span>{lead.role}</p>
             <!-- Name in violet boxes over the photo's corner, one box per word -->
             <h2 class="lead-name">
               {lead.name.split(/\s+/).map((word) => <span>{word}</span>)}
@@ -103,7 +103,7 @@ const lookFor = (i: number) => looks[i % looks.length];
                     </div>
                   )}
                   <!-- Orange tag on the photo's corner, like Colossal's role tags -->
-                  <p class="label member-tag">{pad(i + firstNumber)} · {member.role}</p>
+                  <p class="label member-tag"><span class="member-tag-num">{pad(i + firstNumber)} · </span>{member.role}</p>
                 </div>
                 <h2 class="member-name">{member.name}</h2>
                 <p class="member-major">{member.majorYear}</p>
@@ -551,11 +551,26 @@ const lookFor = (i: number) => looks[i % looks.length];
       inset: 0.5rem -0.5rem -0.5rem 0.5rem;
     }
 
+    /* on phones the tag drops its number and stays on one line */
     .member-tag {
       top: 0.4rem;
       left: 0.4rem;
       padding: 0.2rem 0.4rem;
       font-size: 0.6rem;
+      white-space: nowrap;
+    }
+
+    .member-tag-num {
+      display: none;
+    }
+
+    /* the colour blocks and frames poke out about 0.6rem; this keeps them inside the page margin */
+    .crew {
+      padding-inline: 0.6rem;
+    }
+
+    .lead-media {
+      margin-left: 0.6rem;
     }
 
     .member-panel {

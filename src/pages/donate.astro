@@ -189,6 +189,11 @@ const financeHref = contactHref(financeContact);
       aspect-ratio: 16 / 9;
     }
 
+    /* the corner square stays inside the page margin */
+    .way-tile::after {
+      right: 0;
+    }
+
     .way-text {
       font-size: var(--text-base);
     }

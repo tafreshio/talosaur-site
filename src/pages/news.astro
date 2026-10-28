@@ -14,14 +14,15 @@ import { imageExists, imageUrl } from '../lib/images';
 
 const entries = await getSortedNews();
 
-// Where we test: the steps from the pool down to the reef, each with a photo that goes with it
-// (public/images/sections/test-*.jpg, stock stand-ins until the team has its own; the tag on each
-// says what that photo should show). Text in [brackets] is a placeholder to fill in later.
+// Where we test: the steps from the pool out to open water, following the test ladder on the
+// Turtle drawing (Home page). Each has a photo that goes with it (public/images/sections/test-*.jpg,
+// stock stand-ins until the team has its own; the tag on each says what that photo should show).
+// Text in [brackets] is a placeholder to fill in later.
 const tests = [
   { image: 'test-pool.jpg', tag: 'Photo: pool test', title: 'Pool', text: '[When, and what this test shows.]' },
-  { image: 'test-lake.jpg', tag: 'Photo: lake test', title: 'Lake', text: '[When, and what this test shows.]' },
-  { image: 'test-gulf.jpg', tag: 'Photo: out on the Gulf', title: 'Gulf of Mexico', text: '[When, and what this test shows.]' },
-  { image: 'test-reef.jpg', tag: 'Photo: first reef footage', title: 'Flower Garden Banks', text: '[When, and what we hope to film there.]' },
+  { image: 'test-lake.jpg', tag: 'Photo: lake test', title: 'Lake Bryan and Lake Travis', text: '[When, and what this test shows.]' },
+  { image: 'test-gulf.jpg', tag: 'Photo: Galveston', title: 'Galveston', text: '[When, and what this test shows.]' },
+  { image: 'test-reef.jpg', tag: 'Photo: first offshore footage', title: 'Offshore', text: '[When, and what we hope to film there, for example Flower Garden Banks.]' },
 ];
 
 // Heights (0 = top, 1 = bottom) of the four photos on the field log strip. They match the picture,
