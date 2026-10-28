@@ -146,3 +146,39 @@ export const glance = [
   { label: 'Who lives here', value: 'At Flower Garden Banks: black corals, octocorals, sponges and reef fish', source: sources.poster },
   { label: 'Surveys a year', value: '[How often this zone gets surveyed]' }, // PLACEHOLDER
 ];
+
+// ---------------------------------------------------------------- Section 06: What we're doing
+// The answer to the problem: what Talosaur is building, as a statement and four steps (a "dive" that
+// sinks a little with each step, src/components/Roadmap.astro). Written for the site from the Content
+// doc's Home text, Turtle and eDNA cards, Donate and Work with us copy; edit freely.
+// In the headline, words between ** and ** get a coloured box.
+export const plan = {
+  tag: 'Our plan',
+  headline: 'A low-cost robot that **finds, follows and films** marine life in the **twilight zone**.',
+  text: "Divers can't reach the twilight zone, and robots and research ships cost too much to send often. We're building a robot that costs far less, and testing it a step at a time, from the pool to the reef.",
+  depth: '50–300 m',
+  steps: [
+    {
+      status: 'Building now',
+      title: 'Turtle',
+      text: 'Our first autonomous underwater vehicle, built for fresh water to prove affordable documentation is possible.',
+      link: { label: 'Follow the build', href: '/news' },
+    },
+    {
+      status: 'In development',
+      title: 'Deep eDNA samplers',
+      text: 'Lightweight samplers for deep-sea eDNA, the traces of DNA animals leave in the water. They can show what lives there, even what the camera misses.',
+    },
+    {
+      status: 'Next',
+      title: 'Into the twilight zone',
+      text: 'A vehicle built for 50–300 m, starting with deep reefs close to home like Flower Garden Banks.',
+    },
+    {
+      status: 'The goal',
+      title: 'Affordable ocean exploration',
+      text: 'Footage and samples that researchers, sanctuaries, fisheries and offshore teams can use, at a cost that lets them go back again and again.',
+      link: { label: 'Work with us', href: '/work-with-us' },
+    },
+  ],
+};

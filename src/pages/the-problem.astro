@@ -9,9 +9,11 @@ import SpecList from '../components/SpecList.astro';
 import StoryBand from '../components/StoryBand.astro';
 import PictureCards from '../components/PictureCards.astro';
 import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
+import Statement from '../components/Statement.astro';
+import Roadmap from '../components/Roadmap.astro';
 import { url } from '../lib/url';
 import { imageExists, imageUrl } from '../lib/images';
-import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } from '../data/problem';
+import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources, plan } from '../data/problem';
 ---
 
 <BaseLayout title="The Problem" description={problemIntro} headerOverlay>
@@ -125,6 +127,17 @@ import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } f
       <SectionHeader number={5} title="Who lives here" />
       <PictureCards items={fgbSpecies} columns={4} ratio="4 / 3" />
     </section>
+
+    <!-- Section 06: what we're doing about it. A big statement, then the plan as a dive: four steps,
+         each a little deeper, from Turtle in fresh water to the twilight zone (plan in src/data/problem.ts).
+         id="plan" so other pages can link straight here (/the-problem#plan). -->
+    <section class="container section plan" id="plan">
+      <SectionHeader number={6} title="What we're doing" />
+      <Statement tag={plan.tag} headline={plan.headline} text={plan.text} />
+      <div class="plan-roadmap">
+        <Roadmap steps={plan.steps} depth={plan.depth} />
+      </div>
+    </section>
   </div>
 
   <!-- Closing photo (octopus on a reef, in the teal-sand-magenta colour sweep). Copy: Content doc Home headline and "Get in touch" card. -->
@@ -178,6 +191,15 @@ import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } f
 
   .species {
     padding-top: var(--space-lg);
+  }
+
+  /* the fixed header shouldn't cover the section heading when you land on /the-problem#plan */
+  .plan {
+    scroll-margin-top: var(--header-height);
+  }
+
+  .plan-roadmap {
+    margin-top: var(--space-2xl);
   }
 
   .habitat-grid {

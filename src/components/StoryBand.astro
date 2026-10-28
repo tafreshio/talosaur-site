@@ -544,6 +544,12 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     margin-top: var(--space-xl);
   }
 
+  /* under the stacked words, the button sits in the middle too */
+  .story--echo .story-slot {
+    display: flex;
+    justify-content: center;
+  }
+
   /* ---------- Tablet and phone ---------- */
 
   @media (max-width: 900px) {
