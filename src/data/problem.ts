@@ -11,11 +11,93 @@ export const sources = {
   pressure: { label: 'NOAA', href: 'https://oceanservice.noaa.gov/facts/pressure.html' },
   // NOAA's 2023 Flower Garden Banks National Marine Sanctuary poster (also the source of its photos)
   poster: { label: 'NOAA poster', href: 'https://sanctuaries.noaa.gov/media/posters/2023-flower-garden-banks-national-marine-sanctuary-poster.pdf' },
+  // NOAA Ocean Exploration, "How much of the ocean has been explored?" (updated April 20, 2026):
+  // 28.7% of the seafloor mapped to modern high-resolution standards; explorers have seen less than
+  // 0.001% of the deep seafloor (deeper than 200 m), about the size of Rhode Island; an estimated
+  // 700,000 to 1 million ocean species, roughly two-thirds or more not yet discovered or described;
+  // about 2,000 new species accepted each year
+  explored: { label: 'NOAA', href: 'https://oceanexplorer.noaa.gov/facts/explored.html' },
+  // Mora et al. 2011, "How many species are there on Earth and in the ocean?", PLoS Biology:
+  // about 2.2 million ocean species, 91% still awaiting description
+  mora: { label: 'PLoS Biology', href: 'https://doi.org/10.1371/journal.pbio.1001127' },
+  // Liu et al. 2022, "Undescribed species have higher extinction risk than known species",
+  // Conservation Letters: 30% of vertebrates described 2011–2020 are threatened, against 11.9% of those
+  // described 1758–1767 (summary: phys.org/news/2022-03-newly-species-higher-extinction.html)
+  liu: { label: 'Conservation Letters', href: 'https://doi.org/10.1111/conl.12876' },
+  // Ocean Census: fewer than 250,000 ocean species known; some may go extinct before they're found
+  census: { label: 'Ocean Census', href: 'https://oceancensus.org/how-many-ocean-species-remain-undiscovered/' },
+  // Strona (University of Helsinki), 360info, 2022: knowing a species exists isn't knowing if it's
+  // endangered; DNA traces can't replace a formal species description
+  strona: { label: '360info', href: 'https://360info.org/a-rose-by-any-other-name-would-be-as-endangered/' },
+  // Bell et al. 2025, Science Advances (press release on EurekAlert): five countries (the US, Japan,
+  // New Zealand, France and Germany) made 97% of all deep-sea submergence observations, "due to the
+  // high cost of ocean exploration"
+  bell: { label: 'EurekAlert', href: 'https://www.eurekalert.org/news-releases/1082535' },
 };
 
 export const problemIntro =
   "Between 50 and 300 meters lies the ocean's twilight zone. It's full of marine life, yet few people ever get to look at it.";
 
+// ---------------------------------------------------------------- Section 01: Barely explored
+// How little of the ocean has been mapped and seen, and how many of its animals still have no name.
+// Three still pictures, one per figure:
+//   mapped  a dotted Earth with 28.7% of its sea dots lit (public/images/figures/globe-mapped.svg,
+//           made by stills_site/make_globe.py; the lit dots show the share, not the places)
+//   seen    1,000 dots and a magnifier showing one of them holds 100 more, one lit: 1 in 100,000 is
+//           0.001% (src/components/SeenPorthole.astro). The football field line in the aside is
+//           worked out here: a field with end zones is 360 x 160 ft = 57,600 sq ft; 0.001% of that is
+//           0.58 sq ft, less than a letter-size sheet (8.5 x 11 in = 0.65 sq ft)
+//   named   a school of 100 sea animals: 9 named by any count, 24 more by NOAA's, the rest still
+//           unnamed (src/components/SpeciesSchool.astro)
+export const explored = {
+  mapped: {
+    label: 'Mapped',
+    value: '28.7%',
+    caption: 'of the seafloor has been mapped in detail, as of April 2026. The rest is known only roughly, from satellites.',
+    sources: [sources.explored],
+  },
+  seen: {
+    label: 'Seen',
+    value: '<0.001%',
+    caption: 'of the deep seafloor has ever been seen. Split it into 1,000 dots, then split one dot into 100: everything anyone has looked at would fit inside a single speck.',
+    aside: 'On a football field, that would be less than a sheet of paper. In real life, it is an area about the size of Rhode Island.',
+    sources: [sources.explored],
+  },
+  named: {
+    label: 'Named',
+    value: '67–91%',
+    caption: "of ocean species have yet to be formally described: about two in three by NOAA's count, up to nine in ten by another estimate.",
+    sources: [sources.explored, sources.mora],
+  },
+  note: 'About 2,000 new ocean species are named each year. At that pace, naming the rest would take centuries.',
+  noteSource: sources.explored,
+};
+
+// Why formally describing a species matters (under the figures in Section 01)
+export const naming = {
+  title: 'Why naming a species matters',
+  intro:
+    'Formally describing a species means giving it a scientific name, keeping a reference specimen and publishing what sets it apart from every other species. It sounds like paperwork, but a lot depends on it.',
+  reasons: [
+    {
+      title: "You can't protect what you can't name",
+      text: "Whether an animal is endangered is assessed species by species. DNA traces in the water can show something is there, but they don't replace a formal description.",
+      source: sources.strona,
+    },
+    {
+      title: 'The newest names are the most at risk',
+      text: 'Of vertebrates described in 2011–2020, 30% are threatened, against 12% of those described in 1758–1767, the first decade of scientific names.',
+      source: sources.liu,
+    },
+    {
+      title: "Some may vanish before they're found",
+      text: 'With the ocean changing fast, some species may be going extinct before anyone finds them, let alone names them.',
+      source: sources.census,
+    },
+  ],
+};
+
+// ---------------------------------------------------------------- Section 02: What it takes
 // Big number callouts. "value" is the big text, "caption" explains it.
 export const stats = [
   {
@@ -33,7 +115,7 @@ export const stats = [
   {
     value: '$10K+',
     unit: 'a day',
-    caption: 'Ship time costs tens of thousands of dollars a day.',
+    caption: 'What a research ship costs to run: tens of thousands of dollars a day.',
     // Dialogue Earth (2024): "running a research ship can easily cost tens of thousands of dollars a day or more"
     source: sources.ship,
   },

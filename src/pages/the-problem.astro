@@ -9,9 +9,13 @@ import SpecList from '../components/SpecList.astro';
 import StoryBand from '../components/StoryBand.astro';
 import PictureCards from '../components/PictureCards.astro';
 import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
+import SeenPorthole from '../components/SeenPorthole.astro';
+import SpeciesSchool from '../components/SpeciesSchool.astro';
 import { url } from '../lib/url';
 import { imageExists, imageUrl } from '../lib/images';
-import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } from '../data/problem';
+import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources, explored, naming } from '../data/problem';
+
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
 <BaseLayout title="The Problem" description={problemIntro} headerOverlay>
@@ -24,40 +28,118 @@ import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } f
     imagePosition="50% 30%"
   />
 
-  <!-- Light band: the big numbers. It ends where the sea (Section 02) begins. -->
+  <!-- Light band: how little we've seen, then the big numbers on cost. It ends where the sea
+       (Section 03) begins. -->
   <div class="band theme-light sky">
-    <!-- Section 01: big numbers (drifts a little as you scroll, see BaseLayout) -->
+    <!-- Section 01: barely explored. Three still pictures in one style, round "portholes" in dark glass
+         with faint sonar rings around them, zig-zagging left and right: the dotted Earth (mapped), 1,000
+         dots and a magnifier (seen) and a swirling school of 100 sea animals (named). Then why formally
+         naming a species matters. Text and sources: explored and naming in
+         src/data/problem.ts -->
+    <section class="container section">
+      <SectionHeader number={1} title="Barely explored" />
+
+      <!-- 01 Mapped: the dotted Earth (public/images/figures/globe-mapped.svg, stills_site/make_globe.py) -->
+      <div class="fig-row">
+        <figure class="fig-art fig-globe">
+          <img src={imageUrl('figures/globe-mapped.svg')} alt="A dotted globe of the Americas and the Atlantic: land in white, the sea in dark dots, about three in ten of them lit in cyan" width="600" height="600" loading="lazy" decoding="async" />
+        </figure>
+        <div class="fig-text">
+          <p class="label fig-tag">[ 01 · {explored.mapped.label} ]</p>
+          <p class="fig-value">{explored.mapped.value}</p>
+          <p class="fig-caption">{explored.mapped.caption}</p>
+          <ul class="fig-key">
+            <li class="label"><span class="key key--lit"></span>Mapped in detail</li>
+            <li class="label"><span class="key key--sea"></span>Not yet</li>
+            <li class="label"><span class="key key--land"></span>Land</li>
+          </ul>
+          <p class="label fig-note">The lit dots show the share, not the places</p>
+          {explored.mapped.sources.map((src) => <a class="label figures-src" href={src.href} target="_blank" rel="noopener">[ Source: {src.label} ]</a>)}
+        </div>
+      </div>
+
+      <!-- 02 Seen: 1,000 dots and a magnifier (SeenPorthole.astro) -->
+      <div class="fig-row fig-row--flip">
+        <figure class="fig-art fig-porthole">
+          <SeenPorthole />
+        </figure>
+        <div class="fig-text">
+          <p class="label fig-tag">[ 02 · {explored.seen.label} ]</p>
+          <p class="fig-value">{explored.seen.value}</p>
+          <p class="fig-caption">{explored.seen.caption}</p>
+          <p class="fig-aside">{explored.seen.aside}</p>
+          {explored.seen.sources.map((src) => <a class="label figures-src" href={src.href} target="_blank" rel="noopener">[ Source: {src.label} ]</a>)}
+        </div>
+      </div>
+
+      <!-- 03 Named: a school of 100 sea animals (SpeciesSchool.astro) -->
+      <div class="fig-row">
+        <figure class="fig-art fig-species">
+          <SpeciesSchool />
+        </figure>
+        <div class="fig-text">
+          <p class="label fig-tag">[ 03 · {explored.named.label} ]</p>
+          <p class="fig-value">{explored.named.value}</p>
+          <p class="fig-caption">{explored.named.caption}</p>
+          <p class="fig-aside">
+            {explored.note}
+          </p>
+          {explored.named.sources.map((src) => <a class="label figures-src" href={src.href} target="_blank" rel="noopener">[ Source: {src.label} ]</a>)}
+        </div>
+      </div>
+
+      <div class="naming">
+        <div class="naming-head" data-reveal>
+          <h3 class="naming-title">{naming.title}</h3>
+          <p class="naming-intro">{naming.intro}</p>
+        </div>
+        <ol class="naming-list" data-reveal-group>
+          {naming.reasons.map((reason, i) => (
+            <li class="naming-item">
+              <p class="naming-num" aria-hidden="true">{pad(i + 1)}</p>
+              <div>
+                <h4 class="naming-item-title">{reason.title}</h4>
+                <p class="naming-item-text">{reason.text}</p>
+                <a class="label figures-src" href={reason.source.href} target="_blank" rel="noopener">[ Source: {reason.source.label} ]</a>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- Section 02: what it takes to look, big numbers (drifts a little as you scroll, see BaseLayout) -->
     <section class="container section" data-drift="60">
-      <SectionHeader number={1} />
+      <SectionHeader number={2} title="What it takes" />
       <div class="stats" data-reveal-group>
         {stats.map((stat, i) => <StatCallout {...stat} index={i + 1} />)}
       </div>
     </section>
 
-    <!-- Section 02 label sits just above the water line -->
+    <!-- Section 03 label sits just above the water line -->
     <div class="container section">
-      <SectionHeader number={2} />
+      <SectionHeader number={3} title="Out of reach" />
     </div>
   </div>
 
-  <!-- Section 02: the sea itself, drawn to scale. The three reasons it is hard to study
+  <!-- Section 03: the sea itself, drawn to scale. The three reasons it is hard to study
        (Content doc) sit inside it at the depths they are about. -->
   <DepthBands />
 
-  <!-- Section 03: At a glance. It carries on the dark water of the depth graphic above, so the page
+  <!-- Section 04: At a glance. It carries on the dark water of the depth graphic above, so the page
        goes light, dark, light, dark. Colossal's fact sheet: white boxed labels and a big cut-out. -->
   <div class="band">
     <section class="container section">
-      <SectionHeader number={3} title="At a glance" />
+      <SectionHeader number={4} title="At a glance" />
       <SpecList items={glance} image="glance-jelly.webp" width={1745} height={939} />
     </section>
   </div>
 
-  <!-- Section 04: Habitat (light). Like the "Habitat / Arctic + Tundra" section on Colossal's mammoth
+  <!-- Section 05: Habitat (light). Like the "Habitat / Arctic + Tundra" section on Colossal's mammoth
        page: a wide strip of the reef, the place in big type, a short text and a map. -->
   <div class="band theme-light">
     <section class="container section habitat">
-      <SectionHeader number={4} title="Habitat" />
+      <SectionHeader number={5} title="Habitat" />
       <!-- A wide picture of the reef at Flower Garden Banks (sections/habitat-pano.jpg, 1800 x 900): a big
            brain coral on its pedestal of reef, photo supplied by the team. If the file is missing, a
            "photo to come" panel says what goes there. -->
@@ -119,10 +201,10 @@ import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } f
     source={sources.poster}
   />
 
-  <!-- Section 05: who lives here, four animals from the poster with NOAA photos (natural colour) -->
+  <!-- Section 06: who lives here, four animals from the poster with NOAA photos (natural colour) -->
   <div class="band band--top theme-light">
     <section class="container species">
-      <SectionHeader number={5} title="Who lives here" />
+      <SectionHeader number={6} title="Who lives here" />
       <PictureCards items={fgbSpecies} columns={4} ratio="4 / 3" />
     </section>
   </div>
@@ -138,9 +220,286 @@ import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } f
     padding-top: var(--space-2xl);
   }
 
-  /* The light band stops a short way under the Section 02 label, leaving room for the ship's mast */
+  /* The light band stops a short way under the Section 03 label, leaving room for the ship's mast */
   .sky {
     padding-bottom: var(--space-xl);
+  }
+
+  /* ---------- Section 01: Barely explored ---------- */
+
+  /* each figure is a row: the picture on one side, the number and words on the other, swapping sides
+     from row to row */
+  /* no rules between the rows: the sonar rings around each porthole need the room */
+  .fig-row {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: var(--space-lg) var(--space-xl);
+    align-items: center;
+    padding-block: clamp(3rem, 6vw, 6rem);
+  }
+
+  .fig-row:first-of-type {
+    padding-top: clamp(4rem, 8vw, 8rem);
+  }
+
+  .fig-row--flip {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+
+  .fig-row--flip .fig-art {
+    order: 2;
+  }
+
+  .fig-art {
+    position: relative;
+    justify-self: center;
+    margin: 0;
+  }
+
+  /* the three portholes are the same size; the magnifier sticks out to the right of the second */
+  .fig-globe,
+  .fig-species {
+    width: min(74%, 32rem);   /* 74%: room in the column for the outer ring (15% out on each side) */
+  }
+
+  .fig-porthole {
+    width: min(100%, 41.6rem);   /* 780 wide for a 600 porthole, so the porthole matches the others */
+  }
+
+  .fig-globe img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* faint sonar rings around each porthole (still, no motion) */
+  .fig-globe::before,
+  .fig-globe::after,
+  .fig-species::before,
+  .fig-species::after,
+  .fig-porthole::before,
+  .fig-porthole::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    aspect-ratio: 1;
+    border: 1px solid var(--color-line);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .fig-globe::before,
+  .fig-species::before {
+    inset: -7%;
+  }
+
+  .fig-globe::after,
+  .fig-species::after {
+    inset: -15%;
+    border-style: dashed;
+  }
+
+  /* the second picture is wider than it is tall, so its rings are placed on the porthole itself */
+  .fig-porthole::before,
+  .fig-porthole::after {
+    top: 0;
+    left: 0;
+    width: calc(600 / 780 * 100%);
+    height: auto;
+  }
+
+  .fig-porthole::before {
+    translate: 0 0;
+    scale: 1.14;
+  }
+
+  .fig-porthole::after {
+    scale: 1.3;
+    border-style: dashed;
+  }
+
+  .fig-row {
+    isolation: isolate;
+  }
+
+  .fig-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .fig-tag {
+    margin: 0;
+    color: var(--color-accent);
+  }
+
+  .fig-value {
+    margin: 0;
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    font-weight: 800;
+    font-size: clamp(3.5rem, 1.5rem + 5vw, 7rem);
+    line-height: 0.85;
+    color: var(--color-accent);
+    white-space: nowrap;
+  }
+
+  .fig-caption {
+    max-width: 30rem;
+    margin: 0;
+    font-size: var(--text-lg);
+    line-height: 1.5;
+  }
+
+  .fig-aside {
+    max-width: 30rem;
+    margin: 0;
+    color: var(--color-muted);
+    line-height: 1.5;
+  }
+
+  .fig-note {
+    margin: 0;
+  }
+
+  .fig-key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .fig-key li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--color-text);
+  }
+
+  .key {
+    display: inline-block;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+  }
+
+  .key--lit {
+    background: #3de0d0;
+  }
+
+  .key--sea {
+    background: #2a4b60;
+  }
+
+  .key--land {
+    background: #e8f1f5;
+    border: 1px solid var(--color-line);
+  }
+
+  .figures-src {
+    display: inline-block;
+    padding-block: 0.3rem; /* an easier tap target on phones */
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .figures-src:hover {
+    text-decoration: underline;
+  }
+
+  /* Why naming matters: the heading and intro on the left, three numbered reasons on the right */
+  /* a dark glass panel, like the portholes above it, with a cyan corner square */
+  .naming {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--space-lg) var(--space-xl);
+    margin-top: var(--space-xl);
+    padding: clamp(1.75rem, 4vw, 4rem);
+    color: var(--light-bg);
+    background: radial-gradient(120% 140% at 15% 0%, #13324a, #0b1620 60%);
+    /* inside the panel, lines and labels switch to their versions for dark */
+    --color-line: rgb(232 241 245 / 0.2);
+    --color-accent: #3de0d0;
+    --color-muted: #8fa8b8;
+    --color-text: var(--light-bg);
+  }
+
+  .naming::before {
+    content: '';
+    position: absolute;
+    top: -0.5rem;
+    left: -0.5rem;
+    width: 1rem;
+    height: 1rem;
+    background: #3de0d0;
+  }
+
+  .naming-title {
+    font-size: var(--text-xl);
+    color: var(--light-bg);
+  }
+
+  .naming-intro {
+    margin: var(--space-md) 0 0;
+    font-size: var(--text-lg);
+    line-height: 1.5;
+  }
+
+  .naming-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .naming-item {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    gap: var(--space-sm);
+    padding-block: var(--space-md);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .naming-item:first-child {
+    padding-top: 0;
+  }
+
+  .naming-item:last-child {
+    border-bottom: 0;
+  }
+
+  /* big thin numerals, like the story bands */
+  .naming-num {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-stretch: 125%;
+    font-size: 2.6rem;
+    line-height: 0.9;
+    letter-spacing: 0;
+    color: #ff7a2f;
+  }
+
+  .naming-item-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    font-weight: 800;
+    font-size: clamp(1.3rem, 1rem + 0.8vw, 1.75rem);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .naming-item-text {
+    margin: var(--space-xs) 0 0;
+    line-height: 1.5;
+  }
+
+  .naming-item .figures-src {
+    margin-left: 0;
   }
 
   /* ---------- Stats ---------- */
@@ -151,7 +510,7 @@ import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } f
     gap: var(--space-lg);
   }
 
-  /* ---------- Section 03: Habitat ---------- */
+  /* ---------- Section 05: Habitat ---------- */
 
   .habitat-pano {
     position: relative;
@@ -271,6 +630,26 @@ import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } f
   /* ---------- Tablet and phone ---------- */
 
   @media (max-width: 1023px) {
+    .fig-row,
+    .fig-row--flip {
+      grid-template-columns: 1fr;
+    }
+
+    .fig-row--flip .fig-art {
+      order: 0;
+    }
+
+    /* stacked, the second picture is centred on its whole width (porthole and magnifier), so its
+       rings would run off the left edge: leave them out */
+    .fig-porthole::before,
+    .fig-porthole::after {
+      display: none;
+    }
+
+    .naming {
+      grid-template-columns: 1fr;
+    }
+
     .stats {
       grid-template-columns: 1fr 1fr;
     }
@@ -281,6 +660,38 @@ import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } f
   }
 
   @media (max-width: 760px) {
+    /* on phones the portholes shrink a little so their rings stay inside the page margin; the outer
+       dashed ring and the second picture's rings are left out */
+    .fig-globe,
+    .fig-species {
+      width: 82%;
+    }
+
+    .fig-globe::after,
+    .fig-species::after,
+    .fig-porthole::before,
+    .fig-porthole::after {
+      display: none;
+    }
+
+    /* the corner square stays inside the page margin, and the numerals take less room */
+    .naming::before {
+      left: 0;
+    }
+
+    .naming-item {
+      grid-template-columns: 3rem minmax(0, 1fr);
+    }
+
+    .naming-num {
+      font-size: 2rem;
+    }
+
+    .fig-caption,
+    .naming-intro {
+      font-size: var(--text-base);
+    }
+
     .stats {
       grid-template-columns: 1fr;
     }
