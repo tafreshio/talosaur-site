@@ -6,13 +6,15 @@
 //
 // Photos live in public/images/sections/. People, lab and machine photos stay natural; nature
 // photos may have false colour (see the photo rule in the README).
-import { imageUrl } from '../lib/images';
+import { imageExists, imageUrl } from '../lib/images';
+import PhotoPlaceholder from './PhotoPlaceholder.astro';
 
 interface Item {
   image: string;     // file name in public/images/sections/
   title: string;     // short heading under the photo
   text: string;      // a line or two (a [bracket] placeholder until it's written)
   tag?: string;      // small label on the photo's corner
+  needs?: string;    // what the photo should show; until the file exists, a "photo to come" panel says so
 }
 
 interface Props {
@@ -28,9 +30,15 @@ const pad = (n: number) => String(n).padStart(2, '0');
 <ol class:list={['pcards', `pcards--${columns}`]} data-reveal-group>
   {items.map((item, i) => (
     <li class="pcard">
-      <div class="pcard-media">
-        <img src={imageUrl(`sections/${item.image}`)} alt="" loading="lazy" decoding="async" style={`--ratio: ${ratio};`} />
-        {item.tag && <span class="label pcard-tag" aria-hidden="true">[ {item.tag} ]</span>}
+      <div class="pcard-media" style={`--ratio: ${ratio};`}>
+        {imageExists(`sections/${item.image}`) ? (
+          <>
+            <img src={imageUrl(`sections/${item.image}`)} alt="" loading="lazy" decoding="async" />
+            {item.tag && <span class="label pcard-tag" aria-hidden="true">[ {item.tag} ]</span>}
+          </>
+        ) : (
+          <PhotoPlaceholder label={item.needs ?? item.title} file={`sections/${item.image}`} />
+        )}
       </div>
       <p class="label pcard-num">{pad(i + 1)}</p>
       <h3 class="pcard-title">{item.title}</h3>
@@ -62,13 +70,14 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   .pcard-media {
     position: relative;
+    aspect-ratio: var(--ratio);
     overflow: hidden;
     border-radius: var(--radius);
   }
 
   .pcard-media img {
     width: 100%;
-    aspect-ratio: var(--ratio);
+    height: 100%;
     object-fit: cover;
     transition: transform 600ms var(--ease);
   }
@@ -125,7 +134,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       translate: none;
     }
 
-    .pcard-media img {
+    .pcard-media {
       aspect-ratio: 4 / 3;
     }
 

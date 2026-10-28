@@ -6,26 +6,27 @@ import SectionHeader from '../components/SectionHeader.astro';
 import PhotoBand from '../components/PhotoBand.astro';
 import Patch from '../components/Patch.astro';
 import PictureCards from '../components/PictureCards.astro';
+import StoryBand from '../components/StoryBand.astro';
 import { financeContact, contactHref } from '../data/site';
-import { imageUrl } from '../lib/images';
 
 const intro =
   'Talosaur is student-built and runs on a tight budget. Your support funds parts, testing and field trips, and helps us bring affordable ocean exploration to more people.';
 
-// Each way to help has a tile on top: an animal from NOAA Ocean Exploration dive video, edited in
-// Colossal's colour blocks (public/images/accents/). "animal" is the small tag on the tile.
+// Each way to help has a colour block on top with its number in big thin type (Colossal's colour
+// tiles). No photo: a picture of something else would suggest the wrong thing.
 const waysToHelp = [
-  { title: 'Fund research', text: 'Support a specific study or field test', image: 'tile-coral.jpg', animal: 'Iridogorgia coral' },
-  { title: 'Sponsor a project', text: 'Back a build like Turtle or our eDNA sampler', image: 'tile-sea-pen.jpg', animal: 'Sea pen' },
-  { title: 'Give in kind', text: 'Parts, equipment, pool or boat time', image: 'tile-ray.jpg', animal: 'Ray' },
+  { title: 'Fund research', text: 'Support a specific study or field test' },
+  { title: 'Sponsor a project', text: 'Back a build like Turtle or our eDNA sampler' },
+  { title: 'Give in kind', text: 'Parts, equipment, pool or boat time' },
 ];
 
 // Where it goes: parts, testing and field trips (the header's caption), each with a photo that goes
 // with it (public/images/sections/, natural colour). Text in [brackets] is a placeholder to fill in later.
-// support-testing.jpg is a stand-in (a NOAA vehicle, untreated) until there is a photo of Turtle in the pool.
+// "needs" says what a missing photo should show: until support-testing.jpg exists, that card shows a
+// "photo to come" panel.
 const support = [
   { image: 'support-parts.jpg', tag: 'Machining', title: 'Parts', text: '[What a gift buys here, for example materials and parts for the next build.]' },
-  { image: 'support-testing.jpg', tag: 'Photo: Turtle in the pool', title: 'Testing', text: '[What testing costs, for example pool time or a day on the lake.]' },
+  { image: 'support-testing.jpg', needs: 'Turtle in the pool', title: 'Testing', text: '[What testing costs, for example pool time or a day on the lake.]' },
   { image: 'support-field-trips.jpg', tag: 'Under way', title: 'Field trips', text: '[What a field trip costs, for example boat time and travel to the coast.]' },
 ];
 
@@ -42,20 +43,36 @@ const financeHref = contactHref(financeContact);
       <ol class="ways" data-reveal-group>
         {waysToHelp.map((way, i) => (
           <li class="way">
-            <figure class="way-tile" aria-hidden="true">
-              <img src={imageUrl(`accents/${way.image}`)} alt="" width="900" height="675" loading="lazy" decoding="async" />
-              <span class="label way-tag">[ {way.animal} · NOAA ]</span>
-            </figure>
-            <p class="label way-num">{String(i + 1).padStart(2, '0')}</p>
+            <div class="way-tile" aria-hidden="true">
+              <span class="way-big">{String(i + 1).padStart(2, '0')}</span>
+              <span class="way-plus">+</span>
+            </div>
             <h3 class="way-title">{way.title}</h3>
             <p class="way-text">{way.text}</p>
           </li>
         ))}
       </ol>
     </section>
+  </div>
 
-    <!-- Section 02: where it goes, three photo cards, in the same light band (so the page goes
-         dark header, light, dark photo) -->
+  <!-- Story band: the ray (NOAA) from orange at the top to violet at the bottom, like the
+       "Modern biology built upon the past" band on Colossal's company page. Copy: the big line and
+       the two column titles are from the Content doc intro; the column text is a placeholder. -->
+  <StoryBand
+    variant="statement"
+    image="story-donate.jpg"
+    position="55% 50%"
+    tag="Why it matters"
+    title="Affordable ocean exploration"
+    items={[
+      { title: 'Student-built', text: '[One or two sentences on who builds Talosaur, and how.]' },
+      { title: 'On a tight budget', text: '[One or two sentences on what a survey costs today, and what Talosaur could cost.]' },
+    ]}
+  />
+
+  <!-- Light band: where it goes -->
+  <div class="band band--top theme-light">
+    <!-- Section 02: where it goes, three photo cards -->
     <section class="container where">
       <SectionHeader number={2} title="Where it goes" />
       <PictureCards items={support} columns={3} />
@@ -73,7 +90,7 @@ const financeHref = contactHref(financeContact);
       ) : (
         <span class="button button--disabled" aria-disabled="true">Contact our finance team</span>
       )}
-      {!financeHref && <p class="label">Link: {financeContact}</p>}
+      {financeHref ? <p class="label donate-email">{financeContact}</p> : <p class="label">Link: {financeContact}</p>}
       <p class="contact-note">No online payments on the site for now; every donation starts with a conversation.</p>
     </div>
   </PhotoBand>
@@ -81,7 +98,7 @@ const financeHref = contactHref(financeContact);
 
 <style>
   .where {
-    padding-top: var(--space-2xl);
+    padding-top: var(--space-lg);
   }
 
   .ways {
@@ -100,18 +117,43 @@ const financeHref = contactHref(financeContact);
     gap: var(--space-sm);
   }
 
+  /* A colour block with the number in the story bands' thin capitals: orange, lime, violet */
   .way-tile {
     position: relative;
-    margin: 0 0 var(--space-xs);
-  }
-
-  .way-tile img {
-    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
     aspect-ratio: 4 / 3;
-    object-fit: cover;
+    margin: 0 0 var(--space-xs);
+    padding: var(--space-md);
+    color: var(--light-text);
+    background: var(--color-orange);
   }
 
-  /* the small square on the tile's corner, a different colour per tile (Colossal's corner dots) */
+  .way:nth-child(2) .way-tile {
+    background: var(--color-lime);
+  }
+
+  .way:nth-child(3) .way-tile {
+    color: var(--color-white);
+    background: var(--color-violet);
+  }
+
+  .way-big {
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-stretch: 125%;
+    font-size: clamp(4rem, 2rem + 6vw, 8rem);
+    line-height: 0.8;
+  }
+
+  .way-plus {
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+  }
+
+  /* the small square on the block's corner, a different colour per block */
   .way-tile::after {
     content: '';
     position: absolute;
@@ -119,37 +161,20 @@ const financeHref = contactHref(financeContact);
     bottom: -0.45rem;
     width: 0.9rem;
     height: 0.9rem;
-    background: var(--color-orange);
-  }
-
-  .way:nth-child(2) .way-tile::after {
-    background: var(--color-lime);
-  }
-
-  .way:nth-child(3) .way-tile::after {
     background: var(--color-violet);
   }
 
-  .way-tag {
-    position: absolute;
-    top: 0.6rem;
-    left: 0.6rem;
-    padding: 0.25rem 0.5rem;
-    color: var(--color-white);
-    background: rgb(6 18 31 / 0.6);
+  .way:nth-child(2) .way-tile::after {
+    background: var(--color-orange);
   }
 
-  .way-num {
-    padding-top: var(--space-sm);
-    border-top: 1px solid var(--color-accent);
-  }
-
-  .way-num {
-    margin: 0;
-    color: var(--color-accent);
+  .way:nth-child(3) .way-tile::after {
+    background: var(--color-lime);
   }
 
   .way-title {
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-accent);
     font-size: var(--text-xl);
   }
 
@@ -172,6 +197,11 @@ const financeHref = contactHref(financeContact);
     cursor: not-allowed;
   }
 
+  .donate-email {
+    margin: 0;
+    color: var(--color-white);
+  }
+
   .contact-note {
     max-width: 38rem;
     margin: var(--space-sm) 0 0;
@@ -184,9 +214,9 @@ const financeHref = contactHref(financeContact);
       gap: var(--space-xl);
     }
 
-    /* tiles a little shorter on phones so the three ways don't take several screens */
-    .way-tile img {
-      aspect-ratio: 16 / 9;
+    /* blocks a little shorter on phones so the three ways don't take several screens */
+    .way-tile {
+      aspect-ratio: 16 / 7;
     }
 
     /* the corner square stays inside the page margin */

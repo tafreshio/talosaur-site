@@ -13,11 +13,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import PhotoBand from '../components/PhotoBand.astro';
 import Patch from '../components/Patch.astro';
+import StoryBand from '../components/StoryBand.astro';
 import { url } from '../lib/url';
 import Photo from '../components/Photo.astro';
 import { team, teamIntro } from '../data/team';
 import { isPlaceholder } from '../data/site';
-import { imageExists, imageUrl } from '../lib/images';
+import { imageExists } from '../lib/images';
 
 // Big faded text on a panel: "Fernando Guzman" -> "FG". A [Name] placeholder shows the role instead.
 const panelText = (name: string, role: string) =>
@@ -42,6 +43,14 @@ const looks = [
   { ratio: '4 / 3', accent: 'frame-violet', drift: 100 },
 ];
 const lookFor = (i: number) => looks[i % looks.length];
+
+// The team in numbers, for the story band between the lead and the rest of the team.
+// The count comes from src/data/team.ts; the two universities and Turtle are from the page intro and Home.
+const stats = [
+  { title: String(team.length).padStart(2, '0'), text: 'Students on the team' },
+  { title: '02', text: 'Universities: Texas A&M and UT Austin' },
+  { title: '01', text: 'Vehicle in the build: Turtle' },
+];
 ---
 
 <BaseLayout title="Who we are" description={teamIntro} headerOverlay>
@@ -84,7 +93,17 @@ const lookFor = (i: number) => looks[i % looks.length];
           </div>
         </article>
       )}
+    </section>
+  </div>
 
+  <!-- Story band: the team in numbers, over sun rays under the surface (Pexels) shifted from orange
+       to violet, like the "5.5 million square miles" stats on Colossal's mammoth page.
+       Copy: the Home "Who we are" card (Content doc). -->
+  <StoryBand variant="stats" image="story-team.jpg" position="55% 40%" tag="Students · College Station, Texas" title="A Texas-based student team" items={stats} />
+
+  <!-- Light band: everyone else -->
+  <div class="band band--top theme-light">
+    <section class="container team">
       <!-- Everyone else -->
       <ul class="crew" data-reveal-group>
         {rest.map((member, i) => {
@@ -116,19 +135,6 @@ const lookFor = (i: number) => looks[i % looks.length];
             </li>
           );
         })}
-        <!-- Last card: open positions (Content doc copy), wide, across two columns. Behind the words:
-             a 1900 engraving of a fish skeleton in Colossal's orange-to-violet gradient (their Careers
-             page has a gradient skull). Picture: public/images/accents/skeleton-wide.jpg -->
-        <li class="member member--join">
-          <div class="member-card" data-drift="140">
-            <a class="member-join" href={url('/positions')}>
-              <img class="member-join-art" src={imageUrl('accents/skeleton-wide.jpg')} alt="" width="1600" height="900" loading="lazy" decoding="async" />
-              <span class="label member-join-index">{pad(team.length + 1)}</span>
-              <span class="member-join-title">Open positions <span aria-hidden="true">→</span></span>
-            </a>
-            <p class="member-join-text">We're recruiting. See what roles are open.</p>
-          </div>
-        </li>
       </ul>
     </section>
   </div>
@@ -393,72 +399,6 @@ const lookFor = (i: number) => looks[i % looks.length];
     color: var(--color-accent);
   }
 
-  /* ---------- Open positions card (wide, across two columns) ---------- */
-
-  .member--join {
-    grid-column: span 2;
-  }
-
-  .member-join {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    aspect-ratio: 16 / 9;
-    padding: var(--space-md);
-    overflow: hidden;
-    border-radius: var(--radius);
-    text-decoration: none;
-    color: var(--color-white);
-    background: var(--color-violet);
-  }
-
-  /* The edited engraving fills the card; the words sit on top of it */
-  .member-join-art {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 600ms var(--ease);
-  }
-
-  .member-join > :not(.member-join-art) {
-    position: relative;
-  }
-
-  .member-join-index {
-    color: var(--color-white);
-  }
-
-  .member-join:hover .member-join-art {
-    transform: scale(1.04);
-  }
-
-  .member-join-title {
-    font-family: var(--font-display);
-    font-stretch: var(--display-width);
-    font-weight: 800;
-    font-size: clamp(1.6rem, 0.8rem + 2vw, 2.6rem);
-    line-height: 0.95;
-    text-transform: uppercase;
-    color: var(--color-white);
-  }
-
-  .member-join-title span {
-    display: inline-block;
-    transition: transform var(--duration) var(--ease);
-  }
-
-  .member-join:hover .member-join-title span {
-    transform: translateX(6px);
-  }
-
-  .member-join-text {
-    margin: var(--space-sm) 0 0;
-    color: var(--color-muted);
-  }
-
   /* ---------- Tablet and phone: the lead stacks, the collage becomes two staggered columns ---------- */
 
   @media (max-width: 900px) {
@@ -582,8 +522,7 @@ const lookFor = (i: number) => looks[i % looks.length];
       font-size: 1.25rem;
     }
 
-    .member-major,
-    .member-join-text {
+    .member-major {
       font-size: var(--text-sm);
     }
 

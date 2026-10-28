@@ -6,8 +6,9 @@ import StatCallout from '../components/StatCallout.astro';
 import DepthBands from '../components/DepthBands.astro';
 import PhotoBand from '../components/PhotoBand.astro';
 import SpecList from '../components/SpecList.astro';
+import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
 import { url } from '../lib/url';
-import { imageUrl } from '../lib/images';
+import { imageExists, imageUrl } from '../lib/images';
 import { problemIntro, stats, habitat, glance } from '../data/problem';
 ---
 
@@ -51,11 +52,19 @@ import { problemIntro, stats, habitat, glance } from '../data/problem';
   </div>
 
   <!-- Section 04: Habitat (light). Like the "Habitat / Arctic + Tundra" section on Colossal's mammoth
-       page: a wide strip of the reef under water, the place in big type, a short text and a map. -->
+       page: a wide strip of the reef, the place in big type, a short text and a map. -->
   <div class="band theme-light">
     <section class="container section habitat">
       <SectionHeader number={4} title="Habitat" />
-      <img class="habitat-pano" src={imageUrl('sections/habitat-pano.jpg')} alt="A reef under water" width="2400" height="600" loading="lazy" decoding="async" />
+      <!-- A wide strip of the reef at Flower Garden Banks (sections/habitat-pano.jpg, 2400 x 600).
+           Until that file exists, a "photo to come" panel says what goes there. -->
+      <div class="habitat-pano">
+        {imageExists('sections/habitat-pano.jpg') ? (
+          <img src={imageUrl('sections/habitat-pano.jpg')} alt="The reef at Flower Garden Banks" width="2400" height="600" loading="lazy" decoding="async" />
+        ) : (
+          <PhotoPlaceholder label="the reef at Flower Garden Banks" file="sections/habitat-pano.jpg" />
+        )}
+      </div>
       <div class="habitat-grid">
         <div class="habitat-copy" data-reveal>
           <h3 class="habitat-title">{habitat.title}</h3>
@@ -110,10 +119,17 @@ import { problemIntro, stats, habitat, glance } from '../data/problem';
   /* ---------- Section 03: Habitat ---------- */
 
   .habitat-pano {
+    position: relative;
     width: 100%;
     aspect-ratio: 4 / 1;
-    object-fit: cover;
+    overflow: hidden;
     border-radius: var(--radius);
+  }
+
+  .habitat-pano img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .habitat-grid {

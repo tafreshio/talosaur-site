@@ -4,7 +4,7 @@
 //   frame    one photo with a thin offset frame and a dot on its corner
 //   lens     a round photo with a ring and crosshair ticks
 //   contact  a film strip of three square frames, numbered
-//   strip    a tall narrow photo running off the edge of the screen, with a sideways label
+//   strip    a tall narrow photo at the side of the page, with a sideways label
 //   pano     a wide panoramic strip with corner brackets
 //   stack    two photos overlapping at an angle, with a small square marker
 //
@@ -113,8 +113,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
   /* ---------- Placement ---------- */
 
   .patch-row {
-    /* distance from the content edge to the edge of the screen, for the strip that bleeds off it */
-    --bleed: calc(var(--gutter) + max(0px, (100vw - var(--max-width)) / 2));
     position: relative;
     z-index: 2; /* above the sections it crosses */
     display: flex;
@@ -298,19 +296,15 @@ const pad = (n: number) => String(n).padStart(2, '0');
     bottom: 0.35rem;
   }
 
-  /* ---------- strip: tall photo running off the screen edge ---------- */
+  /* ---------- strip: tall narrow photo with a sideways label ---------- */
 
   .patch--strip {
     width: clamp(7.5rem, 13vw, 12.5rem);
     border-left: 3px solid var(--color-accent);
   }
 
-  .patch-row--right .patch--strip {
-    margin-right: calc(-1 * var(--bleed));
-  }
-
+  /* the strip stays inside the page margin (it used to run off the screen edge, which read as cut off) */
   .patch-row--left .patch--strip {
-    margin-left: calc(-1 * var(--bleed));
     border-left: 0;
     border-right: 3px solid var(--color-accent);
   }
@@ -437,7 +431,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     }
 
     .patch--strip {
-      width: 40vw;
+      width: min(28vw, 9rem);
     }
 
     .patch--pano {
@@ -453,7 +447,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     }
 
     /* frames, corner brackets and corner squares poke out about 0.6rem: keep them inside the
-       page margin (the strip is the one patch meant to run off the edge) */
+       page margin */
     .patch-row--right .patch:not(.patch--strip) {
       margin-right: 0.6rem;
     }
@@ -469,6 +463,24 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
     :global(.patch-row--straddle + .band) {
       padding-top: 8rem;
+    }
+  }
+
+  /* Tablets and phones: the photo band after a tall strip starts its headline below the strip,
+     and the section after the round lens starts below the lens and its caption */
+  @media (max-width: 900px) {
+    .patch--strip {
+      width: min(28vw, 9rem);
+    }
+
+    :global(.patch-row--strip.patch-row--straddle + .photo-band .photo-band-inner) {
+      padding-top: calc(min(28vw, 9rem) * 7 / 3 + 1.5rem);
+    }
+  }
+
+  @media (max-width: 1099px) {
+    :global(.patch-row--lens.patch-row--straddle + .band) {
+      padding-top: 9rem;
     }
   }
 </style>

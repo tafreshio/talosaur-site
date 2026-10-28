@@ -29,7 +29,7 @@ npm run check    # looks for mistakes in the code (typos in data files, missing 
 | What | File |
 |---|---|
 | Colors, fonts, spacing | `src/styles/global.css` (the `:root` block at the top) |
-| Top navigation and footer links, team email, social links, Twitch link | `src/data/site.ts` |
+| Top navigation and footer links, email addresses (info@, sales@, support@), social links, Twitch link | `src/data/site.ts` |
 | Logo files and browser-tab icons | `public/brand/`, `public/favicon.*`, `public/apple-touch-icon.png` |
 | Page-header photos | `public/images/pages/` |
 | Colour-edited accent pictures (collage, tiles, field log strip, specimen) | `public/images/accents/` |
@@ -55,8 +55,10 @@ npm run check    # looks for mistakes in the code (typos in data files, missing 
 
 ## Common edits
 
-**Change a link in the nav or footer, or add the team email / social links:**
+**Change a link in the nav or footer, an email address or the social links:**
 open `src/data/site.ts` and edit the text between the quotes. Social links left as `''` show as plain text until filled in.
+
+**Email addresses.** `src/data/site.ts` has three: `info@talosaur.com` (general inquiries: footer, privacy page), `sales@talosaur.com` (donations and sponsorship: the Donate button) and `support@talosaur.com` (technical questions). All three are listed on Work with us and in the footer, in the order of `contactEmails`; add a line there to list another address.
 
 **Change a color or font:** open `src/styles/global.css` and change the value next to the variable (for example `--color-accent`).
 
@@ -98,7 +100,7 @@ Swap any of these for real team photos whenever you have them.
 
 **Big photo bands.** Like Colossal's elephant and mammoth sections, some pages give one good photo a whole screen, with a headline and button over it: Home (Section 04, "How can we help?"), and the end of every inner page (Who we are, The Problem, News, Work with us, Positions, Donate). For a whole sentence as the headline, add `size="md"`. The component is `src/components/PhotoBand.astro`; the photos are in `public/images/bands/` (2400 × 1500, named after the page) and pan slowly as you scroll. Each headline reuses copy from the Content doc or the page.
 
-**Inset photos across section edges ("patches").** Smaller photos sit across the edge between two sections, each in a different shape so they don't repeat: a round lens with crosshair ticks (Home, under the shark photo), a photo with an offset frame and a dot on its corner (Who we are), a tall strip running off the edge of the screen (Work with us), a panoramic strip with corner brackets (Positions) and two stacked photos (Donate). Like Colossal, never on the edge right under a page header or the Home video. The component is `src/components/Patch.astro` (the top of the file lists the shapes); photos are in `public/images/patches/`. Example: `<Patch variant="lens" image="fish-eye-lens.jpg" caption="Fish eye" side="center" straddle />` between two sections.
+**Inset photos across section edges ("patches").** Smaller photos sit across the edge between two sections, each in a different shape so they don't repeat: a round lens with crosshair ticks (Home, under the shark photo), a photo with an offset frame and a dot on its corner (Who we are), a tall strip with a sideways label (Work with us), a panoramic strip with corner brackets (Positions) and two stacked photos (Donate). Like Colossal, never on the edge right under a page header or the Home video. The component is `src/components/Patch.astro` (the top of the file lists the shapes); photos are in `public/images/patches/`. Example: `<Patch variant="lens" image="fish-eye-lens.jpg" caption="Fish eye" side="center" straddle />` between two sections.
 
 **Colour-shift accents (`public/images/accents/`).** Smaller edited pictures in the style of Colossal's species pages, each a different idea. All are nature or old engravings (the photo rule above), and each is decorative, so screen readers skip it:
 
@@ -106,25 +108,33 @@ Swap any of these for real team photos whenever you have them.
 |---|---|---|
 | `radiolarian.webp` | Home, Section 03, running off the right edge behind the cards | A radiolarian (plankton) from the 1887 HMS Challenger plates: neon lime lines on a violet shell, magenta inside. Transparent background. Placed with `src/components/Specimen.astro` |
 | `sonar.jpg` | Home, Section 05, behind Latest news | NOAA sonar data of the seafloor, recoloured violet, teal and magenta and kept dark so the news reads on top |
-| `news-rail.jpg`, `news-rail-wide.jpg` | News: the tall one beside the list on wide screens, the sideways one above the list on phones and tablets | A rainbow "field log" strip with four small NOAA photos. The numbered dots are drawn by the page at the positions in `railStops` in `src/pages/news.astro` |
-| `jelly.jpg` (and `sections/contact-inset.jpg`) | Work with us, beside the contact details | Collage: a jellyfish in magenta and orange, a lime block with a notch behind it, an orange dot and a small natural photo of a ray (NOAA) |
-| `tile-coral.jpg`, `tile-sea-pen.jpg`, `tile-ray.jpg` | Donate, one above each way to help | NOAA dive footage turned into colour blocks: lime, violet and orange to magenta. The file names and tags are in `waysToHelp` at the top of `src/pages/donate.astro` |
-| `skeleton-wide.jpg` | Who we are, the wide "Open positions" card at the end of the team | A 1900 engraving of a fish skeleton in an orange to violet gradient |
+| `jelly.jpg` (and `sections/contact-inset.jpg`) | Work with us, beside the contact details | Collage: a jellyfish in magenta and orange, a lime block with a notch behind it, an orange dot and a small sand tiger shark in lime on violet (Pexels), edited like the jellyfish so the two match |
 
-The accent colours used in these edits (lime, orange, violet, magenta) are CSS variables in `src/styles/global.css` (`--color-lime` and so on), so the colour blocks and dots on the page match the pictures. To replace one, keep the same file name and size (and the transparent background for the `.webp`).
+The three ways to help on Donate sit on plain colour blocks (orange, lime, violet) with their number in big thin type, not photos: a picture of an unrelated animal would suggest the wrong thing. The accent colours used in these edits (lime, orange, violet, magenta) are CSS variables in `src/styles/global.css` (`--color-lime` and so on), so the colour blocks and dots on the page match the pictures. To replace one, keep the same file name and size (and the transparent background for the `.webp`).
 
 **Content sections with photos (`public/images/sections/`).** Like the species pages on Colossal (a section about the habitat has a map, a section about the team has team photos), these sections each carry pictures that go with what they say. Their text is mostly [bracket] placeholders to fill in later (listed in `PLACEHOLDERS.md`):
 
 | Section | Where the text lives | Pictures |
 |---|---|---|
 | The Problem, 03 At a glance (dark, carrying on the water of the depth graphic): a fact sheet in white boxed labels beside a big jellyfish cut-out (`src/components/SpecList.astro`) | `glance` in `src/data/problem.ts` | `glance-jelly.webp` |
-| The Problem, 04 Habitat: a strip of reef under water, "Flower Garden Banks", two paragraphs, three facts and a map with Flower Garden Banks and College Station | `habitat` in `src/data/problem.ts` | `habitat-pano.jpg`, `habitat-map.png` (the two map labels are placed by % in `src/pages/the-problem.astro`) |
-| Work with us, 01 Who we work with: four photo cards (`src/components/PictureCards.astro`) | `audiences` at the top of `src/pages/work-with-us.astro` | `aud-research.jpg`, `aud-conservation.jpg`, `aud-fisheries.jpg`, `aud-offshore.jpg` |
+| The Problem, 04 Habitat: a wide strip of the reef at Flower Garden Banks (a "photo to come" panel until `habitat-pano.jpg` is added), "Flower Garden Banks", two paragraphs, three facts and a map with Flower Garden Banks and College Station | `habitat` in `src/data/problem.ts` | `habitat-pano.jpg`, `habitat-map.png` (the two map labels are placed by % in `src/pages/the-problem.astro`) |
+| Work with us, 01 Who we work with: four photo cards, all natural colour so the row matches (`src/components/PictureCards.astro`) | `audiences` at the top of `src/pages/work-with-us.astro` | `aud-research.jpg`, `aud-conservation.jpg`, `aud-fisheries.jpg`, `aud-offshore.jpg` |
 | Donate, 02 Where it goes: three photo cards | `support` at the top of `src/pages/donate.astro` | `support-parts.jpg`, `support-testing.jpg`, `support-field-trips.jpg` |
 | Positions, 01 Life on the team: text and an Apply button beside a big photo with a smaller one in an orange frame | `life` at the top of `src/pages/positions.astro` | `team-build.jpg`, `team-lab.jpg` |
-| News, 01 Where we test: four photo cards, from the pool out to open water (the same steps as the test ladder on the Turtle drawing) | `tests` at the top of `src/pages/news.astro` | `test-pool.jpg`, `test-lake.jpg`, `test-gulf.jpg`, `test-reef.jpg` |
+| News, 01 Where we test: an orange band with a map of East Texas and the Gulf, the five test stops numbered on it and listed beside it, each with a small photo (`src/components/TestRoute.astro`, drawn like the locations map on Colossal's company page) | `stops` at the top of `src/pages/news.astro` (each stop's place on the map is left % / top %) | `test-route-map.png`, `test-pool.jpg`, `test-lake-bryan.jpg`, `test-lake-travis.jpg`, `test-galveston.jpg`, `test-offshore.jpg` |
 
-The photos of people, labs and machines are natural; the reef and the fish in "Who we work with" have false-colour edits. Most are stand-ins from NOAA and Pexels footage: replace them with the team's own photos using the same file names. Where a tag on a photo starts with "Photo:" (for example `[ Photo: Turtle in the pool ]`), it says what the real photo should show; change the tag in the page's list once it's in.
+**"Photo to come" panels.** A photo that shows something specific (the team, Turtle, a place like Lake Bryan) is never stood in for by an unrelated stock picture. Until the real photo exists, the slot shows a dark panel with "[ Photo to come ]" and what the photo should be (`src/components/PhotoPlaceholder.astro`). Save the photo under the file name listed in `PLACEHOLDERS.md` and the panel turns into the photo. Cards with a photo that is a generic stand-in on purpose (parts being machined, a boat wake for field trips) keep it. People, lab and machine photos stay natural; a row of photo cards keeps one treatment (all natural or all edited) so it reads as a set.
+
+**Story bands.** Between the white stretches, each page has one loud, full-width band: a colour-shifted picture across the whole screen with very large thin capitals over it, like the bands on Colossal's mammoth and company pages. The component is `src/components/StoryBand.astro` and has four layouts:
+
+| Layout | Page | Picture (`public/images/bands/`) |
+|---|---|---|
+| `echo`: a few big words stacked down the middle, each with a small caption (Colossal's "Lost but not gone forever") | Home, FIND / FOLLOW / FILM | `story-find.jpg` (spiral coral, NOAA, magenta and green) |
+| `stats`: a title and big numbers on dots (Colossal's "5.5 million square miles") | Who we are, the team in numbers | `story-team.jpg` (sun rays under the surface, Pexels, orange to violet) |
+| `split`: big type across a picture in two halves (Colossal's "Bringing back the woolly mammoth") | Positions, "Help us explore the twilight zone" | `story-join.jpg` (garden eels, Pexels, lime on violet; a magenta and orange blur) |
+| `statement`: a big line and two short columns (Colossal's "Mission / Goal") | Donate, "Affordable ocean exploration"; Work with us, "20 minutes" | `story-donate.jpg` (a ray, NOAA, orange to violet), `story-talk.jpg` (a feather star, NOAA, teal and pink) |
+
+The pictures are made by `stills_site/make_story.py` from public-domain NOAA video and Pexels clips (only nature is colour-shifted). To add a band to a page, close the light band (`</div>`), put `<StoryBand ... />`, and open a new one (`<div class="band band--top theme-light">`).
 
 These sections sit inside the light bands (or, for At a glance, in the dark water under the depth graphic), so every page keeps going light, dark, light, dark down the page.
 

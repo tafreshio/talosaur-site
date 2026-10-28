@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroVideo from '../components/HeroVideo.astro';
 import SectionHeader from '../components/SectionHeader.astro';
+import StoryBand from '../components/StoryBand.astro';
 import PhotoBand from '../components/PhotoBand.astro';
 import Patch from '../components/Patch.astro';
 import Card from '../components/Card.astro';
@@ -19,7 +20,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 <BaseLayout headerOverlay>
   <HeroVideo />
 
-  <!-- Light band: Sections 01 and 02 (white after the dark video, like Colossal) -->
+  <!-- Light band: Section 01 (white after the dark video, like Colossal) -->
   <div class="band theme-light">
     <!-- Section 01: headline and intro -->
     <section id="intro" class="container section intro">
@@ -36,7 +37,24 @@ const pad = (n: number) => String(n).padStart(2, '0');
         </div>
       </div>
     </section>
+  </div>
 
+  <!-- Story band: FIND / FOLLOW / FILM (the three verbs of the intro, Content doc) stacked over the
+       spiral coral (NOAA) in magenta and green, like the "Lost but not gone forever" band on
+       Colossal's mammoth page -->
+  <StoryBand
+    variant="echo"
+    image="story-find.jpg"
+    tag="The twilight zone"
+    items={[
+      { title: 'Find', text: 'marine life' },
+      { title: 'Follow', text: '50–300 m down' },
+      { title: 'Film', text: 'at low cost' },
+    ]}
+  />
+
+  <!-- Light band: Section 02 -->
+  <div class="band theme-light">
     <!-- Section 02: three cards -->
     <section class="container section">
       <SectionHeader number={2} />

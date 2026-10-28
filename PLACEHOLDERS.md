@@ -1,13 +1,12 @@
 # Placeholders
 
-Everything the Content doc leaves in [brackets], and the file where you fill it in. Photos and video are not
-listed here: every Home card and inner page already has a photo (stills from the hero video and edited footage),
-and the README's "Add or swap a photo" section says which file is which so they can be swapped for real team photos.
+Everything the Content doc leaves in [brackets], and the file where you fill it in, plus every photo the site
+still needs. A missing photo shows as a dark "[ Photo to come ]" panel that says what goes there; save the photo
+under the file name below and the panel turns into the photo (no code change). The README's "Add or swap a photo"
+section explains sizes.
 
 | Placeholder | Where it shows | File to edit |
 |---|---|---|
-| `[team email]` | Footer, Work with us page, Privacy page | `src/data/site.ts` (`teamEmail`) |
-| `[finance email or form]` | Donate, "Contact our finance team" button (greyed out until filled in) | `src/data/site.ts` (`financeContact`) |
 | Instagram, LinkedIn, YouTube links | Footer, "Connect with us" (plain text until filled in) | `src/data/site.ts` (`socialLinks`) |
 | `[Major, year]` (all 5 people) | Who we are | `src/data/team.ts` |
 | Team photos (initials show until a photo is added) | Who we are | `public/images/team/` (file names are in `src/data/team.ts`) |
@@ -21,13 +20,31 @@ and the README's "Add or swap a photo" section says which file is which so they 
 | Four `[One or two sentences on...]` lines (Research, Conservation, Fisheries, Offshore energy) | Work with us, Section 01 "Who we work with" | `src/pages/work-with-us.astro` (`audiences`) |
 | Three `[What ... costs]` lines (Parts, Testing, Field trips) | Donate, Section 02 "Where it goes" | `src/pages/donate.astro` (`support`) |
 | `[A few lines on what being on the team is like...]` and `[A line on who to ask...]` | Positions, Section 01 "Life on the team" | `src/pages/positions.astro` (`life`) |
-| Four `[When, and what this test shows.]` lines (Pool, Lake Bryan and Lake Travis, Galveston, Offshore) | News, Section 01 "Where we test" | `src/pages/news.astro` (`tests`) |
-| Stand-in photos in the new sections (NOAA and Pexels footage); swap for the team's own when you have them | Work with us, Donate, Positions, News | `public/images/sections/` (same file names) |
-| Photos whose tag says what should go there: `[ Photo: Turtle in the pool ]` (`support-testing.jpg`, a NOAA vehicle for now), `[ Photo: the team at a build day ]` (`team-build.jpg`, a lathe for now; `team-lab.jpg` beside it is a microscope), and `[ Photo: pool test ]`, `[ Photo: lake test ]`, `[ Photo: Galveston ]`, `[ Photo: first offshore footage ]` (`test-*.jpg`) | Donate, Positions, News | `public/images/sections/` (same file names); change the tag text in the page's list when the real photo is in |
+| Five `[When, and what this test shows.]` lines (Pool, Lake Bryan, Lake Travis, Galveston, Offshore) | News, Section 01 "Where we test" (orange map band) | `src/pages/news.astro` (`stops`) |
+| Story band columns: `[A line on the questions the team will bring...]`, `[A line on what the conversation gives back...]` | Work with us, "20 minutes" band | `src/pages/work-with-us.astro` |
+| Story band columns: `[One or two sentences on who builds Talosaur...]`, `[...what a survey costs today...]` | Donate, "Affordable ocean exploration" band | `src/pages/donate.astro` |
+
+### Photos still needed ("photo to come" panels)
+
+| Photo | Where it shows | Save as (in `public/images/`) | Shape |
+|---|---|---|---|
+| The whole team | Home, Featured "Who we are" card | `home-team.jpg` | 16:9 |
+| Team members at work | Home, Featured "Open positions" card | `home-positions.jpg` | 16:9 |
+| Turtle mid-build (hull closed) | Home, Featured "Our build log" card | `home-build-log.jpg` | 16:9 |
+| The live build stream setup | Home, "Talosaur Live" card | `home-live.jpg` | 16:9 |
+| A team portrait | Home, "Meet the team" card | `home-meet-the-team.jpg` | 16:9 |
+| A Flower Garden Banks reef | Home, "Get in touch" card | `home-get-in-touch.jpg` | 16:9 |
+| Team portraits (initials show until then) | Who we are | `team/` (names in `src/data/team.ts`) | 4:5, 3:4, 1:1, 4:5, 4:3 |
+| The reef at Flower Garden Banks, wide | The Problem, Section 04 "Habitat" | `sections/habitat-pano.jpg` | 4:1 |
+| A pool test, Lake Bryan, Lake Travis, Galveston, Flower Garden Banks | News, "Where we test" (small photo beside each stop) | `sections/test-pool.jpg`, `test-lake-bryan.jpg`, `test-lake-travis.jpg`, `test-galveston.jpg`, `test-offshore.jpg` | 4:3 |
+| An offshore platform in the Gulf | Work with us, Offshore energy card | `sections/aud-offshore.jpg` | 4:5 |
+| The team at a build day | Positions, "Life on the team" | `sections/team-build.jpg` | 16:10 |
+| Hands on a part (optional: adds the small framed photo) | Positions, "Life on the team" | `sections/team-lab.jpg` | 1:1 |
+| Turtle in the pool | Donate, "Where it goes" Testing card | `sections/support-testing.jpg` | 4:3 |
 
 ## To confirm
 
 - **Ocean Image Bank photos** (the animals in The Problem depth graphic): free for non-commercial use with credit to the photographer and Ocean Image Bank. Check that the site counts as non-commercial (it has a Donate page, but no payments). Credits are on the Image credits page.
 - **Sources on The Problem page.** Every number and fact now links to a source (the `sources` list at the top of `src/data/problem.ts`). Give them a read before launch. The closest match for the robot cost range is Deep Trekker's ROV buying guide (inspection ROVs $15,000 to $300,000, work-class ROVs $250,000 up to millions); swap in the team's own source if the $50,000 figure came from somewhere specific.
-- **New section titles** ("At a glance", "Habitat", "Who we work with", "Where it goes", "Life on the team", "Where we test" and its four steps) and the small photo tags were written as stand-ins, not Content doc copy. Change them where each section is.
+- **New section titles** ("At a glance", "Habitat", "Who we work with", "Where it goes", "Life on the team", "Where we test" and its stops) and the small photo tags were written as stand-ins, not Content doc copy. The big lines in the story bands come from Content doc copy ("Find / Follow / Film" from the Home intro, "A Texas-based student team" from the Home card, "Affordable ocean exploration" from the Donate intro, "20 minutes" from the Work with us intro, the Positions headline), but their small [ tags ] and captions were written for the bands. Change them where each band is.
 - **Patch captions** ("On deck", "Making parts" and so on) are short labels written for the inset photos, not Content doc copy. Change them where each page uses `<Patch>`.

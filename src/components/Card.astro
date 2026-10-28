@@ -6,6 +6,7 @@
 // is missing from public/images/, a quiet dark panel of the same shape takes its place.
 import { imageExists, imageUrl } from '../lib/images';
 import { url } from '../lib/url';
+import PhotoPlaceholder from './PhotoPlaceholder.astro';
 
 interface Props {
   title: string;
@@ -17,7 +18,8 @@ interface Props {
   ratio?: string;      // photo shape, e.g. '4 / 3' or '16 / 9'
   feature?: boolean;   // true = the big lead card in a feature layout (larger title)
   badge?: string;      // small sticker on the photo, e.g. 'Live' (shows with a red dot)
-  standIn?: string;    // the photo is a stock stand-in: say what the real one should show, e.g. 'the team'
+  standIn?: string;    // what the real photo should show, e.g. 'the whole team'. Until the photo file
+                       // exists, the card shows a "photo to come" panel with this text
 }
 
 const { title, text, href, photo, photoLabel = title, index, ratio = '4 / 3', feature = false, badge, standIn } = Astro.props;
@@ -32,9 +34,8 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
 
 <article class:list={['card', { 'card--feature': feature }]}>
   <div class="card-media" style={`aspect-ratio: ${ratio};`}>
-    <!-- a stand-in photo doesn't show what the card is about, so it gets no alt text, just a tag -->
-    {hasPhoto && <img src={imageUrl(photo)} alt={standIn ? '' : photoLabel} loading="lazy" decoding="async" />}
-    {standIn && <span class="card-standin label" aria-hidden="true">[ Photo: {standIn} ]</span>}
+    {hasPhoto && <img src={imageUrl(photo)} alt={photoLabel} loading="lazy" decoding="async" />}
+    {!hasPhoto && standIn && <PhotoPlaceholder label={standIn} file={photo} />}
     {badge && <span class="card-badge label"><span class="card-badge-dot" aria-hidden="true"></span>{badge}</span>}
   </div>
 
@@ -158,16 +159,6 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
     border-radius: 999px;
     background: color-mix(in srgb, var(--light-text) 80%, transparent);
     color: var(--light-bg);
-  }
-
-  /* Tag on a stand-in photo: what the real photo should show, in the bottom-left corner */
-  .card-standin {
-    position: absolute;
-    left: var(--space-sm);
-    bottom: var(--space-sm);
-    padding: 0.25rem 0.5rem;
-    color: var(--color-white);
-    background: rgb(6 18 31 / 0.6);
   }
 
   .card-badge-dot {
