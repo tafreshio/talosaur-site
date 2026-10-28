@@ -10,7 +10,8 @@ import { imageUrl } from '../lib/images';
 import { positions, positionsHeadline, positionsIntro, applicationFormUrl } from '../data/positions';
 
 // Life on the team: text in [brackets] is a placeholder to fill in later.
-// Photos: public/images/sections/team-build.jpg and team-lab.jpg (natural colour; swap for the team's own).
+// Photos: public/images/sections/team-build.jpg and team-lab.jpg. Both are stock stand-ins (natural colour):
+// swap them for the team's own photos, keeping the file names.
 const life = {
   lead: '[A few lines on what being on the team is like: when you meet, what a build day looks like and where testing happens.]',
   text: '[A line on who to ask if you have questions before applying.]',
@@ -51,14 +52,10 @@ const life = {
         ))}
       </ol>
     </section>
-  </div>
 
-  <!-- Inset photo sitting across the edge between the roles and the dark band below -->
-  <Patch variant="pano" image="mill-pano.jpg" caption="Machining a part" side="left" straddle />
-
-  <!-- Dark band: life on the team. Like the "Decoding life" collage on Colossal's mammoth page:
-       a big photo with a smaller one over its corner in an offset orange frame. -->
-  <div class="band">
+    <!-- Section 01: life on the team, in the same light band as the roles (so the page goes dark
+         header, light, dark photo). Like the "Decoding life" collage on Colossal's mammoth page:
+         a big photo with a smaller one over its corner in an offset orange frame. -->
     <section class="container life">
       <SectionHeader number={1} title="Life on the team" />
       <div class="life-grid">
@@ -72,7 +69,7 @@ const life = {
         </div>
         <figure class="life-collage" aria-hidden="true" data-drift="60">
           <img class="life-main" src={imageUrl('sections/team-build.jpg')} alt="" width="1600" height="1000" loading="lazy" decoding="async" />
-          <span class="label life-tag">[ Build day ]</span>
+          <span class="label life-tag">[ Photo: the team at a build day ]</span>
           <span class="life-frame">
             <img class="life-inset" src={imageUrl('sections/team-lab.jpg')} alt="" width="900" height="900" loading="lazy" decoding="async" />
           </span>
@@ -80,6 +77,9 @@ const life = {
       </div>
     </section>
   </div>
+
+  <!-- Inset photo sitting across the edge between the light band and the photo below -->
+  <Patch variant="pano" image="mill-pano.jpg" caption="Machining a part" side="right" straddle />
 
   <!-- One big photo (bubble anemone, false colour) leading on to News. Copy: Content doc, "Our build log" card. -->
   <PhotoBand image="positions.jpg" position="50% 50%" heading="Our build log" tag="Updates, photos and videos from every stage">
@@ -156,9 +156,10 @@ const life = {
       grid-template-columns: 1fr;
     }
 
+    /* on tablets and phones the small photo moves to the right corner, inside the page margin */
     .life-frame {
       left: auto;
-      right: calc(-1 * var(--space-xs));
+      right: 0;
     }
   }
 

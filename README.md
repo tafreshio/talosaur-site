@@ -117,13 +117,16 @@ The accent colours used in these edits (lime, orange, violet, magenta) are CSS v
 
 | Section | Where the text lives | Pictures |
 |---|---|---|
-| The Problem, 03 Habitat: a strip of open water, "Flower Garden Banks", two paragraphs, three facts and a map with Flower Garden Banks and College Station | `habitat` in `src/data/problem.ts` | `habitat-pano.jpg`, `habitat-map.png` (the two map labels are placed by % in `src/pages/the-problem.astro`) |
-| The Problem, 04 At a glance: a fact sheet in white boxed labels beside a big jellyfish cut-out (`src/components/SpecList.astro`) | `glance` in `src/data/problem.ts` | `glance-jelly.webp` |
+| The Problem, 03 At a glance (dark, carrying on the water of the depth graphic): a fact sheet in white boxed labels beside a big jellyfish cut-out (`src/components/SpecList.astro`) | `glance` in `src/data/problem.ts` | `glance-jelly.webp` |
+| The Problem, 04 Habitat: a strip of reef under water, "Flower Garden Banks", two paragraphs, three facts and a map with Flower Garden Banks and College Station | `habitat` in `src/data/problem.ts` | `habitat-pano.jpg`, `habitat-map.png` (the two map labels are placed by % in `src/pages/the-problem.astro`) |
 | Work with us, 01 Who we work with: four photo cards (`src/components/PictureCards.astro`) | `audiences` at the top of `src/pages/work-with-us.astro` | `aud-research.jpg`, `aud-conservation.jpg`, `aud-fisheries.jpg`, `aud-offshore.jpg` |
 | Donate, 02 Where it goes: three photo cards | `support` at the top of `src/pages/donate.astro` | `support-parts.jpg`, `support-testing.jpg`, `support-field-trips.jpg` |
 | Positions, 01 Life on the team: text and an Apply button beside a big photo with a smaller one in an orange frame | `life` at the top of `src/pages/positions.astro` | `team-build.jpg`, `team-lab.jpg` |
+| News, 01 Where we test: four photo cards, from the pool down to the reef | `tests` at the top of `src/pages/news.astro` | `test-pool.jpg`, `test-lake.jpg`, `test-gulf.jpg`, `test-reef.jpg` |
 
-The photos of people, labs and machines are natural; the reef and the fish in "Who we work with" have false-colour edits. Most are stand-ins from NOAA and Pexels footage: replace them with the team's own photos using the same file names.
+The photos of people, labs and machines are natural; the reef and the fish in "Who we work with" have false-colour edits. Most are stand-ins from NOAA and Pexels footage: replace them with the team's own photos using the same file names. Where a tag on a photo starts with "Photo:" (for example `[ Photo: Turtle in the pool ]`), it says what the real photo should show; change the tag in the page's list once it's in.
+
+These sections sit inside the light bands (or, for At a glance, in the dark water under the depth graphic), so every page keeps going light, dark, light, dark down the page.
 
 **Page headers meet the page with a clean edge.** There is no dark fade at the bottom of a header photo: the photo runs to its bottom edge and meets the light section below with a clean line, like Colossal. Readability comes from shading on the left side only (where the title sits; even shading on phones), and the caption sits in a boxed tag. When making a new header photo, keep the bottom edge in the photo's own colours (don't darken it to navy).
 

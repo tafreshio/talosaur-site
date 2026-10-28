@@ -22,9 +22,10 @@ const waysToHelp = [
 
 // Where it goes: parts, testing and field trips (the header's caption), each with a photo that goes
 // with it (public/images/sections/, natural colour). Text in [brackets] is a placeholder to fill in later.
+// support-testing.jpg is a stand-in (a NOAA vehicle, untreated) until there is a photo of Turtle in the pool.
 const support = [
   { image: 'support-parts.jpg', tag: 'Machining', title: 'Parts', text: '[What a gift buys here, for example materials and parts for the next build.]' },
-  { image: 'support-testing.jpg', tag: 'NOAA', title: 'Testing', text: '[What testing costs, for example pool time or a day on the lake.]' },
+  { image: 'support-testing.jpg', tag: 'Photo: Turtle in the pool', title: 'Testing', text: '[What testing costs, for example pool time or a day on the lake.]' },
   { image: 'support-field-trips.jpg', tag: 'Under way', title: 'Field trips', text: '[What a field trip costs, for example boat time and travel to the coast.]' },
 ];
 
@@ -52,18 +53,17 @@ const financeHref = contactHref(financeContact);
         ))}
       </ol>
     </section>
-  </div>
 
-  <!-- Inset photo sitting across the edge between the ways to help and the dark band below -->
-  <Patch variant="stack" images={['stack-shrimp.jpg', 'stack-anemone.jpg']} caption="NOAA footage" side="right" straddle />
-
-  <!-- Dark band: where it goes, three photo cards -->
-  <div class="band">
+    <!-- Section 02: where it goes, three photo cards, in the same light band (so the page goes
+         dark header, light, dark photo) -->
     <section class="container where">
       <SectionHeader number={2} title="Where it goes" />
       <PictureCards items={support} columns={3} />
     </section>
   </div>
+
+  <!-- Inset photo sitting across the edge between the light band and the photo below -->
+  <Patch variant="stack" images={['stack-shrimp.jpg', 'stack-anemone.jpg']} caption="NOAA footage" side="right" straddle />
 
   <!-- One big photo (zoanthids and a sea slug, false colour) carrying the contact button and note -->
   <PhotoBand image="donate.jpg" position="55% 50%" heading="Your support funds parts, testing and field trips." size="md">

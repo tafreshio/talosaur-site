@@ -12,6 +12,7 @@
 import { depthBands, reasons, depthMarks, depthRanges, pressureNote, talosaurNote } from '../data/problem';
 import { url } from '../lib/url';
 import { imageUrl } from '../lib/images';
+import { keepUnits } from '../lib/text';
 
 const MAX = depthBands[depthBands.length - 1].to; // where the drawing stops (meters)
 const marks = Array.from({ length: MAX / 50 + 1 }, (_, i) => i * 50); // ruler labels every 50 m
@@ -52,7 +53,7 @@ const animals = [
         </ol>
         {depthRanges.map((r, i) => (
           <div class={`range range--${i}`} style={`--from: ${r.from}; --to: ${r.to}`}>
-            <span class="label range-label">{r.label}</span>
+            <span class="label range-label">{keepUnits(r.label)}</span>
           </div>
         ))}
 
@@ -60,7 +61,7 @@ const animals = [
         {depthMarks.map((m) => (
           <div class="mark" style={`--d: ${m.depth}`} data-zone={zoneOf(m.depth)}>
             <p class="label mark-text">
-              {m.depth} m · {m.text} <a class="src" href={m.source.href} target="_blank" rel="noopener">[ {m.source.label} ]</a>
+              {m.depth}&nbsp;m · {keepUnits(m.text)} <a class="src" href={m.source.href} target="_blank" rel="noopener">[ {m.source.label} ]</a>
             </p>
           </div>
         ))}
@@ -90,7 +91,7 @@ const animals = [
           {depthBands.map((b) => (
             <li class={`zone zone--${b.zone}`} style={`--from: ${b.from}; --to: ${b.to}`}>
               <div class="zone-copy" data-zone={b.zone}>
-                <p class="zone-depth">{b.depth}</p>
+                <p class="zone-depth">{keepUnits(b.depth)}</p>
                 <p class="zone-text">{b.name && <strong>{b.name}.</strong>} {b.text}</p>
               </div>
             </li>
@@ -103,8 +104,8 @@ const animals = [
             <li class="note" style={`--d: ${r.depth}`} data-zone={zoneOf(r.depth)}>
               <p class="label note-tag">[ {String(i + 1).padStart(2, '0')} ]</p>
               <h3 class="note-title">{r.title}</h3>
-              <p class="note-text">{r.text}</p>
-              {r.fact && <p class="note-fact">{r.fact}</p>}
+              <p class="note-text">{keepUnits(r.text)}</p>
+              {r.fact && <p class="note-fact">{keepUnits(r.fact)}</p>}
               <p class="label src-list">
                 {r.sources.map((src) => (
                   <a class="src" href={src.href} target="_blank" rel="noopener">[ Source: {src.label} ]</a>
@@ -127,7 +128,7 @@ const animals = [
         <div class="note" style={`--d: ${pressureNote.depth}`} data-zone={zoneOf(pressureNote.depth)}>
           <p class="label note-tag">[ Pressure ]</p>
           <h3 class="note-title">{pressureNote.title}</h3>
-          <p class="note-text">{pressureNote.text}</p>
+          <p class="note-text">{keepUnits(pressureNote.text)}</p>
           <a class="label src" href={pressureNote.source.href} target="_blank" rel="noopener">[ Source: {pressureNote.source.label} ]</a>
         </div>
       </div>
@@ -638,9 +639,25 @@ const animals = [
       left: 1.55rem;
     }
 
-    .ruler-unit,
-    .range-label {
+    .ruler-unit {
       display: none;
+    }
+
+    /* the range labels stay, smaller, running down beside their bars. The Flower Garden Banks
+       label starts just under the reef bar (50 m) so the two don't touch. */
+    .range-label {
+      left: 0.3rem;
+      font-size: 0.55rem;
+    }
+
+    .range--1 .range-label {
+      top: calc(12 * var(--m));
+    }
+
+    /* the moving readout sits on the ruler and already says "0 m" at the surface,
+       so the ruler's own 0 hides under it */
+    :global(.js) .depth-ruler li:first-child {
+      visibility: hidden;
     }
 
     .range {
@@ -697,15 +714,13 @@ const animals = [
       transform: translateX(50%);
     }
 
-    /* On narrower screens the text runs the full width, so only the jellyfish stays (small, in the sunlit band) */
+    /* On narrower screens the text runs the full width, so the animals go faint and sit behind it,
+       off the right edge. The larval fish (beside the first note) and the labels are left out. */
     .animal {
-      opacity: 0.45;
+      opacity: 0.4;
     }
 
     .animal--larva,
-    .animal--squid,
-    .animal--oval,
-    .animal--long,
     .vehicle-label {
       display: none;
     }

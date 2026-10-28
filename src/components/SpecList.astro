@@ -6,6 +6,7 @@
 //
 // A value in [brackets] is a placeholder. A fact can link to its source.
 import { imageUrl } from '../lib/images';
+import { keepUnits } from '../lib/text';
 
 interface Item {
   label: string;
@@ -29,7 +30,7 @@ const { items, image, width = 1522, height = 959 } = Astro.props;
       <div class="spec-row">
         <dt class="label spec-label">{item.label} /</dt>
         <dd class="label spec-value">
-          {item.value}
+          {keepUnits(item.value)}
           {item.source && <a class="spec-src" href={item.source.href} target="_blank" rel="noopener">[ {item.source.label} ]</a>}
         </dd>
       </div>

@@ -41,12 +41,21 @@ import { problemIntro, stats, habitat, glance } from '../data/problem';
        (Content doc) sit inside it at the depths they are about. -->
   <DepthBands />
 
-  <!-- Section 03: Habitat (light). Like the "Habitat / Arctic + Tundra" section on Colossal's mammoth
-       page: a wide strip of open water, the place in big type, a short text and a map. -->
+  <!-- Section 03: At a glance. It carries on the dark water of the depth graphic above, so the page
+       goes light, dark, light, dark. Colossal's fact sheet: white boxed labels and a big cut-out. -->
+  <div class="band">
+    <section class="container section">
+      <SectionHeader number={3} title="At a glance" />
+      <SpecList items={glance} image="glance-jelly.webp" width={1745} height={939} />
+    </section>
+  </div>
+
+  <!-- Section 04: Habitat (light). Like the "Habitat / Arctic + Tundra" section on Colossal's mammoth
+       page: a wide strip of the reef under water, the place in big type, a short text and a map. -->
   <div class="band theme-light">
     <section class="container section habitat">
-      <SectionHeader number={3} title="Habitat" />
-      <img class="habitat-pano" src={imageUrl('sections/habitat-pano.jpg')} alt="Open water offshore" width="2400" height="600" loading="lazy" decoding="async" />
+      <SectionHeader number={4} title="Habitat" />
+      <img class="habitat-pano" src={imageUrl('sections/habitat-pano.jpg')} alt="A reef under water" width="2400" height="600" loading="lazy" decoding="async" />
       <div class="habitat-grid">
         <div class="habitat-copy" data-reveal>
           <h3 class="habitat-title">{habitat.title}</h3>
@@ -71,14 +80,6 @@ import { problemIntro, stats, habitat, glance } from '../data/problem';
           <span class="map-pin map-pin--home" style="left: 25.4%; top: 21.9%;"><span class="label">College Station</span></span>
         </figure>
       </div>
-    </section>
-  </div>
-
-  <!-- Section 04: At a glance (dark). Colossal's fact sheet: white boxed labels and a big cut-out. -->
-  <div class="band">
-    <section class="container section">
-      <SectionHeader number={4} title="At a glance" />
-      <SpecList items={glance} image="glance-jelly.webp" />
     </section>
   </div>
 
