@@ -8,7 +8,7 @@ section explains sizes.
 | Placeholder | Where it shows | File to edit |
 |---|---|---|
 | Instagram, LinkedIn, YouTube links | Footer, "Connect with us" (plain text until filled in) | `src/data/site.ts` (`socialLinks`) |
-| `[Major, year]` (all 5 people) | Who we are | `src/data/team.ts` |
+| `[Major, year]` (all 7 people) | Who we are | `src/data/team.ts` |
 | Team photos (initials show until a photo is added) | Who we are | `public/images/team/` (file names are in `src/data/team.ts`) |
 | Team LinkedIn links (optional, hidden until filled in) | Who we are | `src/data/team.ts` (`linkedin`) |
 | `[Date]` and `[One line on how Talosaur started.]` | "Project kicks off" news entry | `src/content/news/project-kicks-off.md` |
@@ -33,7 +33,7 @@ section explains sizes.
 | Turtle mid-build (hull closed) | Home, Featured "Our build log" card | `home-build-log.jpg` | 16:9 |
 | The live build stream setup | Home, "Talosaur Live" card | `home-live.jpg` | 16:9 |
 | A team portrait | Home, "Meet the team" card | `home-meet-the-team.jpg` | 16:9 |
-| Team portraits (initials show until then) | Who we are | `team/` (names in `src/data/team.ts`) | 4:5, 3:4, 1:1, 4:5, 4:3 |
+| Team portraits (initials show until then) | Who we are | `team/` (names in `src/data/team.ts`) | Fernando 4:5, Sam 3:4, Kabir 1:1, Nicholas 4:5, Omeed 4:3, Dominick 3:4, Alvin 1:1 |
 | A pool test, Lake Bryan, Lake Travis, Galveston (the Offshore stop has a NOAA reef photo) | News, "Where we test" (small photo beside each stop) | `sections/test-pool.jpg`, `test-lake-bryan.jpg`, `test-lake-travis.jpg`, `test-galveston.jpg` | 4:3 |
 | An offshore platform in the Gulf | Work with us, Offshore energy card | `sections/aud-offshore.jpg` | 4:5 |
 | The team at a build day | Positions, "Life on the team" | `sections/team-build.jpg` | 16:10 |
@@ -42,6 +42,7 @@ section explains sizes.
 
 ## To confirm
 
+- **"What we share" on Who we are** (`teamStatement` in `src/data/team.ts`): the headline ("Many disciplines, one vehicle, one question: what lives down there?") and the paragraph under it were written for the page, not taken from the Content doc. Rewrite them in the team's own words if you like.
 - **The Flower Garden Banks poster drawing** (The Problem, the band "Most of it lies in the twilight zone", `public/images/sections/fgb-poster-art.jpg`). It is by Kathryn Robertson (an independent artist), Matt McIntosh/NOAA and Melissa Cook, so unlike the NOAA staff photos it is not automatically public domain, and NOAA's poster page doesn't say how the art may be reused. Ask NOAA's Office of National Marine Sanctuaries (or the artist) for an OK before launch. It is credited under the picture and on the Image credits page. To take it out, change `variant="art"` back to `variant="stats"` in `src/pages/the-problem.astro` and delete the `art={{ ... }}` lines.
 - **The brain coral photo** (The Problem, Habitat, `public/images/sections/habitat-pano.jpg`). Supplied by the team; note where it came from and who took it so it can be credited. If it is NOAA's photo pl23_sanc2433 (Emma Hickerson, Flower Garden Banks National Marine Sanctuary) it is public domain.
 - **Ocean Image Bank photos** (the animals in The Problem depth graphic): free for non-commercial use with credit to the photographer and Ocean Image Bank. Check that the site counts as non-commercial (it has a Donate page, but no payments). Credits are on the Image credits page.

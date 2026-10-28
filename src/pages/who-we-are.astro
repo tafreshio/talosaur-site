@@ -5,6 +5,8 @@
 //   - Everyone else is a staggered collage below: cards of different sizes, columns at different
 //     heights, colour blocks and frames offset behind the photos, and each card drifting at its own
 //     speed as you scroll.
+//   - The collage is split in two rows of three. Between them: a slow strip of the team's disciplines
+//     (taken from the roles) and a few lines about the team as a whole (teamStatement in team.ts).
 //
 // Team members are listed in src/data/team.ts. A member with a photo in public/images/team/ gets a
 // photo card; without one, a plain panel with their initials. People's photos stay natural (no colour
@@ -16,7 +18,9 @@ import Patch from '../components/Patch.astro';
 import StoryBand from '../components/StoryBand.astro';
 import { url } from '../lib/url';
 import Photo from '../components/Photo.astro';
-import { team, teamIntro } from '../data/team';
+import Marquee from '../components/Marquee.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import { team, teamIntro, teamStatement } from '../data/team';
 import { isPlaceholder } from '../data/site';
 import { imageExists } from '../lib/images';
 
@@ -41,8 +45,26 @@ const looks = [
   { ratio: '1 / 1', accent: 'frame-orange', drift: 120 },
   { ratio: '4 / 5', accent: 'block-magenta', drift: 80 },
   { ratio: '4 / 3', accent: 'frame-violet', drift: 100 },
+  { ratio: '3 / 4', accent: 'block-orange', drift: 70 },
+  { ratio: '1 / 1', accent: 'frame-magenta', drift: 110 },
 ];
 const lookFor = (i: number) => looks[i % looks.length];
+
+// Two rows of three. The strip of disciplines and the team statement go between them
+// (or after the first row, if there are only three people).
+const rows = [rest.slice(0, 3), rest.slice(3)];
+
+// The disciplines for the strip, from the roles: 'Lead Mechanical Engineer' -> 'Mechanical'
+const disciplines = [
+  ...new Set(
+    rest
+      .map((member) => member.role.replace(/\b(lead|senior|engineer|engineering)\b/gi, '').trim())
+      .filter((word) => word && !isPlaceholder(word)),
+  ),
+];
+
+// "**one vehicle**" -> a word in a coloured box
+const statementParts = teamStatement.headline.split(/\*\*(.+?)\*\*/);
 
 // The team in numbers, for the story band between the lead and the rest of the team.
 // The count comes from src/data/team.ts; the two universities and Turtle are from the page intro and Home.
@@ -101,42 +123,72 @@ const stats = [
        Copy: the Home "Who we are" card (Content doc). -->
   <StoryBand variant="stats" image="story-team.jpg" position="55% 40%" tag="Students · College Station, Texas" title="A Texas-based student team" items={stats} />
 
-  <!-- Light band: everyone else -->
+  <!-- Light band: everyone else, in two rows of three with the disciplines strip and the team
+       statement between them, so the people get room to breathe -->
   <div class="band band--top theme-light">
-    <section class="container team">
-      <!-- Everyone else -->
-      <ul class="crew" data-reveal-group>
-        {rest.map((member, i) => {
-          const hasPhoto = imageExists(`team/${member.photo}`);
-          const look = lookFor(i);
-          return (
-            <li class="member">
-              <div class="member-card" data-drift={look.drift}>
-                <div class="member-media">
-                  <span class:list={['member-accent', `member-accent--${look.accent}`]} aria-hidden="true"></span>
-                  {hasPhoto ? (
-                    <Photo file={`team/${member.photo}`} label={member.name} ratio={look.ratio} />
-                  ) : (
-                    <div class="member-panel" style={`aspect-ratio: ${look.ratio};`} aria-hidden="true">
-                      <span class:list={['member-initials', { 'member-initials--role': isPlaceholder(member.name) }]}>{panelText(member.name, member.role)}</span>
-                    </div>
-                  )}
-                  <!-- Orange tag on the photo's corner, like Colossal's role tags -->
-                  <p class="label member-tag"><span class="member-tag-num">{pad(i + firstNumber)} · </span>{member.role}</p>
-                </div>
-                <h2 class="member-name">{member.name}</h2>
-                <p class="member-major">{member.majorYear}</p>
-                {member.linkedin && (
-                  <a class="member-linkedin label" href={member.linkedin} target="_blank" rel="noopener noreferrer">
-                    LinkedIn <span aria-hidden="true">↗</span>
-                  </a>
-                )}
+    {rows.map((row, r) => (
+      <Fragment>
+        {r === 1 && disciplines.length > 0 && <Marquee words={disciplines} />}
+        <section class:list={['container', 'team', r === 0 ? 'team--before' : 'team--after']}>
+          {r === 0 && <SectionHeader number={1} title="The crew" />}
+
+          <!-- A few lines about the team as a whole (teamStatement in src/data/team.ts) -->
+          {r === 1 && (
+            <div class="ethos">
+              <div class="ethos-head" data-reveal>
+                <p class="label ethos-tag">[ {teamStatement.tag} ]</p>
+                <span class="ethos-hatch" aria-hidden="true"></span>
               </div>
-            </li>
-          );
-        })}
-      </ul>
-    </section>
+              <p class="ethos-line" data-reveal>
+                {statementParts.map((part, i) => (i % 2 === 1 ? <span class:list={['ethos-box', { 'ethos-box--lime': i === statementParts.length - 2 }]}>{part}</span> : part))}
+              </p>
+              <!-- drifts a little slower than the page (data-drift), on a wrapper so it doesn't fight the fade-in -->
+              <div class="ethos-body" data-drift="40">
+                <div data-reveal>
+                  <p class="ethos-text">{teamStatement.text}</p>
+                  <p class="label ethos-sign">[ {teamStatement.signoff} ]</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {row.length > 0 && (
+            <ul class:list={['crew', { 'crew--b': r === 1 }]} data-reveal-group>
+              {row.map((member, j) => {
+                const i = r * 3 + j; // position in the whole crew, for the number and the look
+                const hasPhoto = imageExists(`team/${member.photo}`);
+                const look = lookFor(i);
+                return (
+                  <li class="member">
+                    <div class="member-card" data-drift={look.drift}>
+                      <div class="member-media">
+                        <span class:list={['member-accent', `member-accent--${look.accent}`]} aria-hidden="true"></span>
+                        {hasPhoto ? (
+                          <Photo file={`team/${member.photo}`} label={member.name} ratio={look.ratio} />
+                        ) : (
+                          <div class="member-panel" style={`aspect-ratio: ${look.ratio};`} aria-hidden="true">
+                            <span class:list={['member-initials', { 'member-initials--role': isPlaceholder(member.name) }]}>{panelText(member.name, member.role)}</span>
+                          </div>
+                        )}
+                        <!-- Orange tag on the photo's corner, like Colossal's role tags -->
+                        <p class="label member-tag"><span class="member-tag-num">{pad(i + firstNumber)} · </span>{member.role}</p>
+                      </div>
+                      <h2 class="member-name">{member.name}</h2>
+                      <p class="member-major">{member.majorYear}</p>
+                      {member.linkedin && (
+                        <a class="member-linkedin label" href={member.linkedin} target="_blank" rel="noopener noreferrer">
+                          LinkedIn <span aria-hidden="true">↗</span>
+                        </a>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+      </Fragment>
+    ))}
   </div>
 
   <!-- One photo with an offset frame across the edge into the photo below (natural NOAA footage) -->
@@ -166,8 +218,7 @@ const stats = [
     align-items: start;
     gap: clamp(5rem, 8vw, 8rem) clamp(2rem, 4vw, 4.5rem);
     margin: 0;
-    padding: var(--space-xl) 0 var(--step-2);
-    border-top: 1px solid var(--color-line);
+    padding: var(--space-md) 0 var(--step-2);
     list-style: none;
   }
 
@@ -180,10 +231,128 @@ const stats = [
     translate: 0 var(--step-3);
   }
 
-  /* The fourth card (bottom left) is narrower and sits to the right of its column */
-  .member:nth-child(4) .member-card {
-    width: 78%;
+  /* The second row mirrors the first: the wide column on the right, and the heights swapped round */
+  .crew--b {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 3.6fr) minmax(0, 4.4fr);
+  }
+
+  .crew--b .member:nth-child(3n + 1) {
+    translate: 0 var(--step-3);
+  }
+
+  .crew--b .member:nth-child(3n + 2) {
+    translate: none;
+  }
+
+  .crew--b .member:nth-child(3n) {
+    translate: 0 var(--step-2);
+  }
+
+  /* its first card is narrower and sits to the right of its column */
+  .crew--b .member:nth-child(1) .member-card {
+    width: 82%;
     margin-left: auto;
+  }
+
+  /* room between the first row and the disciplines strip, and between the strip and the statement */
+  .team--before {
+    padding-bottom: var(--space-xl);
+  }
+
+  .team--after {
+    padding-top: var(--space-2xl);
+  }
+
+  /* ---------- What we share: a few lines about the whole team ---------- */
+
+  .ethos {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .ethos-head {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .ethos-tag {
+    margin: 0;
+    padding: 0.3rem 0.55rem;
+    border: 1px solid var(--color-text);
+    color: var(--color-text);
+  }
+
+  .ethos-hatch {
+    flex: 0 0 8rem;
+    height: 0.9rem;
+    background: repeating-linear-gradient(115deg, var(--color-muted) 0 1px, transparent 1px 7px);
+  }
+
+  /* one big sentence in thin, wide capitals, with two phrases in colour boxes */
+  .ethos-line {
+    grid-column: 1 / span 11;
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-stretch: 125%;
+    font-size: clamp(2rem, 0.8rem + 3.8vw, 5.2rem);
+    line-height: 1.06;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .ethos-box {
+    padding: 0 0.16em;
+    color: var(--color-white);
+    background: var(--color-violet);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  .ethos-box--lime {
+    color: var(--light-text);
+    background: var(--color-lime);
+  }
+
+  /* on wider screens a boxed phrase stays on one line (on phones it may wrap, box and all) */
+  @media (min-width: 761px) {
+    .ethos-box {
+      white-space: nowrap;
+    }
+  }
+
+  /* the paragraph sits to the right, under a hairline with an orange dot on its end */
+  .ethos-body {
+    position: relative;
+    grid-column: 7 / -1;
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-text);
+  }
+
+  .ethos-body::before {
+    content: '';
+    position: absolute;
+    top: -0.4rem;
+    left: 0;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    background: var(--color-orange);
+  }
+
+  .ethos-text {
+    margin: 0;
+    font-size: var(--text-lg);
+    line-height: 1.55;
+  }
+
+  .ethos-sign {
+    margin: var(--space-md) 0 0;
+    color: var(--color-accent);
   }
 
   .member-card {
@@ -339,6 +508,19 @@ const stats = [
     border: 1px solid var(--color-violet);
   }
 
+  .member-accent--block-orange {
+    right: -1.25rem;
+    bottom: -1.25rem;
+    width: 50%;
+    height: 44%;
+    background: var(--color-orange);
+  }
+
+  .member-accent--frame-magenta {
+    inset: 0.9rem 0.9rem -0.9rem -0.9rem;
+    border: 1px solid var(--color-magenta);
+  }
+
   .member-tag {
     position: absolute;
     z-index: 2;
@@ -402,6 +584,15 @@ const stats = [
   /* ---------- Tablet and phone: the lead stacks, the collage becomes two staggered columns ---------- */
 
   @media (max-width: 900px) {
+    .ethos-line,
+    .ethos-body {
+      grid-column: 1 / -1;
+    }
+
+    .ethos-body {
+      margin-left: clamp(0rem, 12vw, 6rem);
+    }
+
     .lead {
       grid-template-columns: 1fr;
       gap: 0;
@@ -446,7 +637,25 @@ const stats = [
       translate: 0 var(--step-2);
     }
 
-    .member:nth-child(4) .member-card {
+    /* the second row: its lone third card moves to the right column, so the two rows zigzag */
+    .crew--b {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .crew--b .member:nth-child(n) {
+      translate: none;
+    }
+
+    .crew--b .member:nth-child(2n) {
+      translate: 0 var(--step-2);
+    }
+
+    .crew--b .member:nth-child(3) {
+      grid-column: 2;
+      translate: 0 var(--step-2);
+    }
+
+    .crew--b .member:nth-child(1) .member-card {
       width: 100%;
     }
   }
@@ -489,6 +698,36 @@ const stats = [
 
     .member-accent--frame-violet {
       inset: 0.5rem -0.5rem -0.5rem 0.5rem;
+    }
+
+    .member-accent--block-orange {
+      right: -0.6rem;
+      bottom: -0.6rem;
+    }
+
+    .member-accent--frame-magenta {
+      inset: 0.5rem 0.5rem -0.5rem -0.5rem;
+    }
+
+    .ethos {
+      gap: var(--space-md);
+    }
+
+    .ethos-line {
+      font-stretch: 112%;
+      font-size: clamp(1.7rem, 0.9rem + 4.4vw, 2.4rem);
+    }
+
+    .ethos-body {
+      margin-left: 0;
+    }
+
+    .ethos-text {
+      font-size: var(--text-base);
+    }
+
+    .ethos-hatch {
+      flex-basis: 4rem;
     }
 
     /* on phones the tag drops its number and stays on one line */

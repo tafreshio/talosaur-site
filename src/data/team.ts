@@ -33,7 +33,7 @@ export const team: TeamMember[] = [
   },
   {
     name: 'Sam Cakici',
-    role: 'Mechanical Engineer',
+    role: 'Lead Mechanical Engineer',
     majorYear: '[Major, year]', // PLACEHOLDER
     photo: 'sam-cakici.jpg',
     linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
@@ -59,4 +59,27 @@ export const team: TeamMember[] = [
     photo: 'omeed-tafreshi.jpg',
     linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
   },
+  {
+    name: 'Dominick Chu',
+    role: 'Ocean Engineer',
+    majorYear: '[Major, year]', // PLACEHOLDER
+    photo: 'dominick-chu.jpg',
+    linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
+  },
+  {
+    name: 'Alvin Zheng',
+    role: 'Mechanical Engineer',
+    majorYear: '[Major, year]', // PLACEHOLDER
+    photo: 'alvin-zheng.jpg',
+    linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
+  },
 ];
+
+// A few lines about the team as a whole (not about one person). They sit in the middle of the crew
+// on the Who we are page, after the first row of people. Words between ** and ** get a coloured box.
+export const teamStatement = {
+  tag: 'What we share',
+  headline: 'Many disciplines, **one vehicle**, one question: **what lives down there?**',
+  text: "None of us could build Turtle alone. Every part depends on another, and nothing counts until it all works together in the water. So we design, build and test as one team, a step at a time on the way from the pool to the reef. That's how a group of students gets to see a part of the ocean that is barely watched.",
+  signoff: 'The Talosaur team',
+};
