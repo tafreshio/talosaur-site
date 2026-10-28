@@ -1,6 +1,6 @@
 ---
 // Shared footer. Used on every page through BaseLayout.astro.
-import { footerColumns, socialLinks, footerLegal, teamEmail, isPlaceholder } from '../data/site';
+import { footerColumns, socialLinks, footerLegal, contactEmails } from '../data/site';
 import { url } from '../lib/url';
 
 const year = new Date().getFullYear();
@@ -16,13 +16,12 @@ const year = new Date().getFullYear();
             {column.links.map((link) => (
               <li><a href={url(link.href)}>{link.label}</a></li>
             ))}
-            {column.title === 'Can we help?' && (
-              <li>
-                {isPlaceholder(teamEmail)
-                  ? <span class="placeholder">{teamEmail}</span>
-                  : <a href={`mailto:${teamEmail}`}>{teamEmail}</a>}
+            {column.title === 'Can we help?' && contactEmails.map((contact) => (
+              <li class="footer-email">
+                <!-- <wbr> lets a long address break after the @ on a narrow phone, never mid-word -->
+                <a href={`mailto:${contact.email}`} title={contact.label}>{contact.email.split('@')[0]}@<wbr />{contact.email.split('@')[1]}</a>
               </li>
-            )}
+            ))}
           </ul>
         </div>
       ))}
@@ -106,9 +105,28 @@ const year = new Date().getFullYear();
     color: var(--color-muted);
   }
 
-  .placeholder {
+  /* the three email addresses under "Can we help?", smaller, in the label font */
+  .footer-email {
     font-family: var(--font-mono);
+  }
+
+  .footer-column .footer-email {
     font-size: var(--text-sm);
+  }
+
+  /* padded so each address is a comfortable tap target on a phone */
+  .footer-email a {
+    display: inline-block;
+    padding-block: 0.35rem;
+    color: var(--color-muted);
+  }
+
+  .footer-column li.footer-email {
+    padding-block: 0;
+  }
+
+  .footer-email:first-of-type {
+    margin-top: var(--space-xs);
   }
 
   /* Full-width logo in the faint surface color. mask-image cuts the colored box
@@ -164,6 +182,10 @@ const year = new Date().getFullYear();
   @media (max-width: 700px) {
     .footer-columns {
       grid-template-columns: 1fr 1fr;
+    }
+
+    .footer-column .footer-email {
+      font-size: 0.75rem;
     }
 
     .footer-bottom span:last-child {

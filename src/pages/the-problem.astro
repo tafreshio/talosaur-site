@@ -6,9 +6,12 @@ import StatCallout from '../components/StatCallout.astro';
 import DepthBands from '../components/DepthBands.astro';
 import PhotoBand from '../components/PhotoBand.astro';
 import SpecList from '../components/SpecList.astro';
+import StoryBand from '../components/StoryBand.astro';
+import PictureCards from '../components/PictureCards.astro';
+import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
 import { url } from '../lib/url';
-import { imageUrl } from '../lib/images';
-import { problemIntro, stats, habitat, glance } from '../data/problem';
+import { imageExists, imageUrl } from '../lib/images';
+import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources } from '../data/problem';
 ---
 
 <BaseLayout title="The Problem" description={problemIntro} headerOverlay>
@@ -51,11 +54,23 @@ import { problemIntro, stats, habitat, glance } from '../data/problem';
   </div>
 
   <!-- Section 04: Habitat (light). Like the "Habitat / Arctic + Tundra" section on Colossal's mammoth
-       page: a wide strip of the reef under water, the place in big type, a short text and a map. -->
+       page: a wide strip of the reef, the place in big type, a short text and a map. -->
   <div class="band theme-light">
     <section class="container section habitat">
       <SectionHeader number={4} title="Habitat" />
-      <img class="habitat-pano" src={imageUrl('sections/habitat-pano.jpg')} alt="A reef under water" width="2400" height="600" loading="lazy" decoding="async" />
+      <!-- A wide picture of the reef at Flower Garden Banks (sections/habitat-pano.jpg, 1800 x 900): a big
+           brain coral on its pedestal of reef, photo supplied by the team. If the file is missing, a
+           "photo to come" panel says what goes there. -->
+      <div class="habitat-pano">
+        {imageExists('sections/habitat-pano.jpg') ? (
+          <>
+            <img src={imageUrl('sections/habitat-pano.jpg')} alt="A large brain coral on a pedestal of reef at Flower Garden Banks" width="1800" height="900" loading="lazy" decoding="async" />
+            <span class="label habitat-tag" aria-hidden="true">[ Brain coral · Flower Garden Banks ]</span>
+          </>
+        ) : (
+          <PhotoPlaceholder label="the reef at Flower Garden Banks" file="sections/habitat-pano.jpg" />
+        )}
+      </div>
       <div class="habitat-grid">
         <div class="habitat-copy" data-reveal>
           <h3 class="habitat-title">{habitat.title}</h3>
@@ -80,6 +95,35 @@ import { problemIntro, stats, habitat, glance } from '../data/problem';
           <span class="map-pin map-pin--home" style="left: 25.4%; top: 21.9%;"><span class="label">College Station</span></span>
         </figure>
       </div>
+    </section>
+  </div>
+
+  <!-- Story band: Flower Garden Banks in numbers beside the drawing from the front of NOAA's 2023
+       sanctuary poster (sections/fgb-poster-art.jpg, cropped only, never recoloured). Behind it, the bank's
+       seafloor relief (a NOAA graphic from the same poster) in violet and lime. Facts: the same poster. -->
+  <StoryBand
+    variant="art"
+    image="story-fgb.jpg"
+    position="50% 60%"
+    tag="Flower Garden Banks"
+    title="Most of it lies in the twilight zone"
+    items={fgbStats}
+    art={{
+      image: 'sections/fgb-poster-art.jpg',
+      width: 1600,
+      height: 1524,
+      alt: 'Drawing of Flower Garden Banks: a manta ray and a whale shark overhead, a remotely operated vehicle lighting the water, and a grouper, angelfish and brain coral on the reef',
+      //   is a space that never breaks, so no name splits across two lines
+      credit: "NOAA's 2023 sanctuary poster · Art: Kathryn Robertson, Matt McIntosh / NOAA, Melissa Cook",
+    }}
+    source={sources.poster}
+  />
+
+  <!-- Section 05: who lives here, four animals from the poster with NOAA photos (natural colour) -->
+  <div class="band band--top theme-light">
+    <section class="container species">
+      <SectionHeader number={5} title="Who lives here" />
+      <PictureCards items={fgbSpecies} columns={4} ratio="4 / 3" />
     </section>
   </div>
 
@@ -110,10 +154,30 @@ import { problemIntro, stats, habitat, glance } from '../data/problem';
   /* ---------- Section 03: Habitat ---------- */
 
   .habitat-pano {
+    position: relative;
     width: 100%;
-    aspect-ratio: 4 / 1;
-    object-fit: cover;
+    aspect-ratio: 2 / 1;
+    overflow: hidden;
     border-radius: var(--radius);
+  }
+
+  .habitat-pano img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .habitat-tag {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    color: var(--color-white);
+    background: rgb(6 18 31 / 0.6);
+  }
+
+  .species {
+    padding-top: var(--space-lg);
   }
 
   .habitat-grid {
@@ -221,8 +285,16 @@ import { problemIntro, stats, habitat, glance } from '../data/problem';
       grid-template-columns: 1fr;
     }
 
+    /* a little taller on phones, trimming the sides so the coral stays big */
     .habitat-pano {
-      aspect-ratio: 5 / 2;
+      aspect-ratio: 16 / 10;
+    }
+
+    /* the tag moves to the bottom so it doesn't sit on top of the coral */
+    .habitat-tag {
+      top: auto;
+      bottom: 0.6rem;
+      left: 0.6rem;
     }
 
     .habitat-text {

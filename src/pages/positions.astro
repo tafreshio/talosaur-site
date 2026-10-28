@@ -5,13 +5,16 @@ import PageHeader from '../components/PageHeader.astro';
 import PhotoBand from '../components/PhotoBand.astro';
 import Patch from '../components/Patch.astro';
 import SectionHeader from '../components/SectionHeader.astro';
+import StoryBand from '../components/StoryBand.astro';
+import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
 import { url } from '../lib/url';
-import { imageUrl } from '../lib/images';
+import { imageExists, imageUrl } from '../lib/images';
 import { positions, positionsHeadline, positionsIntro, applicationFormUrl } from '../data/positions';
 
 // Life on the team: text in [brackets] is a placeholder to fill in later.
-// Photos: public/images/sections/team-build.jpg and team-lab.jpg. Both are stock stand-ins (natural colour):
-// swap them for the team's own photos, keeping the file names.
+// Photos: public/images/sections/team-build.jpg (the team at a build day) and team-lab.jpg (hands on a
+// part, the small photo in the orange frame). Until team-build.jpg exists, a "photo to come" panel shows
+// what it should be; the small photo only appears once team-lab.jpg is added.
 const life = {
   lead: '[A few lines on what being on the team is like: when you meet, what a build day looks like and where testing happens.]',
   text: '[A line on who to ask if you have questions before applying.]',
@@ -52,9 +55,28 @@ const life = {
         ))}
       </ol>
     </section>
+  </div>
 
-    <!-- Section 01: life on the team, in the same light band as the roles (so the page goes dark
-         header, light, dark photo). Like the "Decoding life" collage on Colossal's mammoth page:
+  <!-- Story band, split in two like "Bringing back the woolly mammoth" on Colossal's mammoth page:
+       a school of fish (violet with lime) on the left, a magenta and orange blur on the right, big type
+       across both, and the open roles listed on the right (from src/data/positions.ts). -->
+  <StoryBand
+    variant="split"
+    image="story-join.jpg"
+    position="30% 50%"
+    tag="Now recruiting"
+    title={`${String(positions.length).padStart(2, '0')} open roles`}
+    items={positions.map((role) => ({ title: role.title }))}
+  >
+    <a class="button" href={applicationFormUrl} target="_blank" rel="noopener noreferrer">
+      Apply now <span aria-hidden="true">→</span>
+      <span class="visually-hidden">(opens the application form in a new tab)</span>
+    </a>
+  </StoryBand>
+
+  <!-- Light band: life on the team -->
+  <div class="band band--top theme-light">
+    <!-- Section 01: life on the team. Like the "Decoding life" collage on Colossal's mammoth page:
          a big photo with a smaller one over its corner in an offset orange frame. -->
     <section class="container life">
       <SectionHeader number={1} title="Life on the team" />
@@ -68,11 +90,21 @@ const life = {
           </a>
         </div>
         <figure class="life-collage" aria-hidden="true" data-drift="60">
-          <img class="life-main" src={imageUrl('sections/team-build.jpg')} alt="" width="1600" height="1000" loading="lazy" decoding="async" />
-          <span class="label life-tag">[ Photo: the team at a build day ]</span>
-          <span class="life-frame">
-            <img class="life-inset" src={imageUrl('sections/team-lab.jpg')} alt="" width="900" height="900" loading="lazy" decoding="async" />
-          </span>
+          <div class="life-main">
+            {imageExists('sections/team-build.jpg') ? (
+              <img src={imageUrl('sections/team-build.jpg')} alt="" width="1600" height="1000" loading="lazy" decoding="async" />
+            ) : (
+              <PhotoPlaceholder label="the team at a build day" file="sections/team-build.jpg" />
+            )}
+          </div>
+          <!-- the small photo only shows once team-lab.jpg exists (two placeholders on top of each other would be noise) -->
+          {imageExists('sections/team-lab.jpg') && (
+            <span class="life-frame">
+              <span class="life-inset">
+                <img src={imageUrl('sections/team-lab.jpg')} alt="" width="900" height="900" loading="lazy" decoding="async" />
+              </span>
+            </span>
+          )}
         </figure>
       </div>
     </section>
@@ -91,7 +123,7 @@ const life = {
   /* ---------- Life on the team ---------- */
 
   .life {
-    padding-top: var(--space-2xl);
+    padding-top: var(--space-lg);
   }
 
   .life-grid {
@@ -118,19 +150,18 @@ const life = {
   }
 
   .life-main {
+    position: relative;
     width: 100%;
     aspect-ratio: 16 / 10;
-    object-fit: cover;
+    overflow: hidden;
     border-radius: var(--radius);
   }
 
-  .life-tag {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    color: var(--color-white);
-    background: rgb(6 18 31 / 0.6);
+  .life-main img,
+  .life-inset img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   /* the small photo hangs off the bottom left corner inside a thin orange frame */
@@ -145,10 +176,11 @@ const life = {
   }
 
   .life-inset {
+    position: relative;
     display: block;
     width: 100%;
     aspect-ratio: 1;
-    object-fit: cover;
+    overflow: hidden;
   }
 
   @media (max-width: 1023px) {

@@ -6,23 +6,24 @@ import PhotoBand from '../components/PhotoBand.astro';
 import Patch from '../components/Patch.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import PictureCards from '../components/PictureCards.astro';
+import StoryBand from '../components/StoryBand.astro';
 import { url } from '../lib/url';
 import { imageUrl } from '../lib/images';
-import { teamEmail, location, contactHref } from '../data/site';
+import { location, contactEmails } from '../data/site';
 
 const intro =
   "Do you work with marine life between 50 and 300 meters, in research, conservation, fisheries or offshore energy? We'd love a 20-minute conversation about how you study it today.";
 
-const emailHref = contactHref(teamEmail);
 
-// Who we work with: the four groups from the intro, each with a photo that goes with it
-// (public/images/sections/). Text in [brackets] is a placeholder to fill in later.
-// aud-offshore.jpg (a tanker at sea) is a stand-in until there is a photo of an offshore platform.
+// Who we work with: the four groups from the intro, each with a photo of what it names, all in
+// natural colour so the row reads as one set (public/images/sections/). "needs" says what a missing
+// photo should show: until aud-offshore.jpg exists, that card shows a "photo to come" panel.
+// Text in [brackets] is a placeholder to fill in later.
 const audiences = [
-  { image: 'aud-research.jpg', tag: 'Research vehicle', title: 'Research', text: '[One or two sentences on how Talosaur could help ocean researchers.]' },
+  { image: 'aud-research.jpg', tag: 'Research vehicle · NOAA', title: 'Research', text: '[One or two sentences on how Talosaur could help ocean researchers.]' },
   { image: 'aud-conservation.jpg', tag: 'Reef', title: 'Conservation', text: '[One or two sentences on what regular footage could do for sanctuaries and reef protection.]' },
   { image: 'aud-fisheries.jpg', tag: 'Fish school', title: 'Fisheries', text: '[One or two sentences on how fisheries could use counts and footage from these depths.]' },
-  { image: 'aud-offshore.jpg', tag: 'Photo: offshore platform', title: 'Offshore energy', text: '[One or two sentences on surveys around offshore platforms and cables.]' },
+  { image: 'aud-offshore.jpg', needs: 'an offshore platform in the Gulf', title: 'Offshore energy', text: '[One or two sentences on surveys around offshore platforms and cables.]' },
 ];
 ---
 
@@ -33,16 +34,15 @@ const audiences = [
   <div class="band band--top theme-light">
     <section class="container contact-layout">
       <dl class="contact-list" data-reveal-group>
-        <div class="contact-row">
-          <dt class="label">Email</dt>
-          <dd>
-            {emailHref ? (
-              <a class="contact-value contact-email" href={emailHref}>{teamEmail} <span aria-hidden="true">→</span></a>
-            ) : (
-              <span class="contact-value contact-placeholder">{teamEmail}</span>
-            )}
-          </dd>
-        </div>
+        <!-- One row per address (src/data/site.ts, contactEmails): what it's for, then the address -->
+        {contactEmails.map((contact) => (
+          <div class="contact-row">
+            <dt class="label">{contact.label}</dt>
+            <dd>
+              <a class="contact-value contact-email" href={`mailto:${contact.email}`}>{contact.email} <span aria-hidden="true">→</span></a>
+            </dd>
+          </div>
+        ))}
         <div class="contact-row">
           <dt class="label">Location</dt>
           <dd><span class="contact-value">{location}</span></dd>
@@ -51,7 +51,8 @@ const audiences = [
 
       <!-- Collage beside the contact details, in the style of Colossal's species pages: a big edited
            photo (jellyfish in a magenta and orange map), a lime colour block behind it with a notch
-           cut out, an orange dot on one corner and a small natural photo (a ray, NOAA) over another.
+           cut out, an orange dot on one corner and a small edited photo (a sand tiger shark in lime on
+           violet) over another.
            Pictures: public/images/accents/jelly.jpg and sections/contact-inset.jpg. -->
       <figure class="collage" aria-hidden="true" data-drift="50">
         <span class="collage-block"></span>
@@ -61,7 +62,25 @@ const audiences = [
         <img class="collage-inset" src={imageUrl('sections/contact-inset.jpg')} alt="" width="900" height="600" loading="lazy" decoding="async" />
       </figure>
     </section>
+  </div>
 
+  <!-- Story band: the 20-minute conversation, over the feather star on the canyon wall (NOAA) in
+       teal and pink, like the "Allied with others" band on Colossal's company page.
+       Copy: the big line is from the Content doc intro ("a 20-minute conversation"); the two columns are placeholders. -->
+  <StoryBand
+    variant="statement"
+    image="story-talk.jpg"
+    position="60% 50%"
+    tag="A conversation about your work"
+    title="20 minutes"
+    items={[
+      { title: "What we'll ask", text: '[A line on the questions the team will bring to the call.]' },
+      { title: "What you'll get", text: '[A line on what the conversation gives back, for example early footage.]' },
+    ]}
+  />
+
+  <!-- Light band: who we work with -->
+  <div class="band band--top theme-light">
     <!-- Section 01: who we work with, four photo cards -->
     <section class="container audiences">
       <SectionHeader number={1} title="Who we work with" />
@@ -88,7 +107,7 @@ const audiences = [
   }
 
   .audiences {
-    padding-top: var(--space-2xl);
+    padding-top: var(--space-lg);
   }
 
   /* ---------- Collage ---------- */
@@ -166,12 +185,12 @@ const audiences = [
     min-width: 0;
   }
 
-  /* Big, Colossal-style contact details */
+  /* Big, Colossal-style contact details (three addresses, so a little smaller than one would be) */
   .contact-value {
     font-family: var(--font-display);
     font-stretch: var(--display-width);
     font-weight: 800;
-    font-size: clamp(2rem, 1rem + 4vw, 4.5rem);
+    font-size: clamp(1.5rem, 0.9rem + 2.4vw, 3.2rem);
     line-height: 1;
     text-transform: uppercase;
     overflow-wrap: anywhere; /* long email addresses wrap instead of overflowing */
@@ -190,11 +209,6 @@ const audiences = [
 
   .contact-email:hover span {
     transform: translateX(6px);
-  }
-
-  .contact-placeholder {
-    color: var(--color-muted);
-    text-transform: none;
   }
 
   /* Tablet and phone: the collage goes under the contact details */

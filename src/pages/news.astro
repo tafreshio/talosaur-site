@@ -6,28 +6,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Photo from '../components/Photo.astro';
 import PhotoBand from '../components/PhotoBand.astro';
-import SectionHeader from '../components/SectionHeader.astro';
-import PictureCards from '../components/PictureCards.astro';
+import TestRoute from '../components/TestRoute.astro';
 import { twitchUrl } from '../data/site';
 import { getSortedNews, formatNewsDate } from '../lib/news';
-import { imageExists, imageUrl } from '../lib/images';
+import { imageExists } from '../lib/images';
 
 const entries = await getSortedNews();
 
-// Where we test: the steps from the pool out to open water, following the test ladder on the
-// Turtle drawing (Home page). Each has a photo that goes with it (public/images/sections/test-*.jpg,
-// stock stand-ins until the team has its own; the tag on each says what that photo should show).
+// Where we test: the stops on the test ladder from the Turtle drawing (Home page), from the pool in
+// College Station out to Flower Garden Banks. x and y place each stop on the map (left %, top %,
+// printed by stills_site/make_sections.py route_map). Each stop has a small photo: until its file
+// is in public/images/sections/, a "photo to come" panel shows what it should be.
 // Text in [brackets] is a placeholder to fill in later.
-const tests = [
-  { image: 'test-pool.jpg', tag: 'Photo: pool test', title: 'Pool', text: '[When, and what this test shows.]' },
-  { image: 'test-lake.jpg', tag: 'Photo: lake test', title: 'Lake Bryan and Lake Travis', text: '[When, and what this test shows.]' },
-  { image: 'test-gulf.jpg', tag: 'Photo: Galveston', title: 'Galveston', text: '[When, and what this test shows.]' },
-  { image: 'test-reef.jpg', tag: 'Photo: first offshore footage', title: 'Offshore', text: '[When, and what we hope to film there, for example Flower Garden Banks.]' },
+const stops = [
+  { name: 'Pool', place: 'College Station', x: 45.4, y: 27.4, image: 'test-pool.jpg', needs: 'a pool test', text: '[When, and what this test shows.]' },
+  { name: 'Lake Bryan', place: 'Bryan', x: 43.6, y: 25.8, image: 'test-lake-bryan.jpg', needs: 'Lake Bryan', text: '[When, and what this test shows.]', labelLeft: true },
+  { name: 'Lake Travis', place: 'Austin', x: 23.6, y: 31.5, image: 'test-lake-travis.jpg', needs: 'Lake Travis', text: '[When, and what this test shows.]' },
+  { name: 'Galveston', place: 'Gulf coast', x: 66.7, y: 53.6, image: 'test-galveston.jpg', needs: 'Galveston', text: '[When, and what this test shows.]' },
+  { name: 'Offshore', place: 'Flower Garden Banks', x: 81.7, y: 81.2, image: 'test-offshore.jpg', needs: 'Flower Garden Banks', text: '[When, and what we hope to film there.]' },
 ];
-
-// Heights (0 = top, 1 = bottom) of the four photos on the field log strip. They match the picture,
-// so only change them if you remake news-rail.jpg.
-const railStops = [0.12, 0.37, 0.62, 0.86];
 
 // Turn each entry's Markdown body into HTML we can place on the page
 const items = await Promise.all(
@@ -40,22 +37,11 @@ const items = await Promise.all(
 ---
 
 <BaseLayout title="News" headerOverlay>
-  <PageHeader title="News" href="/news" caption="Field log · Turtle, phase 1" image="news.jpg" imagePosition="47% 50%" />
+  <PageHeader title="News" href="/news" caption="Updates · Photos · Videos" image="news.jpg" imagePosition="47% 50%" />
 
   <!-- Light band: everything below the photo header -->
   <div class="band band--top theme-light">
     <section class="container news-layout">
-      <!-- The same field log strip lying on its side, above the list on phones and tablets
-           (public/images/accents/news-rail-wide.jpg). The tall one beside the list is for wide screens. -->
-      <figure class="field-log field-log--wide" aria-hidden="true">
-        <div class="field-log-strip">
-          <img src={imageUrl('accents/news-rail-wide.jpg')} alt="" width="1600" height="440" loading="lazy" decoding="async" />
-          {railStops.map((stop, i) => (
-            <span class="label field-log-dot" style={`left: ${stop * 100}%; top: 15.9%`}>{String(i + 1).padStart(2, '0')}</span>
-          ))}
-        </div>
-      </figure>
-
       <ol class="news-list" data-reveal-group>
         {items.map(({ entry, Content, hasPhoto }) => (
           <li id={entry.id} class:list={['news-item', { 'news-item--has-photo': hasPhoto }]}>
@@ -77,27 +63,12 @@ const items = await Promise.all(
         ))}
       </ol>
 
-      <!-- Field log strip beside the list (wide screens only), like the timelines on Colossal's
-           species pages: lime at the top (the surface) to violet at the bottom (deeper), with four
-           photos from NOAA dive video. The picture is public/images/accents/news-rail.jpg;
-           the numbered dots below sit on its line at the heights the photos were drawn at. -->
-      <figure class="field-log" aria-hidden="true">
-        <div class="field-log-strip">
-          <img src={imageUrl('accents/news-rail.jpg')} alt="" width="480" height="1600" loading="lazy" decoding="async" />
-          {railStops.map((stop, i) => (
-            <span class="label field-log-dot" style={`left: 13.3%; top: ${stop * 100}%`}>{String(i + 1).padStart(2, '0')}</span>
-          ))}
-        </div>
-        <figcaption class="label field-log-tag">[ Field log · NOAA ]</figcaption>
-      </figure>
     </section>
 
-    <!-- Section 01: where we test, from the pool down to the reef (four photo cards) -->
-    <section class="container tests">
-      <SectionHeader number={1} title="Where we test" />
-      <PictureCards items={tests} columns={4} />
-    </section>
   </div>
+
+  <!-- Section 01: where we test. An orange band with a map of the test stops (Colossal's locations map) -->
+  <TestRoute number={1} title="Where we test" tag="From the pool to the reef" stops={stops} />
 
   <!-- Closing photo (moray eel, thermal false colour). Copy: Content doc, "Talosaur Live" card. -->
   <PhotoBand image="news.jpg" position="40% 50%" heading="Talosaur Live" tag="Join the live build stream and see our engineers at work">
@@ -106,80 +77,6 @@ const items = await Promise.all(
 </BaseLayout>
 
 <style>
-  .tests {
-    padding-top: var(--space-2xl);
-  }
-
-  /* The list on the left, the field log strip on the right (wide screens) */
-  .news-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) clamp(11rem, 15vw, 15rem);
-    gap: var(--space-xl);
-    align-items: start;
-  }
-
-  .field-log {
-    margin: 0;
-  }
-
-  /* the dots are placed in % of this box, which is exactly the picture */
-  .field-log-strip {
-    position: relative;
-  }
-
-  .field-log img {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-
-  /* Numbered dots on the strip's line (where they go is set on each dot in the markup) */
-  .field-log-dot {
-    position: absolute;
-    display: grid;
-    place-items: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    background: var(--color-white);
-    color: var(--light-text);
-    transform: translate(-50%, -50%);
-  }
-
-  .field-log-tag {
-    margin-top: var(--space-sm);
-    color: var(--color-muted);
-  }
-
-  /* the sideways strip is only for narrower screens */
-  .field-log--wide {
-    display: none;
-  }
-
-  /* Narrower screens: the list takes the whole width, with the sideways strip above it */
-  @media (max-width: 1099px) {
-    .news-layout {
-      grid-template-columns: 1fr;
-      gap: var(--space-lg);
-    }
-
-    .field-log {
-      display: none;
-    }
-
-    .field-log--wide {
-      display: block;
-    }
-  }
-
-  @media (max-width: 760px) {
-    .field-log--wide .field-log-dot {
-      width: 1.5rem;
-      height: 1.5rem;
-      font-size: 0.6rem;
-    }
-  }
-
   .news-list {
     margin: 0;
     padding: 0;
