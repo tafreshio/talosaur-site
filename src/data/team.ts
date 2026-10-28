@@ -23,13 +23,34 @@ export interface TeamMember {
 export const team: TeamMember[] = [
   {
     name: 'Fernando Guzman',
-    role: 'Project Lead',
+    role: 'Founder',
     majorYear: '[Major, year]', // PLACEHOLDER
     photo: 'fernando-guzman.jpg',
     linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
     lead: true,
-    // PLACEHOLDER: two or three sentences about Fernando
-    bio: '[Two or three sentences about Fernando: what he leads on the team, his background, and what drew him to Talosaur.]',
+    // In Fernando's own words (first person)
+    bio: 'I started Talosaur to discover a fish, the Talosaur, and to allow for cheaper ocean surveying. I think that when we build an AUV to get down to the mesopelagic region, we will show how efficient engineering can really be. Also, my team is very good.',
+  },
+  {
+    name: 'Sam Cakici',
+    role: 'Mechanical Engineer',
+    majorYear: '[Major, year]', // PLACEHOLDER
+    photo: 'sam-cakici.jpg',
+    linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
+  },
+  {
+    name: 'Kabir Muzumdar',
+    role: 'Hydraulics Engineer',
+    majorYear: '[Major, year]', // PLACEHOLDER
+    photo: 'kabir-muzumdar.jpg',
+    linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
+  },
+  {
+    name: 'Nicholas Khu',
+    role: 'Electrical Engineer',
+    majorYear: '[Major, year]', // PLACEHOLDER
+    photo: 'nicholas-khu.jpg',
+    linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
   },
   {
     name: 'Omeed Tafreshi',
@@ -37,26 +58,5 @@ export const team: TeamMember[] = [
     majorYear: '[Major, year]', // PLACEHOLDER
     photo: 'omeed-tafreshi.jpg',
     linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
-  },
-  {
-    name: '[Name]', // PLACEHOLDER
-    role: 'Ocean Engineer',
-    majorYear: '[Major, year]', // PLACEHOLDER
-    photo: 'ocean-engineer.jpg',
-    linkedin: '',
-  },
-  {
-    name: '[Name]', // PLACEHOLDER
-    role: 'Electrical Engineer',
-    majorYear: '[Major, year]', // PLACEHOLDER
-    photo: 'electrical-engineer.jpg',
-    linkedin: '',
-  },
-  {
-    name: '[Name]', // PLACEHOLDER
-    role: 'CAD Lead',
-    majorYear: '[Major, year]', // PLACEHOLDER
-    photo: 'cad-lead.jpg',
-    linkedin: '',
   },
 ];
