@@ -117,7 +117,7 @@ The three ways to help on Donate sit on plain colour blocks (orange, lime, viole
 | Section | Where the text lives | Pictures |
 |---|---|---|
 | The Problem, 03 At a glance (dark, carrying on the water of the depth graphic): a fact sheet in white boxed labels beside a big jellyfish cut-out (`src/components/SpecList.astro`) | `glance` in `src/data/problem.ts` | `glance-jelly.webp` |
-| The Problem, 04 Habitat: a wide strip of the reef at Flower Garden Banks (a "photo to come" panel until `habitat-pano.jpg` is added), "Flower Garden Banks", two paragraphs, three facts and a map with Flower Garden Banks and College Station | `habitat` in `src/data/problem.ts` | `habitat-pano.jpg`, `habitat-map.png` (the two map labels are placed by % in `src/pages/the-problem.astro`) |
+| The Problem, 04 Habitat: a wide photo of a brain coral at Flower Garden Banks (supplied by the team), "Flower Garden Banks", two paragraphs, five facts and a map with Flower Garden Banks and College Station. Then a story band with the sanctuary in numbers beside the drawing from the front of NOAA's 2023 sanctuary poster, and 05 Who lives here: four animals with NOAA photos from the same poster (all made by `stills_site/make_fgb.py`) | `habitat` in `src/data/problem.ts` | `habitat-pano.jpg`, `habitat-map.png` (the two map labels are placed by % in `src/pages/the-problem.astro`), `bands/story-fgb.jpg`, `fgb-poster-art.jpg`, `fgb-black-coral.jpg`, `fgb-marbled-grouper.jpg`, `fgb-manta-ray.jpg`, `fgb-trunkfish.jpg` (text: `habitat`, `fgbStats`, `fgbSpecies` in `src/data/problem.ts`) |
 | Work with us, 01 Who we work with: four photo cards, all natural colour so the row matches (`src/components/PictureCards.astro`) | `audiences` at the top of `src/pages/work-with-us.astro` | `aud-research.jpg`, `aud-conservation.jpg`, `aud-fisheries.jpg`, `aud-offshore.jpg` |
 | Donate, 02 Where it goes: three photo cards | `support` at the top of `src/pages/donate.astro` | `support-parts.jpg`, `support-testing.jpg`, `support-field-trips.jpg` |
 | Positions, 01 Life on the team: text and an Apply button beside a big photo with a smaller one in an orange frame | `life` at the top of `src/pages/positions.astro` | `team-build.jpg`, `team-lab.jpg` |
@@ -125,7 +125,7 @@ The three ways to help on Donate sit on plain colour blocks (orange, lime, viole
 
 **"Photo to come" panels.** A photo that shows something specific (the team, Turtle, a place like Lake Bryan) is never stood in for by an unrelated stock picture. Until the real photo exists, the slot shows a dark panel with "[ Photo to come ]" and what the photo should be (`src/components/PhotoPlaceholder.astro`). Save the photo under the file name listed in `PLACEHOLDERS.md` and the panel turns into the photo. Cards with a photo that is a generic stand-in on purpose (parts being machined, a boat wake for field trips) keep it. People, lab and machine photos stay natural; a row of photo cards keeps one treatment (all natural or all edited) so it reads as a set.
 
-**Story bands.** Between the white stretches, each page has one loud, full-width band: a colour-shifted picture across the whole screen with very large thin capitals over it, like the bands on Colossal's mammoth and company pages. The component is `src/components/StoryBand.astro` and has four layouts:
+**Story bands.** Between the white stretches, each page has one loud, full-width band: a colour-shifted picture across the whole screen with very large thin capitals over it, like the bands on Colossal's mammoth and company pages. The component is `src/components/StoryBand.astro` and has five layouts:
 
 | Layout | Page | Picture (`public/images/bands/`) |
 |---|---|---|
@@ -133,6 +133,7 @@ The three ways to help on Donate sit on plain colour blocks (orange, lime, viole
 | `stats`: a title and big numbers on dots (Colossal's "5.5 million square miles") | Who we are, the team in numbers | `story-team.jpg` (sun rays under the surface, Pexels, orange to violet) |
 | `split`: big type across a picture in two halves (Colossal's "Bringing back the woolly mammoth") | Positions, "Help us explore the twilight zone" | `story-join.jpg` (garden eels, Pexels, lime on violet; a magenta and orange blur) |
 | `statement`: a big line and two short columns (Colossal's "Mission / Goal") | Donate, "Affordable ocean exploration"; Work with us, "20 minutes" | `story-donate.jpg` (a ray, NOAA, orange to violet), `story-talk.jpg` (a feather star, NOAA, teal and pink) |
+| `art`: a title and numbers on the left, a piece of artwork shown whole on the right in a thin lime frame (no type over it, no colour edits) | The Problem, "Most of it lies in the twilight zone" | `story-fgb.jpg` (the bank's seafloor relief from NOAA's poster, violet and lime), with the poster drawing `sections/fgb-poster-art.jpg` on top |
 
 The pictures are made by `stills_site/make_story.py` from public-domain NOAA video and Pexels clips (only nature is colour-shifted). To add a band to a page, close the light band (`</div>`), put `<StoryBand ... />`, and open a new one (`<div class="band band--top theme-light">`).
 

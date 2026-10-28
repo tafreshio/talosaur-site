@@ -11,6 +11,9 @@
 //   statement  a big line of type, then two or three short columns (Colossal's "Mission / Goal")
 //   split      big type running across a picture split into two halves, an optional subtitle and a
 //              numbered list on the right half (Colossal's "Bringing back the woolly mammoth")
+//   art        a title and numbers on the left, and a piece of artwork shown whole on the right in a
+//              thin offset frame, untouched (no type over it, no colour shift). The colour-shifted
+//              picture still fills the band behind it.
 //
 // Pictures: public/images/bands/story-*.jpg (2400 x 1350, made by stills_site/make_story.py).
 // Text in [brackets] is a placeholder to fill in later.
@@ -22,17 +25,27 @@ interface Item {
   text?: string;    // the line under it
 }
 
+interface Art {
+  image: string;    // path inside public/images, e.g. 'sections/fgb-poster-art.jpg'
+  width: number;
+  height: number;
+  alt: string;
+  credit: string;   // shown under the frame, e.g. 'Art: ...'
+}
+
 interface Props {
-  variant: 'echo' | 'stats' | 'statement' | 'split';
+  variant: 'echo' | 'stats' | 'statement' | 'split' | 'art';
   image: string;           // file name in public/images/bands/
   position?: string;       // which part of the picture to keep on narrow screens
   tag?: string;            // small [ label ] at the top left
-  title?: string;          // the big line (stats, statement, split)
+  title?: string;          // the big line (stats, statement, split, art)
   subtitle?: string;       // a sentence beside or under the big line
   items?: Item[];
+  art?: Art;               // the artwork for the 'art' layout
+  source?: { label: string; href: string };  // where the facts come from, shown small at the bottom
 }
 
-const { variant, image, position = '50% 50%', tag, title, subtitle, items = [] } = Astro.props;
+const { variant, image, position = '50% 50%', tag, title, subtitle, items = [], art, source } = Astro.props;
 const hasSlot = Astro.slots.has('default');
 const pad = (n: number) => String(n + 1).padStart(2, '0');
 ---
@@ -115,7 +128,30 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
       </div>
     )}
 
+    {variant === 'art' && art && (
+      <div class="art">
+        {title && <h2 class="story-title story-title--art" data-reveal>{title}</h2>}
+        <figure class="art-figure" data-reveal>
+          <span class="art-frame">
+            <img src={imageUrl(art.image)} alt={art.alt} width={art.width} height={art.height} loading="lazy" decoding="async" />
+          </span>
+          <figcaption class="label art-credit">[ {art.credit} ]</figcaption>
+        </figure>
+        {items.length > 0 && (
+          <dl class="art-stats" data-reveal-group>
+            {items.map((item) => (
+              <div class="art-stat">
+                <dt class="story-word art-num">{item.title}</dt>
+                <dd class="art-text">{item.text}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+      </div>
+    )}
+
     {hasSlot && variant !== 'split' && <div class="story-slot"><slot /></div>}
+    {source && <a class="label story-src" href={source.href} target="_blank" rel="noopener">[ Source: {source.label} ]</a>}
   </div>
 </section>
 
@@ -159,6 +195,11 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
   .story--statement .story-media::after,
   .story--stats .story-media::after {
     background: linear-gradient(90deg, rgb(6 18 31 / 0.55) 0%, rgb(6 18 31 / 0.3) 55%, rgb(6 18 31 / 0.1) 100%);
+  }
+
+  /* art: the picture behind is toned down all over, so the artwork stays the loudest thing */
+  .story--art .story-media::after {
+    background: linear-gradient(90deg, rgb(6 18 31 / 0.72) 0%, rgb(6 18 31 / 0.6) 55%, rgb(6 18 31 / 0.56) 100%);
   }
 
   .story-rail {
@@ -403,6 +444,102 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     text-transform: uppercase;
   }
 
+  /* ---------- art ---------- */
+
+  /* title and numbers on the left, the artwork across two rows on the right */
+  .art {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+      'title fig'
+      'stats fig';
+    gap: var(--space-lg) var(--space-xl);
+    align-items: center;
+  }
+
+  .story-title--art {
+    grid-area: title;
+    align-self: end;
+    max-width: 13ch;
+    font-size: clamp(2rem, 0.9rem + 2.6vw, 3.6rem);
+  }
+
+  .art-stats {
+    grid-area: stats;
+    align-self: start;
+    margin: 0;
+  }
+
+  .art-stat {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    gap: var(--space-md);
+    align-items: baseline;
+    padding-block: var(--space-sm);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .art-stat:last-child {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .art-num {
+    font-size: clamp(2.6rem, 1.2rem + 2.6vw, 4.2rem);
+    line-height: 1;
+  }
+
+  .art-text {
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  /* the room on the right and below is for the offset frame, so it never runs past the page margin */
+  .art-figure {
+    grid-area: fig;
+    margin: 0;
+    padding: 0 0.9rem 0.9rem 0;
+  }
+
+  .art-frame {
+    position: relative;
+    display: block;
+    isolation: isolate;
+  }
+
+  .art-frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* a thin lime frame set off down and to the right, behind the picture */
+  .art-frame::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    translate: 0.9rem 0.9rem;
+    border: 1px solid var(--color-lime);
+  }
+
+  .art-credit {
+    margin: 1.4rem 0 0;
+    color: var(--color-white);
+  }
+
+  .story-src {
+    display: inline-block;
+    margin-top: var(--space-lg);
+    padding-block: 0.3rem;
+    color: var(--color-white);
+    text-decoration: none;
+  }
+
+  .story-src:hover {
+    text-decoration: underline;
+  }
+
   .story-slot {
     margin-top: var(--space-xl);
   }
@@ -418,6 +555,13 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     .split {
       grid-template-columns: 1fr;
       grid-template-areas: 'title' 'sub' 'foot';
+    }
+
+    /* title, then the artwork, then the numbers */
+    .art {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+      grid-template-areas: 'title' 'fig' 'stats';
     }
 
     .story-rail {
@@ -452,6 +596,15 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
 
     .stat-num {
       font-size: 5rem;
+    }
+
+    .art-stat {
+      grid-template-columns: 5.5rem minmax(0, 1fr);
+      gap: var(--space-sm);
+    }
+
+    .art-num {
+      font-size: 2.6rem;
     }
 
     .story-sub,

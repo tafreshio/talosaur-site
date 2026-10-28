@@ -1,7 +1,7 @@
 // Text for The Problem page (copy from the Content doc).
 
 // Sources for every number and fact on The Problem page. Each shows as a small [ link ] under what it backs up.
-const sources = {
+export const sources = {
   zones: { label: 'Smithsonian', href: 'https://dashboard.si.edu/newsdesk/releases/smithsonian-researchers-name-new-ocean-zone-rariphotic' },
   robots: { label: 'Deep Trekker', href: 'https://www.deeptrekker.com/learn/rov-buying-guide' },
   ship: { label: 'Dialogue Earth', href: 'https://dialogue.earth/en/ocean/scientists-are-becoming-ocean-hitchhikers-to-fill-data-gaps/' },
@@ -9,6 +9,8 @@ const sources = {
   fgb: { label: 'NOAA', href: 'https://flowergarden.noaa.gov/about/mesophotic.html' },
   light: { label: 'NOAA', href: 'https://oceanservice.noaa.gov/facts/light_travel.html' },
   pressure: { label: 'NOAA', href: 'https://oceanservice.noaa.gov/facts/pressure.html' },
+  // NOAA's 2023 Flower Garden Banks National Marine Sanctuary poster (also the source of its photos)
+  poster: { label: 'NOAA poster', href: 'https://sanctuaries.noaa.gov/media/posters/2023-flower-garden-banks-national-marine-sanctuary-poster.pdf' },
 };
 
 export const problemIntro =
@@ -99,30 +101,48 @@ export const depthBands = [
   { depth: '300 m+', name: '', text: 'Reached by research ships and deep vehicles.', zone: 'deep', from: 300, to: 380 },
 ];
 
-// ---------------------------------------------------------------- Section 03: Habitat
-// Text in [brackets] is a placeholder to fill in later. The map is public/images/sections/habitat-map.png;
-// the two labels on it are placed in src/pages/the-problem.astro.
+// ---------------------------------------------------------------- Section 04: Habitat
+// The map is public/images/sections/habitat-map.png; the two labels on it are placed in
+// src/pages/the-problem.astro. The first paragraph and the new facts come from NOAA's 2023 sanctuary
+// poster (sources.poster); the second paragraph is still a placeholder for the team to write.
 export const habitat = {
   title: 'Flower Garden Banks',
-  // PLACEHOLDER: two short paragraphs
   paragraphs: [
-    '[A short paragraph about the deep reefs at Flower Garden Banks: where they are, what lives there and why they matter.]',
-    "[A second paragraph on why they're hard to visit, and what regular filming there could show.]",
+    'Flower Garden Banks National Marine Sanctuary covers 17 reefs and banks 80 to 125 miles off the Texas and Louisiana coast. The coral reefs on top are among the healthiest in the world, but they make up only 2% of the sanctuary. Most of it lies deeper, in the twilight zone, on reefs of black corals, octocorals and sponges. Reef fish, manta rays, sea turtles and sharks live across the sanctuary.',
+    "[A second paragraph on why the deeper reefs are hard to visit, and what regular filming there could show.]", // PLACEHOLDER
   ],
   facts: [
     { label: 'Reef depth', value: '40–221 m', source: sources.fgb },
-    { label: 'Off the coast of', value: 'Texas and Louisiana' },
-    { label: 'From College Station', value: '[distance] km' }, // PLACEHOLDER
+    { label: 'Off the coast', value: '80–125 miles south of Texas and Louisiana', source: sources.poster },
+    { label: 'Protected area', value: '160 square miles', source: sources.poster },
+    { label: 'Reef monitoring', value: 'Every year since 1989, on the shallow reefs', source: sources.poster },
+    // straight line from College Station to East and West Flower Garden Bank (worked out from their coordinates)
+    { label: 'From College Station', value: 'About 400 km (250 miles)' },
   ],
 };
 
-// ---------------------------------------------------------------- Section 04: At a glance
+// Flower Garden Banks in numbers, for the story band between the habitat and the animals
+export const fgbStats = [
+  { title: '17', text: 'Reefs and banks in the sanctuary' },
+  { title: '160', text: 'Square miles protected' },
+  { title: '2%', text: 'Is the shallow coral reef divers know. Most of the rest lies deeper.' },
+];
+
+// Who lives here: four animals from the poster, each with a NOAA photo (public/images/sections/fgb-*.jpg)
+export const fgbSpecies = [
+  { image: 'fgb-black-coral.jpg', tag: 'NOAA / UNCW-UVP', title: 'Black coral', text: 'Lives on the deeper reefs. New species turn up during deep-sea exploration; this one was first described in 2017.' },
+  { image: 'fgb-marbled-grouper.jpg', tag: 'G.P. Schmahl · NOAA', title: 'Marbled grouper', text: 'A shy fish that prefers deeper reefs, so divers rarely see one.' },
+  { image: 'fgb-manta-ray.jpg', tag: 'G.P. Schmahl · NOAA', title: 'Manta ray', text: 'A common sight in the sanctuary. Each one can be told apart by the markings on its belly.' },
+  { image: 'fgb-trunkfish.jpg', tag: 'Emma Hickerson · NOAA', title: 'Golden smooth trunkfish', text: 'One of the only places in the world to find the golden form of this fish.' },
+];
+
+// ---------------------------------------------------------------- Section 03: At a glance
 // The twilight zone as a fact sheet (Colossal's mammoth page style). Values in [brackets] are placeholders.
 export const glance = [
   { label: 'Depth', value: '50–300 m' },
   { label: 'Sunlight', value: 'Rarely any significant sunlight below 200 m', source: sources.light },
   { label: 'Pressure', value: 'About 6 to 31 times the surface', source: sources.pressure },
   { label: 'Temperature', value: '[Typical temperature range]' }, // PLACEHOLDER
-  { label: 'Who lives here', value: '[A few of the animals found at these depths]' }, // PLACEHOLDER
+  { label: 'Who lives here', value: 'At Flower Garden Banks: black corals, octocorals, sponges and reef fish', source: sources.poster },
   { label: 'Surveys a year', value: '[How often this zone gets surveyed]' }, // PLACEHOLDER
 ];
