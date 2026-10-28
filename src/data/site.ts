@@ -49,7 +49,7 @@ export const footerColumns = [
 // Social links. Leave href empty ('') until the account exists; it shows as plain text.
 export const socialLinks = [
   { label: 'Instagram', href: '' }, // PLACEHOLDER: Instagram URL
-  { label: 'LinkedIn', href: '' },  // PLACEHOLDER: LinkedIn URL
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/talosaur' },
   { label: 'YouTube', href: '' },   // PLACEHOLDER: YouTube URL
   { label: 'Twitch', href: twitchUrl }, // the live build stream
 ];

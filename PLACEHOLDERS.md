@@ -7,7 +7,7 @@ section explains sizes.
 
 | Placeholder | Where it shows | File to edit |
 |---|---|---|
-| Instagram, LinkedIn, YouTube links | Footer, "Connect with us" (plain text until filled in) | `src/data/site.ts` (`socialLinks`) |
+| Instagram and YouTube links | Footer, "Connect with us" (plain text until filled in) | `src/data/site.ts` (`socialLinks`) |
 | `[Major, year]` (all 7 people) | Who we are | `src/data/team.ts` |
 | Team photos (initials show until a photo is added) | Who we are | `public/images/team/` (file names are in `src/data/team.ts`) |
 | Team LinkedIn links (optional, hidden until filled in) | Who we are | `src/data/team.ts` (`linkedin`) |
