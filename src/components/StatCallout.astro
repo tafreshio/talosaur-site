@@ -61,7 +61,10 @@ const { value, unit, caption, index, source } = Astro.props;
     color: var(--color-muted);
   }
 
+  /* padded so it's a comfortable tap target on a phone */
   .stat-source {
+    align-self: flex-start;
+    padding-block: 0.3rem;
     color: var(--color-accent);
     text-decoration: none;
   }

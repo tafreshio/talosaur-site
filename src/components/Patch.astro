@@ -437,7 +437,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     }
 
     .patch--strip {
-      width: 30vw;
+      width: 40vw;
     }
 
     .patch--pano {
@@ -450,6 +450,16 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
     .patch--stack {
       width: 58%;
+    }
+
+    /* frames, corner brackets and corner squares poke out about 0.6rem: keep them inside the
+       page margin (the strip is the one patch meant to run off the edge) */
+    .patch-row--right .patch:not(.patch--strip) {
+      margin-right: 0.6rem;
+    }
+
+    .patch-row--left .patch:not(.patch--strip) {
+      margin-left: 0.6rem;
     }
 
     /* a section right under a straddling patch starts its content below the patch */

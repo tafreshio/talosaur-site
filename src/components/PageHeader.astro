@@ -110,16 +110,16 @@ const photoUrl = imageUrl(`pages/${image}`);
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(90deg, rgb(6 18 31 / 0.62) 0%, rgb(6 18 31 / 0.38) 38%, rgb(6 18 31 / 0.08) 68%, transparent 85%),
-      linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 55%, transparent) 0%, transparent 22%);
+      linear-gradient(90deg, rgb(6 18 31 / 0.72) 0%, rgb(6 18 31 / 0.5) 42%, rgb(6 18 31 / 0.16) 72%, transparent 90%),
+      linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 72%, transparent) 0%, transparent 28%);
   }
 
   /* Phones: the text runs the full width, so shade the whole photo evenly instead */
   @media (max-width: 760px) {
     .page-header-media::after {
       background:
-        linear-gradient(rgb(6 18 31 / 0.52), rgb(6 18 31 / 0.52)),
-        linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 55%, transparent) 0%, transparent 22%);
+        linear-gradient(rgb(6 18 31 / 0.58), rgb(6 18 31 / 0.58)),
+        linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 72%, transparent) 0%, transparent 28%);
     }
   }
 
@@ -144,6 +144,15 @@ const photoUrl = imageUrl(`pages/${image}`);
   .page-num {
     margin: 0 0 var(--space-sm);
     color: var(--color-accent);
+  }
+
+  /* On a photo the number gets the same dark glassy box as the captions, so it reads on any colour */
+  .page-header--image .page-num {
+    width: fit-content;
+    padding: 0.3rem 0.55rem;
+    background: rgb(6 18 31 / 0.55);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
   }
 
   .page-title {

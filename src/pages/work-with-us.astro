@@ -4,6 +4,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import PhotoBand from '../components/PhotoBand.astro';
 import Patch from '../components/Patch.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import PictureCards from '../components/PictureCards.astro';
 import { url } from '../lib/url';
 import { imageUrl } from '../lib/images';
 import { teamEmail, location, contactHref } from '../data/site';
@@ -12,6 +14,16 @@ const intro =
   "Do you work with marine life between 50 and 300 meters, in research, conservation, fisheries or offshore energy? We'd love a 20-minute conversation about how you study it today.";
 
 const emailHref = contactHref(teamEmail);
+
+// Who we work with: the four groups from the intro, each with a photo that goes with it
+// (public/images/sections/). Text in [brackets] is a placeholder to fill in later.
+// aud-offshore.jpg (a tanker at sea) is a stand-in until there is a photo of an offshore platform.
+const audiences = [
+  { image: 'aud-research.jpg', tag: 'Research vehicle', title: 'Research', text: '[One or two sentences on how Talosaur could help ocean researchers.]' },
+  { image: 'aud-conservation.jpg', tag: 'Reef', title: 'Conservation', text: '[One or two sentences on what regular footage could do for sanctuaries and reef protection.]' },
+  { image: 'aud-fisheries.jpg', tag: 'Fish school', title: 'Fisheries', text: '[One or two sentences on how fisheries could use counts and footage from these depths.]' },
+  { image: 'aud-offshore.jpg', tag: 'Photo: offshore platform', title: 'Offshore energy', text: '[One or two sentences on surveys around offshore platforms and cables.]' },
+];
 ---
 
 <BaseLayout title="Work with us" description={intro} headerOverlay>
@@ -39,15 +51,21 @@ const emailHref = contactHref(teamEmail);
 
       <!-- Collage beside the contact details, in the style of Colossal's species pages: a big edited
            photo (jellyfish in a magenta and orange map), a lime colour block behind it with a notch
-           cut out, an orange dot on one corner and a small natural photo over another.
-           Pictures: public/images/accents/jelly.jpg and ship-inset.jpg. -->
+           cut out, an orange dot on one corner and a small natural photo (a ray, NOAA) over another.
+           Pictures: public/images/accents/jelly.jpg and sections/contact-inset.jpg. -->
       <figure class="collage" aria-hidden="true" data-drift="50">
         <span class="collage-block"></span>
         <img class="collage-main" src={imageUrl('accents/jelly.jpg')} alt="" width="1280" height="960" loading="lazy" decoding="async" />
         <span class="collage-dot"></span>
         <span class="label collage-tag">[ Jellyfish ]</span>
-        <img class="collage-inset" src={imageUrl('accents/ship-inset.jpg')} alt="" width="900" height="600" loading="lazy" decoding="async" />
+        <img class="collage-inset" src={imageUrl('sections/contact-inset.jpg')} alt="" width="900" height="600" loading="lazy" decoding="async" />
       </figure>
+    </section>
+
+    <!-- Section 01: who we work with, four photo cards -->
+    <section class="container audiences">
+      <SectionHeader number={1} title="Who we work with" />
+      <PictureCards items={audiences} columns={4} />
     </section>
   </div>
 
@@ -67,6 +85,10 @@ const emailHref = contactHref(teamEmail);
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     gap: var(--space-xl);
     align-items: start;
+  }
+
+  .audiences {
+    padding-top: var(--space-2xl);
   }
 
   /* ---------- Collage ---------- */
@@ -182,9 +204,10 @@ const emailHref = contactHref(teamEmail);
       gap: var(--space-lg);
     }
 
+    /* the right margin keeps the orange dot on the corner inside the page margin */
     .collage {
       width: min(34rem, 88%);
-      margin: var(--space-md) 0 calc(var(--space-xl) + var(--space-md)) auto;
+      margin: var(--space-md) 0.6rem calc(var(--space-xl) + var(--space-md)) auto;
     }
   }
 

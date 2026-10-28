@@ -50,10 +50,6 @@ const lookFor = (i: number) => looks[i % looks.length];
   <!-- Light band: the team collage -->
   <div class="band band--top theme-light">
     <section class="container team">
-      <!-- Margin note, like the sideways labels in Colossal's left margin -->
-      <p class="label team-rail" aria-hidden="true">[ Team · {pad(team.length)} ]</p>
-      <span class="team-plus team-plus--a" aria-hidden="true">+</span>
-
       <!-- The lead, on a row of their own -->
       {lead && (
         <article class="lead">
@@ -66,7 +62,7 @@ const lookFor = (i: number) => looks[i % looks.length];
                 <span class="member-initials">{panelText(lead.name, lead.role)}</span>
               </div>
             )}
-            <p class="label member-tag">01 · {lead.role}</p>
+            <p class="label member-tag"><span class="member-tag-num">01 · </span>{lead.role}</p>
             <!-- Name in violet boxes over the photo's corner, one box per word -->
             <h2 class="lead-name">
               {lead.name.split(/\s+/).map((word) => <span>{word}</span>)}
@@ -107,7 +103,7 @@ const lookFor = (i: number) => looks[i % looks.length];
                     </div>
                   )}
                   <!-- Orange tag on the photo's corner, like Colossal's role tags -->
-                  <p class="label member-tag">{pad(i + firstNumber)} · {member.role}</p>
+                  <p class="label member-tag"><span class="member-tag-num">{pad(i + firstNumber)} · </span>{member.role}</p>
                 </div>
                 <h2 class="member-name">{member.name}</h2>
                 <p class="member-major">{member.majorYear}</p>
@@ -120,13 +116,13 @@ const lookFor = (i: number) => looks[i % looks.length];
             </li>
           );
         })}
-        <!-- Last card: open positions (Content doc copy). Behind the words: a 1900 engraving of a fish
-             skeleton in Colossal's orange-to-violet gradient (their Careers page has a gradient skull).
-             Picture: public/images/accents/skeleton-tile.jpg -->
-        <li class="member">
+        <!-- Last card: open positions (Content doc copy), wide, across two columns. Behind the words:
+             a 1900 engraving of a fish skeleton in Colossal's orange-to-violet gradient (their Careers
+             page has a gradient skull). Picture: public/images/accents/skeleton-wide.jpg -->
+        <li class="member member--join">
           <div class="member-card" data-drift="140">
             <a class="member-join" href={url('/positions')}>
-              <img class="member-join-art" src={imageUrl('accents/skeleton-tile.jpg')} alt="" width="1000" height="1250" loading="lazy" decoding="async" />
+              <img class="member-join-art" src={imageUrl('accents/skeleton-wide.jpg')} alt="" width="1600" height="900" loading="lazy" decoding="async" />
               <span class="label member-join-index">{pad(team.length + 1)}</span>
               <span class="member-join-title">Open positions <span aria-hidden="true">→</span></span>
             </a>
@@ -397,39 +393,18 @@ const lookFor = (i: number) => looks[i % looks.length];
     color: var(--color-accent);
   }
 
-  /* ---------- Margin note and "+" marks ---------- */
+  /* ---------- Open positions card (wide, across two columns) ---------- */
 
-  .team-rail {
-    position: absolute;
-    top: var(--space-xl);
-    left: calc(var(--gutter) * -0.65);
-    margin: 0;
-    color: var(--color-muted);
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    white-space: nowrap;
+  .member--join {
+    grid-column: span 2;
   }
-
-  .team-plus {
-    position: absolute;
-    font-family: var(--font-mono);
-    color: var(--color-muted);
-    line-height: 1;
-  }
-
-  .team-plus--a {
-    top: calc(var(--space-xl) - 0.6rem);
-    right: 0;
-  }
-
-  /* ---------- Open positions card ---------- */
 
   .member-join {
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 16 / 9;
     padding: var(--space-md);
     overflow: hidden;
     border-radius: var(--radius);
@@ -507,6 +482,11 @@ const lookFor = (i: number) => looks[i % looks.length];
     .lead-name {
       bottom: calc(var(--space-md) + 1.5rem);
     }
+
+    /* and so do the initials on the placeholder panel, clear of the box and its lime square */
+    .lead .member-panel {
+      padding-bottom: calc(var(--space-md) + 1.5rem);
+    }
   }
 
   @media (max-width: 1099px) {
@@ -571,11 +551,26 @@ const lookFor = (i: number) => looks[i % looks.length];
       inset: 0.5rem -0.5rem -0.5rem 0.5rem;
     }
 
+    /* on phones the tag drops its number and stays on one line */
     .member-tag {
       top: 0.4rem;
       left: 0.4rem;
       padding: 0.2rem 0.4rem;
       font-size: 0.6rem;
+      white-space: nowrap;
+    }
+
+    .member-tag-num {
+      display: none;
+    }
+
+    /* the colour blocks and frames poke out about 0.6rem; this keeps them inside the page margin */
+    .crew {
+      padding-inline: 0.6rem;
+    }
+
+    .lead-media {
+      margin-left: 0.6rem;
     }
 
     .member-panel {
@@ -592,8 +587,5 @@ const lookFor = (i: number) => looks[i % looks.length];
       font-size: var(--text-sm);
     }
 
-    .team-rail {
-      display: none;
-    }
   }
 </style>

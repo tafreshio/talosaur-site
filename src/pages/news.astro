@@ -6,11 +6,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Photo from '../components/Photo.astro';
 import PhotoBand from '../components/PhotoBand.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import PictureCards from '../components/PictureCards.astro';
 import { twitchUrl } from '../data/site';
 import { getSortedNews, formatNewsDate } from '../lib/news';
 import { imageExists, imageUrl } from '../lib/images';
 
 const entries = await getSortedNews();
+
+// Where we test: the steps from the pool out to open water, following the test ladder on the
+// Turtle drawing (Home page). Each has a photo that goes with it (public/images/sections/test-*.jpg,
+// stock stand-ins until the team has its own; the tag on each says what that photo should show).
+// Text in [brackets] is a placeholder to fill in later.
+const tests = [
+  { image: 'test-pool.jpg', tag: 'Photo: pool test', title: 'Pool', text: '[When, and what this test shows.]' },
+  { image: 'test-lake.jpg', tag: 'Photo: lake test', title: 'Lake Bryan and Lake Travis', text: '[When, and what this test shows.]' },
+  { image: 'test-gulf.jpg', tag: 'Photo: Galveston', title: 'Galveston', text: '[When, and what this test shows.]' },
+  { image: 'test-reef.jpg', tag: 'Photo: first offshore footage', title: 'Offshore', text: '[When, and what we hope to film there, for example Flower Garden Banks.]' },
+];
 
 // Heights (0 = top, 1 = bottom) of the four photos on the field log strip. They match the picture,
 // so only change them if you remake news-rail.jpg.
@@ -78,6 +91,12 @@ const items = await Promise.all(
         <figcaption class="label field-log-tag">[ Field log · NOAA ]</figcaption>
       </figure>
     </section>
+
+    <!-- Section 01: where we test, from the pool down to the reef (four photo cards) -->
+    <section class="container tests">
+      <SectionHeader number={1} title="Where we test" />
+      <PictureCards items={tests} columns={4} />
+    </section>
   </div>
 
   <!-- Closing photo (moray eel, thermal false colour). Copy: Content doc, "Talosaur Live" card. -->
@@ -87,6 +106,10 @@ const items = await Promise.all(
 </BaseLayout>
 
 <style>
+  .tests {
+    padding-top: var(--space-2xl);
+  }
+
   /* The list on the left, the field log strip on the right (wide screens) */
   .news-layout {
     display: grid;

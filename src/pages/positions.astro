@@ -4,8 +4,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import PhotoBand from '../components/PhotoBand.astro';
 import Patch from '../components/Patch.astro';
+import SectionHeader from '../components/SectionHeader.astro';
 import { url } from '../lib/url';
+import { imageUrl } from '../lib/images';
 import { positions, positionsHeadline, positionsIntro, applicationFormUrl } from '../data/positions';
+
+// Life on the team: text in [brackets] is a placeholder to fill in later.
+// Photos: public/images/sections/team-build.jpg and team-lab.jpg. Both are stock stand-ins (natural colour):
+// swap them for the team's own photos, keeping the file names.
+const life = {
+  lead: '[A few lines on what being on the team is like: when you meet, what a build day looks like and where testing happens.]',
+  text: '[A line on who to ask if you have questions before applying.]',
+};
 ---
 
 <BaseLayout title="Positions" description={positionsIntro} headerOverlay>
@@ -42,10 +52,34 @@ import { positions, positionsHeadline, positionsIntro, applicationFormUrl } from
         ))}
       </ol>
     </section>
+
+    <!-- Section 01: life on the team, in the same light band as the roles (so the page goes dark
+         header, light, dark photo). Like the "Decoding life" collage on Colossal's mammoth page:
+         a big photo with a smaller one over its corner in an offset orange frame. -->
+    <section class="container life">
+      <SectionHeader number={1} title="Life on the team" />
+      <div class="life-grid">
+        <div class="life-copy" data-reveal>
+          <p class="life-lead">{life.lead}</p>
+          <p class="life-text">{life.text}</p>
+          <a class="button" href={applicationFormUrl} target="_blank" rel="noopener noreferrer">
+            Apply now <span aria-hidden="true">→</span>
+            <span class="visually-hidden">(opens the application form in a new tab)</span>
+          </a>
+        </div>
+        <figure class="life-collage" aria-hidden="true" data-drift="60">
+          <img class="life-main" src={imageUrl('sections/team-build.jpg')} alt="" width="1600" height="1000" loading="lazy" decoding="async" />
+          <span class="label life-tag">[ Photo: the team at a build day ]</span>
+          <span class="life-frame">
+            <img class="life-inset" src={imageUrl('sections/team-lab.jpg')} alt="" width="900" height="900" loading="lazy" decoding="async" />
+          </span>
+        </figure>
+      </div>
+    </section>
   </div>
 
-  <!-- Inset photo sitting across the edge between the roles and the photo below -->
-  <Patch variant="pano" image="mill-pano.jpg" caption="Machining a part" side="left" straddle />
+  <!-- Inset photo sitting across the edge between the light band and the photo below -->
+  <Patch variant="pano" image="mill-pano.jpg" caption="Machining a part" side="right" straddle />
 
   <!-- One big photo (bubble anemone, false colour) leading on to News. Copy: Content doc, "Our build log" card. -->
   <PhotoBand image="positions.jpg" position="50% 50%" heading="Our build log" tag="Updates, photos and videos from every stage">
@@ -54,6 +88,88 @@ import { positions, positionsHeadline, positionsIntro, applicationFormUrl } from
 </BaseLayout>
 
 <style>
+  /* ---------- Life on the team ---------- */
+
+  .life {
+    padding-top: var(--space-2xl);
+  }
+
+  .life-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .life-lead {
+    margin: 0;
+    font-size: clamp(1.25rem, 1rem + 0.9vw, 1.75rem);
+    line-height: 1.4;
+  }
+
+  .life-text {
+    margin: var(--space-md) 0 var(--space-lg);
+    color: var(--color-muted);
+  }
+
+  .life-collage {
+    position: relative;
+    margin: 0 0 var(--space-2xl);
+  }
+
+  .life-main {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+
+  .life-tag {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    color: var(--color-white);
+    background: rgb(6 18 31 / 0.6);
+  }
+
+  /* the small photo hangs off the bottom left corner inside a thin orange frame */
+  .life-frame {
+    position: absolute;
+    left: calc(-1 * var(--space-lg));
+    bottom: calc(-1 * var(--space-2xl) + 1rem);
+    width: 38%;
+    padding: 0.9rem;
+    border: 1px solid var(--color-orange);
+    background: var(--color-bg);
+  }
+
+  .life-inset {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  @media (max-width: 1023px) {
+    .life-grid {
+      grid-template-columns: 1fr;
+    }
+
+    /* on tablets and phones the small photo moves to the right corner, inside the page margin */
+    .life-frame {
+      left: auto;
+      right: 0;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .life-frame {
+      width: 46%;
+      padding: 0.5rem;
+    }
+  }
+
   .roles {
     margin: 0;
     padding: 0;
@@ -83,7 +199,11 @@ import { positions, positionsHeadline, positionsIntro, applicationFormUrl } from
   .role-apply {
     grid-column: -2 / -1;
     justify-self: start;
-    padding: 0.45rem 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 44px; /* a comfortable size to tap on a phone */
+    padding: 0.45rem 1rem;
     border: 1px solid var(--color-accent);
     border-radius: 999px;
     color: var(--color-accent);
