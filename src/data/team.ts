@@ -28,8 +28,8 @@ export const team: TeamMember[] = [
     photo: 'fernando-guzman.jpg',
     linkedin: '', // PLACEHOLDER: LinkedIn URL (optional)
     lead: true,
-    // PLACEHOLDER: two or three sentences about Fernando
-    bio: '[Two or three sentences about Fernando: why he started Talosaur, his background, and what he works on now.]',
+    // In Fernando's own words (first person)
+    bio: 'I started Talosaur to discover a fish, the Talosaur, and to allow for cheaper ocean surveying. I think that when we build an AUV to get down to the mesopelagic region, we will show how efficient engineering can really be. Also, my team is very good.',
   },
   {
     name: 'Sam Cakici',
