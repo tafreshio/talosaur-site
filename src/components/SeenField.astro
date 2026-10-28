@@ -1,0 +1,129 @@
+---
+// "If the deep seafloor were a football field": a field drawn from above, 360 x 160 ft with its end
+// zones, and a letter-size sheet of paper (8.5 x 11 in) drawn to scale on it, circled so you can find it.
+// Everything anyone has ever seen of the deep seafloor is under 0.001% of it (NOAA): on this field, 0.58 sq ft,
+// smaller than that sheet (0.65 sq ft). A still picture, no motion.
+//
+// One unit of the drawing is one foot. The field sits at (10, 10).
+interface Props {
+  size?: 'lg' | 'sm';
+}
+const { size = 'lg' } = Astro.props;
+
+const X0 = 10, Y0 = 10, W = 360, H = 160, END = 30;
+// a yard line every 5 yards (15 ft) between the goal lines; every 10 yards gets a number
+const lines = Array.from({ length: 21 }, (_, i) => ({ x: X0 + END + i * 15, major: i % 2 === 0 }));
+const numbers = [10, 20, 30, 40, 50, 40, 30, 20, 10].map((n, i) => ({ n, x: X0 + END + (i + 1) * 30 }));
+// the sheet of paper, near the 40-yard line in the middle of the field, clear of the numbers
+// (8.5 x 11 in = 0.71 x 0.92 ft)
+const PX = X0 + END + 112, PY = Y0 + 66;
+---
+
+<svg class:list={['field', `field--${size}`]} viewBox="0 0 380 180" role="img" aria-label="A football field with a sheet of paper drawn to scale on it, too small to see without a circle around it">
+  <rect x={X0} y={Y0} width={W} height={H} class="field-turf" />
+  <rect x={X0} y={Y0} width={END} height={H} class="field-end" />
+  <rect x={X0 + W - END} y={Y0} width={END} height={H} class="field-end" />
+  {lines.map((l) => <line x1={l.x} y1={Y0} x2={l.x} y2={Y0 + H} class:list={['field-line', { 'field-line--major': l.major }]} />)}
+  {numbers.map((t) => (
+    <>
+      <text x={t.x} y={Y0 + 30} class="field-num">{t.n}</text>
+      <text x={t.x} y={Y0 + H - 22} class="field-num">{t.n}</text>
+    </>
+  ))}
+  <rect x={X0} y={Y0} width={W} height={H} class="field-edge" />
+
+  <!-- the sheet of paper, to scale, and a circle so it can be found -->
+  <rect x={PX} y={PY} width="0.71" height="0.92" class="field-paper" />
+  <circle cx={PX + 0.35} cy={PY + 0.46} r="6.5" class="field-ring" />
+  <line x1={PX + 5} y1={PY + 5} x2={PX + 18} y2={PY + 18} class="field-leader" />
+  {size === 'lg' && (
+    <g class="field-tag">
+      <rect x={PX + 18} y={PY + 14} width="128" height="13" />
+      <text x={PX + 22} y={PY + 23.3}>A SHEET OF PAPER, TO SCALE</text>
+    </g>
+  )}
+</svg>
+<!-- on phones the tag inside the drawing would be too small to read, so it's said underneath instead -->
+<p class="label field-note">The orange circle: a sheet of paper, to scale</p>
+
+<style>
+  .field {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .field-turf {
+    fill: #0b1620;
+  }
+
+  .field-end {
+    fill: #13324a;
+  }
+
+  .field-line {
+    stroke: rgb(232 241 245 / 0.25);
+    stroke-width: 0.4;
+  }
+
+  .field-line--major {
+    stroke: rgb(232 241 245 / 0.55);
+    stroke-width: 0.6;
+  }
+
+  .field-edge {
+    fill: none;
+    stroke: rgb(232 241 245 / 0.8);
+    stroke-width: 1;
+  }
+
+  .field-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 10px;
+    text-anchor: middle;
+    fill: rgb(232 241 245 / 0.5);
+  }
+
+  .field-paper {
+    fill: #ffffff;
+  }
+
+  .field-ring {
+    fill: none;
+    stroke: var(--color-orange);
+    stroke-width: 1;
+  }
+
+  .field-leader {
+    stroke: var(--color-orange);
+    stroke-width: 0.6;
+  }
+
+  .field-tag rect {
+    fill: var(--color-orange);
+  }
+
+  .field-note {
+    display: none;
+    margin: var(--space-xs) 0 0;
+    color: var(--color-orange);
+  }
+
+  @media (max-width: 760px) {
+    .field-tag {
+      display: none;
+    }
+
+    .field--lg + .field-note {
+      display: block;
+    }
+  }
+
+  .field-tag text {
+    font-family: var(--font-mono);
+    font-size: 6.2px;
+    letter-spacing: 0.06em;
+    fill: #0b1620;
+  }
+</style>

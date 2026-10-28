@@ -162,10 +162,10 @@ export const echoFigures = [
     sources: [problemSources.diving],
   },
   {
+    // not a price: a cost figure here read as if it were what Talosaur charges
     label: 'Film',
-    value: '$10K+',
-    unit: 'a day',
-    text: 'for ship time alone, on a research trip.',
-    sources: [problemSources.ship],
+    value: '97%',
+    text: 'of deep-sea observations come from just five countries, because exploring is so expensive.',
+    sources: [problemSources.bell],
   },
 ];

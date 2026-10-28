@@ -11,7 +11,6 @@ import Specimen from '../components/Specimen.astro';
 import { imageUrl } from '../lib/images';
 import { heroCards, featuredHeading, featuredCards, helpButtons, interestedCards, echoFigures } from '../data/home';
 import { explored } from '../data/problem';
-import OceanFigure from '../components/OceanFigure.astro';
 import { getSortedNews, formatNewsDate } from '../lib/news';
 import { url } from '../lib/url';
 
@@ -37,10 +36,23 @@ const pad = (n: number) => String(n).padStart(2, '0');
             finds, follows and films marine life there.
           </p>
           <a class="button" href={url('/the-problem')}>Read more <span aria-hidden="true">→</span></a>
-          <!-- two figures from The Problem (explored in src/data/problem.ts): how much of the seafloor is
-               mapped, and how little of the deep seafloor anyone has seen -->
-          <div class="intro-figures" data-reveal-group>
-            {explored.figures.slice(0, 2).map((figure) => <OceanFigure {...figure} size="sm" />)}
+          <!-- two figures from The Problem (explored in src/data/problem.ts), as still pictures: the dotted
+               Earth with the mapped share lit, and how little of the deep seafloor anyone has seen -->
+          <div class="intro-figures">
+            <figure class="intro-fig">
+              <img class="intro-globe" src={imageUrl('figures/globe-mapped.svg')} alt="" width="600" height="600" loading="lazy" decoding="async" />
+              <figcaption>
+                <span class="intro-fig-value">{explored.mapped.value}</span>
+                <span class="intro-fig-text">of the seafloor is mapped in detail.</span>
+              </figcaption>
+            </figure>
+            <figure class="intro-fig">
+              <span class="intro-fig-value intro-fig-value--big">{explored.seen.value}</span>
+              <figcaption>
+                <span class="intro-fig-text">of the deep seafloor has ever been seen. On a football field, that would be less than a sheet of paper.</span>
+                <a class="label intro-fig-src" href={url('/the-problem')}>See the figures <span aria-hidden="true">→</span></a>
+              </figcaption>
+            </figure>
           </div>
         </div>
       </div>
@@ -271,6 +283,61 @@ const pad = (n: number) => String(n).padStart(2, '0');
     gap: var(--space-md);
     width: 100%;
     margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .intro-fig {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin: 0;
+  }
+
+  .intro-fig figcaption {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+
+  .intro-globe {
+    display: block;
+    width: min(100%, 11rem);
+    height: auto;
+  }
+
+  .intro-fig-value {
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    font-weight: 800;
+    font-size: 1.75rem;
+    line-height: 1;
+    color: var(--color-accent);
+  }
+
+  /* without a picture, the number itself is the picture */
+  .intro-fig-value--big {
+    font-size: clamp(2.75rem, 1.5rem + 2.5vw, 4rem);
+    line-height: 0.9;
+  }
+
+  .intro-fig-text {
+    font-size: var(--text-sm);
+    line-height: 1.45;
+  }
+
+  @media (max-width: 760px) {
+    .intro-fig-value--big {
+      font-size: 2rem;
+    }
+  }
+
+  .intro-fig-src {
+    display: inline-block;
+    padding-block: 0.3rem; /* an easier tap target on phones */
+    color: var(--color-accent);
+    text-decoration: none;
   }
 
   /* ---------- Card grids (sections 03, 04, 07) ---------- */

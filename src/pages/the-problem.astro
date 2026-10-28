@@ -9,7 +9,8 @@ import SpecList from '../components/SpecList.astro';
 import StoryBand from '../components/StoryBand.astro';
 import PictureCards from '../components/PictureCards.astro';
 import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
-import OceanFigure from '../components/OceanFigure.astro';
+import SeenField from '../components/SeenField.astro';
+import SpeciesGrid from '../components/SpeciesGrid.astro';
 import { url } from '../lib/url';
 import { imageExists, imageUrl } from '../lib/images';
 import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources, explored, naming } from '../data/problem';
@@ -30,17 +31,61 @@ const pad = (n: number) => String(n).padStart(2, '0');
   <!-- Light band: how little we've seen, then the big numbers on cost. It ends where the sea
        (Section 03) begins. -->
   <div class="band theme-light sky">
-    <!-- Section 01: barely explored. Three figures, each with a small drawing (OceanFigure.astro), and
-         why formally naming a species matters. Text and sources: explored and naming in src/data/problem.ts -->
+    <!-- Section 01: barely explored. Three still pictures, zig-zagging left and right: a dotted Earth
+         (mapped), a football field with a sheet of paper to scale (seen) and a grid of 100 sea animals
+         (named). Then why formally naming a species matters. Text and sources: explored and naming in
+         src/data/problem.ts -->
     <section class="container section">
       <SectionHeader number={1} title="Barely explored" />
-      <div class="figures" data-reveal-group>
-        {explored.figures.map((figure) => <OceanFigure {...figure} />)}
+
+      <!-- 01 Mapped: the dotted Earth (public/images/figures/globe-mapped.svg, stills_site/make_globe.py) -->
+      <div class="fig-row">
+        <figure class="fig-art fig-globe">
+          <img src={imageUrl('figures/globe-mapped.svg')} alt="A dotted globe of the Americas and the Atlantic: land in white, the sea in dark dots, about three in ten of them lit in cyan" width="600" height="600" loading="lazy" decoding="async" />
+        </figure>
+        <div class="fig-text">
+          <p class="label fig-tag">[ 01 · {explored.mapped.label} ]</p>
+          <p class="fig-value">{explored.mapped.value}</p>
+          <p class="fig-caption">{explored.mapped.caption}</p>
+          <ul class="fig-key">
+            <li class="label"><span class="key key--lit"></span>Mapped in detail</li>
+            <li class="label"><span class="key key--sea"></span>Not yet</li>
+            <li class="label"><span class="key key--land"></span>Land</li>
+          </ul>
+          <p class="label fig-note">The lit dots show the share, not the places</p>
+          {explored.mapped.sources.map((src) => <a class="label figures-src" href={src.href} target="_blank" rel="noopener">[ Source: {src.label} ]</a>)}
+        </div>
       </div>
-      <p class="figures-note" data-reveal>
-        {explored.note}
-        <a class="label figures-src" href={explored.noteSource.href} target="_blank" rel="noopener">[ Source: {explored.noteSource.label} ]</a>
-      </p>
+
+      <!-- 02 Seen: a football field with a sheet of paper to scale (SeenField.astro) -->
+      <div class="fig-row fig-row--flip">
+        <figure class="fig-art fig-field">
+          <SeenField />
+        </figure>
+        <div class="fig-text">
+          <p class="label fig-tag">[ 02 · {explored.seen.label} ]</p>
+          <p class="fig-value">{explored.seen.value}</p>
+          <p class="fig-caption">{explored.seen.caption}</p>
+          <p class="fig-aside">{explored.seen.aside}</p>
+          {explored.seen.sources.map((src) => <a class="label figures-src" href={src.href} target="_blank" rel="noopener">[ Source: {src.label} ]</a>)}
+        </div>
+      </div>
+
+      <!-- 03 Named: 100 sea animals (SpeciesGrid.astro) -->
+      <div class="fig-row">
+        <figure class="fig-art fig-species">
+          <SpeciesGrid />
+        </figure>
+        <div class="fig-text">
+          <p class="label fig-tag">[ 03 · {explored.named.label} ]</p>
+          <p class="fig-value">{explored.named.value}</p>
+          <p class="fig-caption">{explored.named.caption}</p>
+          <p class="fig-aside">
+            {explored.note}
+          </p>
+          {explored.named.sources.map((src) => <a class="label figures-src" href={src.href} target="_blank" rel="noopener">[ Source: {src.label} ]</a>)}
+        </div>
+      </div>
 
       <div class="naming">
         <div class="naming-head" data-reveal>
@@ -181,22 +226,129 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   /* ---------- Section 01: Barely explored ---------- */
 
-  .figures {
+  /* each figure is a row: the picture on one side, the number and words on the other, swapping sides
+     from row to row */
+  .fig-row {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-lg);
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: var(--space-lg) var(--space-xl);
+    align-items: center;
+    padding-block: var(--space-xl);
+    border-top: 1px solid var(--color-line);
   }
 
-  .figures-note {
-    max-width: 44rem;
-    margin: var(--space-xl) 0 0;
+  .fig-row:first-of-type {
+    border-top: 0;
+    padding-top: var(--space-md);
+  }
+
+  .fig-row--flip {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+
+  .fig-row--flip .fig-art {
+    order: 2;
+  }
+
+  .fig-art {
+    margin: 0;
+  }
+
+  .fig-globe {
+    justify-self: center;
+    width: min(100%, 34rem);
+  }
+
+  .fig-globe img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .fig-species {
+    justify-self: center;
+    width: min(100%, 30rem);
+  }
+
+  .fig-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .fig-tag {
+    margin: 0;
+    color: var(--color-accent);
+  }
+
+  .fig-value {
+    margin: 0;
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    font-weight: 800;
+    font-size: clamp(3.5rem, 1.5rem + 5vw, 7rem);
+    line-height: 0.85;
+    color: var(--color-accent);
+    white-space: nowrap;
+  }
+
+  .fig-caption {
+    max-width: 30rem;
+    margin: 0;
     font-size: var(--text-lg);
     line-height: 1.5;
   }
 
+  .fig-aside {
+    max-width: 30rem;
+    margin: 0;
+    color: var(--color-muted);
+    line-height: 1.5;
+  }
+
+  .fig-note {
+    margin: 0;
+  }
+
+  .fig-key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .fig-key li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--color-text);
+  }
+
+  .key {
+    display: inline-block;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+  }
+
+  .key--lit {
+    background: #3de0d0;
+  }
+
+  .key--sea {
+    background: #2a4b60;
+  }
+
+  .key--land {
+    background: #e8f1f5;
+    border: 1px solid var(--color-line);
+  }
+
   .figures-src {
     display: inline-block;
-    margin-left: 0.4rem;
     padding-block: 0.3rem; /* an easier tap target on phones */
     color: var(--color-accent);
     text-decoration: none;
@@ -396,8 +548,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
   /* ---------- Tablet and phone ---------- */
 
   @media (max-width: 1023px) {
-    .figures {
-      grid-template-columns: 1fr 1fr;
+    .fig-row,
+    .fig-row--flip {
+      grid-template-columns: 1fr;
+    }
+
+    .fig-row--flip .fig-art {
+      order: 0;
     }
 
     .naming {
@@ -414,12 +571,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   }
 
   @media (max-width: 760px) {
-    .figures {
-      grid-template-columns: 1fr;
-      gap: var(--space-xl);
-    }
-
-    .figures-note,
+    .fig-caption,
     .naming-intro {
       font-size: var(--text-base);
     }

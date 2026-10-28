@@ -29,6 +29,10 @@ export const sources = {
   // Strona (University of Helsinki), 360info, 2022: knowing a species exists isn't knowing if it's
   // endangered; DNA traces can't replace a formal species description
   strona: { label: '360info', href: 'https://360info.org/a-rose-by-any-other-name-would-be-as-endangered/' },
+  // Bell et al. 2025, Science Advances (press release on EurekAlert): five countries (the US, Japan,
+  // New Zealand, France and Germany) made 97% of all deep-sea submergence observations, "due to the
+  // high cost of ocean exploration"
+  bell: { label: 'EurekAlert', href: 'https://www.eurekalert.org/news-releases/1082535' },
 };
 
 export const problemIntro =
@@ -36,34 +40,34 @@ export const problemIntro =
 
 // ---------------------------------------------------------------- Section 01: Barely explored
 // How little of the ocean has been mapped and seen, and how many of its animals still have no name.
-// Each figure has a small drawing (src/components/OceanFigure.astro):
-//   ring   a ring filled to `percent`
-//   dot    a square standing for the whole deep seafloor, with what's been seen drawn to scale
-//   range  a bar of the share still unnamed: solid to `low`%, hatched on to `high`%
+// Three still pictures, one per figure:
+//   mapped  a dotted Earth with 28.7% of its sea dots lit (public/images/figures/globe-mapped.svg,
+//           made by stills_site/make_globe.py; the lit dots show the share, not the places)
+//   seen    a football field with a sheet of paper drawn to scale (src/components/SeenField.astro).
+//           Worked out here: a field with end zones is 360 x 160 ft = 57,600 sq ft; 0.001% of that is
+//           0.58 sq ft, less than a letter-size sheet (8.5 x 11 in = 0.65 sq ft)
+//   named   100 sea animals: 9 named by any count, 24 more by NOAA's, the rest still unnamed
+//           (src/components/SpeciesGrid.astro)
 export const explored = {
-  figures: [
-    {
-      kind: 'ring',
-      value: '28.7%',
-      percent: 28.7,
-      caption: 'of the seafloor has been mapped in detail, as of April 2026.',
-      sources: [sources.explored],
-    },
-    {
-      kind: 'dot',
-      value: '<0.001%',
-      caption: 'of the deep seafloor has ever been seen. All of it together is about the size of Rhode Island.',
-      sources: [sources.explored],
-    },
-    {
-      kind: 'range',
-      value: '67–91%',
-      low: 67,
-      high: 91,
-      caption: "of ocean species have yet to be formally described: about two in three by NOAA's count, up to nine in ten by another estimate.",
-      sources: [sources.explored, sources.mora],
-    },
-  ],
+  mapped: {
+    label: 'Mapped',
+    value: '28.7%',
+    caption: 'of the seafloor has been mapped in detail, as of April 2026. The rest is known only roughly, from satellites.',
+    sources: [sources.explored],
+  },
+  seen: {
+    label: 'Seen',
+    value: '<0.001%',
+    caption: 'of the deep seafloor has ever been seen. If it were a football field, everything anyone has looked at would be smaller than a sheet of paper.',
+    aside: 'In real life, that is an area about the size of Rhode Island.',
+    sources: [sources.explored],
+  },
+  named: {
+    label: 'Named',
+    value: '67–91%',
+    caption: "of ocean species have yet to be formally described: about two in three by NOAA's count, up to nine in ten by another estimate.",
+    sources: [sources.explored, sources.mora],
+  },
   note: 'About 2,000 new ocean species are named each year. At that pace, naming the rest would take centuries.',
   noteSource: sources.explored,
 };
@@ -110,7 +114,7 @@ export const stats = [
   {
     value: '$10K+',
     unit: 'a day',
-    caption: 'Ship time costs tens of thousands of dollars a day.',
+    caption: 'What a research ship costs to run: tens of thousands of dollars a day.',
     // Dialogue Earth (2024): "running a research ship can easily cost tens of thousands of dollars a day or more"
     source: sources.ship,
   },
