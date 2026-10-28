@@ -39,6 +39,17 @@ const pad = (n: number) => String(n).padStart(2, '0');
       </div>
     </section>
 
+    <!-- A thin, long picture between Section 01 and 02, like the panoramic "breather" strips between
+         text blocks on Colossal's pages: a school of fish (Pexels) in violet with lime highlights
+         (public/images/bands/strip-school.jpg, 2400 x 525, made by stills_site/make_strip.py) -->
+    <div class="container strip-wrap">
+      <figure class="strip" aria-hidden="true" data-drift="40">
+        <img src={imageUrl('bands/strip-school.jpg')} alt="" width="2400" height="525" loading="lazy" decoding="async" />
+        <span class="strip-corner strip-corner--tl"></span>
+        <span class="strip-corner strip-corner--br"></span>
+      </figure>
+    </div>
+
     <!-- Section 02: what we're doing. The plan, right after "Life at 50–300 m is barely watched":
          where Turtle and the eDNA work are heading, and what we'll offer (src/components/Plan.astro,
          text in src/data/home.ts). id="plan" so other pages can link straight here (/#plan). -->
@@ -150,6 +161,55 @@ const pad = (n: number) => String(n).padStart(2, '0');
 <style>
   .section {
     padding-top: var(--space-2xl);
+  }
+
+  /* ---------- The thin picture between Section 01 and 02 ---------- */
+
+  .strip-wrap {
+    padding-top: var(--space-2xl);
+  }
+
+  .strip {
+    position: relative;
+    margin: 0;
+    aspect-ratio: 2400 / 525;
+    overflow: hidden;
+    border-radius: var(--radius);
+  }
+
+  .strip img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* thin white corner brackets, like a viewfinder (Colossal's lab-notebook marks) */
+  .strip-corner {
+    position: absolute;
+    width: 1.1rem;
+    height: 1.1rem;
+    border: 0 solid rgb(255 255 255 / 0.8);
+  }
+
+  .strip-corner--tl {
+    top: 0.75rem;
+    left: 0.75rem;
+    border-top-width: 1px;
+    border-left-width: 1px;
+  }
+
+  .strip-corner--br {
+    right: 0.75rem;
+    bottom: 0.75rem;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+  }
+
+  /* on phones it stays thin, but not so thin the fish disappear */
+  @media (max-width: 760px) {
+    .strip {
+      aspect-ratio: 3 / 1;
+    }
   }
 
   /* the fixed header shouldn't cover the section heading when you land on /#plan */
