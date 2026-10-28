@@ -20,6 +20,7 @@ import { url } from '../lib/url';
 import Photo from '../components/Photo.astro';
 import Marquee from '../components/Marquee.astro';
 import SectionHeader from '../components/SectionHeader.astro';
+import Statement from '../components/Statement.astro';
 import { team, teamIntro, teamStatement } from '../data/team';
 import { isPlaceholder } from '../data/site';
 import { imageExists } from '../lib/images';
@@ -62,9 +63,6 @@ const disciplines = [
       .filter((word) => word && !isPlaceholder(word)),
   ),
 ];
-
-// "**one vehicle**" -> a word in a coloured box
-const statementParts = teamStatement.headline.split(/\*\*(.+?)\*\*/);
 
 // The team in numbers, for the story band between the lead and the rest of the team.
 // The count comes from src/data/team.ts; the two universities and Turtle are from the page intro and Home.
@@ -135,20 +133,7 @@ const stats = [
           <!-- A few lines about the team as a whole (teamStatement in src/data/team.ts) -->
           {r === 1 && (
             <div class="ethos">
-              <div class="ethos-head" data-reveal>
-                <p class="label ethos-tag">[ {teamStatement.tag} ]</p>
-                <span class="ethos-hatch" aria-hidden="true"></span>
-              </div>
-              <p class="ethos-line" data-reveal>
-                {statementParts.map((part, i) => (i % 2 === 1 ? <span class:list={['ethos-box', { 'ethos-box--lime': i === statementParts.length - 2 }]}>{part}</span> : part))}
-              </p>
-              <!-- drifts a little slower than the page (data-drift), on a wrapper so it doesn't fight the fade-in -->
-              <div class="ethos-body" data-drift="40">
-                <div data-reveal>
-                  <p class="ethos-text">{teamStatement.text}</p>
-                  <p class="label ethos-sign">[ {teamStatement.signoff} ]</p>
-                </div>
-              </div>
+              <Statement tag={teamStatement.tag} headline={teamStatement.headline} text={teamStatement.text} signoff={teamStatement.signoff} />
             </div>
           )}
 
@@ -263,100 +248,10 @@ const stats = [
     padding-top: var(--space-2xl);
   }
 
-  /* ---------- What we share: a few lines about the whole team ---------- */
+  /* ---------- What we share (src/components/Statement.astro) ---------- */
 
   .ethos {
-    display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: var(--space-lg);
     margin-bottom: var(--space-2xl);
-  }
-
-  .ethos-head {
-    grid-column: 1 / -1;
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-  }
-
-  .ethos-tag {
-    margin: 0;
-    padding: 0.3rem 0.55rem;
-    border: 1px solid var(--color-text);
-    color: var(--color-text);
-  }
-
-  .ethos-hatch {
-    flex: 0 0 8rem;
-    height: 0.9rem;
-    background: repeating-linear-gradient(115deg, var(--color-muted) 0 1px, transparent 1px 7px);
-  }
-
-  /* one big sentence in thin, wide capitals, with two phrases in colour boxes */
-  .ethos-line {
-    grid-column: 1 / span 11;
-    margin: 0;
-    font-family: var(--font-display);
-    font-weight: 300;
-    font-stretch: 125%;
-    font-size: clamp(2rem, 0.8rem + 3.8vw, 5.2rem);
-    line-height: 1.06;
-    text-transform: uppercase;
-    text-wrap: balance;
-  }
-
-  .ethos-box {
-    padding: 0 0.16em;
-    color: var(--color-white);
-    background: var(--color-violet);
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
-  }
-
-  .ethos-box--lime {
-    color: var(--light-text);
-    background: var(--color-lime);
-  }
-
-  /* on wider screens a boxed phrase stays on one line (on phones it may wrap, box and all) */
-  @media (min-width: 761px) {
-    .ethos-box {
-      white-space: nowrap;
-    }
-  }
-
-  /* the paragraph sits to the right, under a hairline with an orange dot on its end */
-  .ethos-body {
-    position: relative;
-    grid-column: 7 / -1;
-    padding-top: var(--space-md);
-    border-top: 1px solid var(--color-text);
-  }
-
-  .ethos-body::before {
-    content: '';
-    position: absolute;
-    top: -0.4rem;
-    left: 0;
-    width: 0.8rem;
-    height: 0.8rem;
-    border-radius: 50%;
-    background: var(--color-orange);
-  }
-
-  .ethos-text {
-    margin: 0;
-    font-size: var(--text-lg);
-    line-height: 1.55;
-  }
-
-  .ethos-sign {
-    margin: var(--space-md) 0 0;
-    color: var(--color-accent);
-  }
-
-  .member-card {
-    position: relative;
   }
 
   /* ---------- The lead: big portrait on the left, description box on the right ---------- */
@@ -584,15 +479,6 @@ const stats = [
   /* ---------- Tablet and phone: the lead stacks, the collage becomes two staggered columns ---------- */
 
   @media (max-width: 900px) {
-    .ethos-line,
-    .ethos-body {
-      grid-column: 1 / -1;
-    }
-
-    .ethos-body {
-      margin-left: clamp(0rem, 12vw, 6rem);
-    }
-
     .lead {
       grid-template-columns: 1fr;
       gap: 0;
@@ -709,26 +595,6 @@ const stats = [
       inset: 0.5rem 0.5rem -0.5rem -0.5rem;
     }
 
-    .ethos {
-      gap: var(--space-md);
-    }
-
-    .ethos-line {
-      font-stretch: 112%;
-      font-size: clamp(1.7rem, 0.9rem + 4.4vw, 2.4rem);
-    }
-
-    .ethos-body {
-      margin-left: 0;
-    }
-
-    .ethos-text {
-      font-size: var(--text-base);
-    }
-
-    .ethos-hatch {
-      flex-basis: 4rem;
-    }
 
     /* on phones the tag drops its number and stays on one line */
     .member-tag {

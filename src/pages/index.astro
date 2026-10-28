@@ -41,7 +41,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   <!-- Story band: FIND / FOLLOW / FILM (the three verbs of the intro, Content doc) stacked over the
        spiral coral (NOAA) in magenta and green, like the "Lost but not gone forever" band on
-       Colossal's mammoth page -->
+       Colossal's mammoth page. The button goes to the plan on The Problem. -->
   <StoryBand
     variant="echo"
     image="story-find.jpg"
@@ -51,7 +51,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
       { title: 'Follow', text: '50–300 m down' },
       { title: 'Film', text: 'at low cost' },
     ]}
-  />
+  >
+    <!-- straight to "What we're doing" on The Problem -->
+    <a class="button" href={url('/the-problem#plan')}>See our plan <span aria-hidden="true">→</span></a>
+  </StoryBand>
 
   <!-- Light band: Section 02 -->
   <div class="band theme-light">
