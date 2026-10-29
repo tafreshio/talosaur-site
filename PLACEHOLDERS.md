@@ -11,18 +11,10 @@ section explains sizes.
 | `[Major, year]` (all 7 people) | Who we are | `src/data/team.ts` |
 | Team photos (initials show until a photo is added) | Who we are | `public/images/team/` (file names are in `src/data/team.ts`) |
 | Team LinkedIn links (optional, hidden until filled in) | Who we are | `src/data/team.ts` (`linkedin`) |
-| `[Date]` and `[One line on how Talosaur started.]` | "Project kicks off" news entry | `src/content/news/project-kicks-off.md` |
-| `[Credits for the remaining third-party stills...]` | Image credits page | `src/pages/image-credits.astro` |
 | `[Photographer and source for these four photos.]` (zoanthids, porcelain crab, soft coral, pygmy seahorse headers) | Image credits page | `src/pages/image-credits.astro` |
 | `[photographer and source]` for the brain coral photo (The Problem, Habitat) | Image credits page | `src/pages/image-credits.astro` |
-| `[A second paragraph on why the deeper reefs are hard to visit...]` (the first paragraph is now written from NOAA's 2023 sanctuary poster; change it if you like) | The Problem, Section 05 "Habitat" | `src/data/problem.ts` (`habitat.paragraphs`) |
-| Temperature and "Surveys a year" values | The Problem, Section 04 "At a glance" | `src/data/problem.ts` (`glance`) |
-| Four `[One or two sentences on...]` lines (Research, Conservation, Fisheries, Offshore energy) | Work with us, Section 01 "Who we work with" | `src/pages/work-with-us.astro` (`audiences`) |
-| Three `[What ... costs]` lines (Parts, Testing, Field trips) | Donate, Section 02 "Where it goes" | `src/pages/donate.astro` (`support`) |
-| `[A few lines on what being on the team is like...]` and `[A line on who to ask...]` | Positions, Section 01 "Life on the team" | `src/pages/positions.astro` (`life`) |
-| Five `[When, and what this test shows.]` lines (Pool, Lake Bryan, Lake Travis, Galveston, Offshore) | News, Section 01 "Where we test" (orange map band) | `src/pages/news.astro` (`stops`) |
-| Story band columns: `[A line on the questions the team will bring...]`, `[A line on what the conversation gives back...]` | Work with us, "20 minutes" band | `src/pages/work-with-us.astro` |
-| Story band columns: `[One or two sentences on who builds Talosaur...]`, `[...what a survey costs today...]` | Donate, "Affordable ocean exploration" band | `src/pages/donate.astro` |
+| `[Date]` for "Project kicks off" (its line is now written from Fernando's description; change it if you like) | News | `src/content/news/project-kicks-off.md` |
+| `[Sources still to find for some homepage video stills...]` (the known ones are now credited) | Image credits page | `src/pages/image-credits.astro` |
 
 ### Photos still needed ("photo to come" panels)
 
@@ -42,6 +34,7 @@ section explains sizes.
 
 ## To confirm
 
+- **Text written to fill placeholders (October 2026).** These were written from the Content doc, the rest of the site and the sources linked on it, so change anything that doesn't match how the team works or talks: The Problem's second Habitat paragraph and two At a glance rows (Temperature, Deep-reef surveys, both sourced); the four Work with us cards and the "20 minutes" band; the three Donate "Where it goes" cards and the "Affordable ocean exploration" band; Positions "Life on the team"; the five test stops on News (in the order of the team's test ladder, with no dates); the "Project kicks off" line; and the homepage video credits. Nothing in them promises dates, prices or results.
 - **The new figures** (The Problem, Section 01 "Barely explored", the two beside the Home intro, and the box under FIND / FOLLOW / FILM). Each links to its source, checked October 2026: NOAA Ocean Exploration's "How much of the ocean has been explored?" (updated April 20, 2026) for 28.7% mapped, under 0.001% of the deep seafloor seen, about two-thirds of ocean species not yet described and about 2,000 named a year; Mora et al. 2011 for the 91% estimate; Liu et al. 2022 for the threatened shares; Ocean Census and 360info for why naming matters; the Science Advances study (via EurekAlert) for the 97% of deep-sea observations made by five countries. The 1,000 dots with 100 in one (1 in 100,000 = 0.001%) and the football field line are worked out from NOAA's under 0.001%: 0.001% of a 360 x 160 ft field is 0.58 sq ft, less than a letter-size sheet (0.65 sq ft). On the globe, the lit dots show the share mapped, not where. Seabed 2030 updates the mapped share every year or so; change `explored` in `src/data/problem.ts` and `MAPPED` in `stills_site/make_globe.py` when it does. "Centuries" is worked out from NOAA's numbers (about two-thirds of 700,000 or more species, at 2,000 a year).
 - **"What we're doing" on Home** (`plan` in `src/data/home.ts`): the headline, paragraph and four steps were written for the site from the Content doc's Home text, the Turtle and eDNA cards, and the Donate and Work with us copy. Check that the step statuses ("Building now", "In development", "Next", "The goal") match where things really stand, and reword anything you like. The same goes for the "What we'll offer" panel under it (vehicles to buy, research to use, surveys on request: `plan.offer`).
 - **"What we share" on Who we are** (`teamStatement` in `src/data/team.ts`): the headline ("Many disciplines, one vehicle, one question: what lives down there?") and the paragraph under it were written for the page, not taken from the Content doc. Rewrite them in the team's own words if you like.

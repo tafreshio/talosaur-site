@@ -33,6 +33,14 @@ export const sources = {
   // New Zealand, France and Germany) made 97% of all deep-sea submergence observations, "due to the
   // high cost of ocean exploration"
   bell: { label: 'EurekAlert', href: 'https://www.eurekalert.org/news-releases/1082535' },
+  // NOAA's long-term monitoring data for Flower Garden Banks (data.gov): "In 2015, monitoring efforts were
+  // expanded to include the deeper mesophotic habitat (34-64 m)", surveyed with a remotely operated vehicle;
+  // fish surveys are annual. The 2016 annual report describes a localized mortality event at East Flower
+  // Garden Bank (https://sanctuaries.noaa.gov/science/conservation/east-west-flower-garden-banks-long-term-monitoring-2016.html)
+  fgbDeep: { label: 'NOAA', href: 'https://catalog.data.gov/dataset/2016-flower-garden-banks-national-marine-sanctuary-long-term-monitoring-of-the-reef-crest-and-m' },
+  // NOAA JetStream, "Layers of the ocean": the thermocline, where temperature falls quickly with depth,
+  // between the warm mixed surface layer and the cold deep
+  layers: { label: 'NOAA', href: 'https://noaa.gov/jetstream/ocean/layers-of-ocean' },
 };
 
 export const problemIntro =
@@ -186,12 +194,14 @@ export const depthBands = [
 // ---------------------------------------------------------------- Section 04: Habitat
 // The map is public/images/sections/habitat-map.png; the two labels on it are placed in
 // src/pages/the-problem.astro. The first paragraph and the new facts come from NOAA's 2023 sanctuary
-// poster (sources.poster); the second paragraph is still a placeholder for the team to write.
+// poster (sources.poster). The second is written from sources.diving, sources.fgbDeep (ROV monitoring of
+// the deeper reefs since 2015, 34–64 m, and the 2016 die-off on East Flower Garden Bank) and sources.fgb
+// (deep reefs give homes to commercially and recreationally valuable fish).
 export const habitat = {
   title: 'Flower Garden Banks',
   paragraphs: [
     'Flower Garden Banks National Marine Sanctuary covers 17 reefs and banks 80 to 125 miles off the Texas and Louisiana coast. The coral reefs on top are among the healthiest in the world, but they make up only 2% of the sanctuary. Most of it lies deeper, in the twilight zone, on reefs of black corals, octocorals and sponges. Reef fish, manta rays, sea turtles and sharks live across the sanctuary.',
-    "[A second paragraph on why the deeper reefs are hard to visit, and what regular filming there could show.]", // PLACEHOLDER
+    'The deeper reefs start below the 40 m limit for recreational divers, so they are mostly reached by remotely operated vehicles on research trips. The sanctuary added them to its yearly monitoring in 2015, but only down to 64 m. Filming more often, and further down, could show how these reefs change from year to year, how they recover after events like the 2016 die-off on East Flower Garden Bank, and how the fish that depend on them are doing.',
   ],
   facts: [
     { label: 'Reef depth', value: '40–221 m', source: sources.fgb },
@@ -219,12 +229,12 @@ export const fgbSpecies = [
 ];
 
 // ---------------------------------------------------------------- Section 03: At a glance
-// The twilight zone as a fact sheet (Colossal's mammoth page style). Values in [brackets] are placeholders.
+// The twilight zone as a fact sheet (Colossal's mammoth page style).
 export const glance = [
   { label: 'Depth', value: '50–300 m' },
   { label: 'Sunlight', value: 'Rarely any significant sunlight below 200 m', source: sources.light },
   { label: 'Pressure', value: 'About 6 to 31 times the surface', source: sources.pressure },
-  { label: 'Temperature', value: '[Typical temperature range]' }, // PLACEHOLDER
+  { label: 'Temperature', value: 'Falls fast with depth, from warm surface water towards the cold deep', source: sources.layers },
   { label: 'Who lives here', value: 'At Flower Garden Banks: black corals, octocorals, sponges and reef fish', source: sources.poster },
-  { label: 'Surveys a year', value: '[How often this zone gets surveyed]' }, // PLACEHOLDER
+  { label: 'Deep-reef surveys', value: 'Once a year at Flower Garden Banks since 2015, by ROV, and only to 64 m', source: sources.fgbDeep },
 ];

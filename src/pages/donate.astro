@@ -25,9 +25,9 @@ const waysToHelp = [
 // "needs" says what a missing photo should show: until support-testing.jpg exists, that card shows a
 // "photo to come" panel.
 const support = [
-  { image: 'support-parts.jpg', tag: 'Machining', title: 'Parts', text: '[What a gift buys here, for example materials and parts for the next build.]' },
-  { image: 'support-testing.jpg', needs: 'Turtle in the pool', title: 'Testing', text: '[What testing costs, for example pool time or a day on the lake.]' },
-  { image: 'support-field-trips.jpg', tag: 'Under way', title: 'Field trips', text: '[What a field trip costs, for example boat time and travel to the coast.]' },
+  { image: 'support-parts.jpg', tag: 'Machining', title: 'Parts', text: 'Materials and parts for the next build, from the hull to the mounts and fittings.' },
+  { image: 'support-testing.jpg', needs: 'Turtle in the pool', title: 'Testing', text: 'Pool time and days on the lake, where every new version is tried before it goes near the sea.' },
+  { image: 'support-field-trips.jpg', tag: 'Under way', title: 'Field trips', text: 'Boat time and travel to the coast, for tests off Galveston and, later, the deep reefs offshore.' },
 ];
 
 const financeHref = contactHref(financeContact);
@@ -65,8 +65,8 @@ const financeHref = contactHref(financeContact);
     tag="Why it matters"
     title="Affordable ocean exploration"
     items={[
-      { title: 'Student-built', text: '[One or two sentences on who builds Talosaur, and how.]' },
-      { title: 'On a tight budget', text: '[One or two sentences on what a survey costs today, and what Talosaur could cost.]' },
+      { title: 'Student-built', text: 'Talosaur is designed, built and tested by students from Texas A&M and UT Austin, mostly in College Station.' },
+      { title: 'On a tight budget', text: 'Commercial underwater robots cost $50,000 to over $1 million, and a research ship tens of thousands of dollars a day. We are building one for a fraction of that.' },
     ]}
   />
 

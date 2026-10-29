@@ -107,6 +107,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
     font-size: var(--text-xl);
   }
 
+  /* four in a row are narrower, so long words like CONSERVATION get a smaller title */
+  .pcards--4 .pcard-title {
+    font-size: clamp(1.4rem, 0.8rem + 1.4vw, 2.1rem);
+  }
+
   .pcard-text {
     margin: var(--space-xs) 0 0;
     color: var(--color-muted);
