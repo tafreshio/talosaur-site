@@ -81,7 +81,10 @@ const lastBox = parts.length - 2;
     text-wrap: balance;
   }
 
+  /* the box's padding is pulled back by the same amount, so a line that starts with a box lines up
+     with the plain lines */
   .statement-box {
+    margin-left: -0.16em;
     padding: 0 0.16em;
     color: var(--color-white);
     background: var(--color-violet);
@@ -150,6 +153,7 @@ const lastBox = parts.length - 2;
     .statement-line {
       font-stretch: 112%;
       font-size: clamp(1.7rem, 0.9rem + 4.4vw, 2.4rem);
+      line-height: 1.16; /* a little air between the coloured boxes on stacked lines */
     }
 
     .statement-body {
@@ -162,6 +166,11 @@ const lastBox = parts.length - 2;
 
     .statement-hatch {
       flex-basis: 4rem;
+    }
+
+    /* on phones the boxes stay inside the page margin */
+    .statement-box {
+      margin-left: 0;
     }
   }
 </style>

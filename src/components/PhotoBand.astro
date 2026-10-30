@@ -151,7 +151,6 @@ const hasSlot = Astro.slots.has('default');
   .photo-band--split .photo-band-media::before {
     content: '';
     position: absolute;
-    z-index: 1;
     inset: auto 0 80px; /* the picture runs 80 px past the band's bottom edge (room to pan) */
     height: 12rem;
     background: linear-gradient(to top, var(--color-bg), transparent);
@@ -166,6 +165,11 @@ const hasSlot = Astro.slots.has('default');
     /* the text covers most of the photo on narrow screens, so darken it evenly */
     .photo-band-media::after {
       background: rgb(6 18 31 / 0.5);
+    }
+
+    /* the split band's list of links runs over the brightest part of its photo: a deeper shade */
+    .photo-band--split .photo-band-media::after {
+      background: rgb(6 18 31 / 0.68);
     }
 
     /* slashes on their own line above the tag, like the page headers */

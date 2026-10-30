@@ -7,7 +7,7 @@
 //
 // The words are repeated so the strip never runs out, and it is decorative (the same roles are on
 // the cards), so screen readers skip it. For visitors with "reduce motion" turned on, it doesn't move:
-// each word shows once, wrapped onto as many lines as it needs and centred.
+// it stops as one line running off the right edge.
 interface Props {
   words: string[];
   colors?: string[]; // a colour for the ring after each word (CSS colours, in the same order); orange if left out
@@ -25,7 +25,7 @@ const run = Array.from({ length: Math.max(2, Math.ceil(8 / Math.max(words.length
     {[0, 1].map((copy) => (
       <ul class:list={['marquee-run', { 'marquee-run--copy': copy === 1 }]}>
         {run.map((word, i) => (
-          <li class:list={['marquee-word', { 'marquee-word--outline': i % 2 === 1, 'marquee-word--repeat': i >= words.length, 'marquee-word--last': i === words.length - 1 }]}>
+          <li class:list={['marquee-word', { 'marquee-word--outline': i % 2 === 1, 'marquee-word--repeat': i >= words.length }]}>
             {word}<span class="marquee-ring" style={colors.length ? `--ring: ${colors[i % words.length]};` : undefined}></span>
           </li>
         ))}
@@ -70,7 +70,7 @@ const run = Array.from({ length: Math.max(2, Math.ceil(8 / Math.max(words.length
 
   .marquee-word--outline {
     color: transparent;
-    -webkit-text-stroke: 1px var(--color-text);
+    -webkit-text-stroke: 1.5px var(--color-text);
   }
 
   /* the orange ring with a dot in it, as on the story band numbers */
@@ -97,44 +97,12 @@ const run = Array.from({ length: Math.max(2, Math.ceil(8 / Math.max(words.length
     }
   }
 
-  /* standing still: every word once, wrapped and centred */
+  /* standing still (reduced motion): the strip simply stops, one line running off the right edge,
+     like a frame of the moving version */
   @media (prefers-reduced-motion: reduce) {
     .marquee-track {
-      width: auto;
       animation: none;
-    }
-
-    .marquee-run {
-      flex-wrap: wrap;
-      justify-content: center;
-      width: 100%;
-      padding-inline: var(--gutter);
-    }
-
-    .marquee-run--copy,
-    .marquee-word--repeat {
-      display: none;
-    }
-
-    .marquee-word {
-      font-size: clamp(2rem, 1rem + 4vw, 5rem);
-    }
-
-    /* the rings go between the words, each tied to the word before it, and the last word has none */
-    .marquee-word--last .marquee-ring {
-      display: none;
-    }
-  }
-
-  /* standing still on a phone: left-aligned, no rings, a plain space between words */
-  @media (prefers-reduced-motion: reduce) and (max-width: 760px) {
-    .marquee-run {
-      justify-content: flex-start;
-      column-gap: 0.3em;
-    }
-
-    .marquee-ring {
-      display: none;
+      padding-left: var(--gutter);
     }
   }
 </style>

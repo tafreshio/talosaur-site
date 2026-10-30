@@ -62,7 +62,7 @@ const hasSlot = Astro.slots.has('default');
 const pad = (n: number) => String(n + 1).padStart(2, '0');
 ---
 
-<section class:list={['story', `story--${variant}`]}>
+<section class:list={['story', `story--${variant}`]} style={variant === 'split' ? `--story-img: url(${imageUrl(`bands/${image}`)});` : undefined}>
   <div class="story-media" aria-hidden="true">
     <img src={imageUrl(`bands/${image}`)} alt="" width="2400" height="1350" loading="lazy" decoding="async" style={`object-position: ${position};`} data-pan="140" />
   </div>
@@ -761,6 +761,20 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
 
     .story--statement .story-media::after {
       background: rgb(6 18 31 / 0.62);
+    }
+
+    /* split: the two halves of the picture stack on phones instead of sitting side by side (each
+       would only be a sliver): the left half behind the title, the right half behind the list, with
+       the seam running across the middle */
+    .story--split .story-media img {
+      object-position: 0% 50% !important;
+    }
+
+    .story--split .story-media::before {
+      content: '';
+      position: absolute;
+      inset: 52% 0 0;
+      background: var(--story-img) right center / auto 200% no-repeat;
     }
 
     /* the full width on phones, so titles break into fewer, fuller lines */

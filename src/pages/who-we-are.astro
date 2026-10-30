@@ -251,8 +251,11 @@ const stats = [
     gap: var(--space-xs);
     padding: var(--space-md);
     border-radius: var(--radius);
+    /* the same family as the crew's panels below: a faint dot pattern and a glow in the founder's
+       lime, over deep navy */
     background:
-      repeating-linear-gradient(135deg, rgb(232 241 245 / 0.06) 0 1px, transparent 1px 14px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Ccircle cx='6' cy='6' r='1.1' fill='%23e8f1f5' fill-opacity='.2'/%3E%3C/svg%3E"),
+      radial-gradient(circle at 80% 18%, color-mix(in srgb, var(--color-lime) 30%, transparent), transparent 60%),
       linear-gradient(160deg, #0c2236, #06121f);
   }
 
