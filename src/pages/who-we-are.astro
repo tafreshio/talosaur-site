@@ -2,9 +2,9 @@
 // Who we are: the team, in the style of the people sections on Colossal's Company page.
 //   - The lead (lead: true in src/data/team.ts) gets a row of their own: a big portrait with their name
 //     in violet boxes over its corner, and a description box beside it (like Colossal's chairman feature).
-//   - Everyone else follows as a dive (src/components/CrewDive.astro): a line down the page from the
-//     surface to 300 m, each person hanging off it on alternating sides, the water and the cards
-//     darkening as it goes down, and the team statement (teamStatement in team.ts) at the bottom.
+//   - Everyone else follows as a loose collage on deep navy (src/components/CrewCollage.astro), like
+//     the "Greatness is in our DNA" band on Colossal's Company page: cards of different sizes at
+//     different heights, with the team statement (teamStatement in team.ts) cut into the middle.
 //
 // Team members are listed in src/data/team.ts. A member with a photo in public/images/team/ gets a
 // photo card; without one, a plain panel with their initials. People's photos stay natural (no colour
@@ -16,7 +16,7 @@ import Patch from '../components/Patch.astro';
 import StoryBand from '../components/StoryBand.astro';
 import { url } from '../lib/url';
 import Photo from '../components/Photo.astro';
-import CrewDive from '../components/CrewDive.astro';
+import CrewCollage from '../components/CrewCollage.astro';
 import { team, teamIntro, teamStatement } from '../data/team';
 import { isPlaceholder } from '../data/site';
 import { imageExists } from '../lib/images';
@@ -28,7 +28,6 @@ const panelText = (name: string, role: string) =>
 // The lead goes on top on their own; the rest of the team follows in the collage
 const lead = team.find((member) => member.lead);
 const rest = team.filter((member) => member !== lead);
-const firstNumber = lead ? 2 : 1; // the lead is 01, the collage carries on from 02
 const leadHasPhoto = lead ? imageExists(`team/${lead.photo}`) : false;
 
 // The disciplines for the strip, from the roles: 'Lead Mechanical Engineer' -> 'Mechanical'
@@ -98,9 +97,9 @@ const stats = [
        Copy: the Home "Who we are" card (Content doc). -->
   <StoryBand variant="stats" image="story-team.jpg" position="55% 40%" tag="The team in numbers" title="A Texas-based student team" items={stats} />
 
-  <!-- The crew as a dive from the surface to 300 m, with the team statement at the bottom
-       (src/components/CrewDive.astro) -->
-  <CrewDive members={rest} firstNumber={firstNumber} disciplines={disciplines} statement={teamStatement} />
+  <!-- The crew as a loose collage on deep navy, with the team statement cut into the middle
+       (src/components/CrewCollage.astro) -->
+  <CrewCollage members={rest} disciplines={disciplines} statement={teamStatement} />
 
   <!-- One photo with an offset frame across the edge into the photo below (natural NOAA footage) -->
   <Patch variant="frame" image="feather-star-wide.jpg" caption="Feather star · NOAA" side="right" straddle />
