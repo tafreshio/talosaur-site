@@ -67,7 +67,7 @@ const stats = [
                 <span class="member-initials">{panelText(lead.name, lead.role)}</span>
               </div>
             )}
-            <p class="label member-tag"><span class="member-tag-num">01 · </span>{lead.role}</p>
+            <p class="label member-tag">{lead.role}</p>
             <!-- Name in violet boxes over the photo's corner, one box per word -->
             <h2 class="lead-name">
               {lead.name.split(/\s+/).map((word) => <span>{word}</span>)}
@@ -335,10 +335,6 @@ const stats = [
       width: fit-content;
       padding: 0.2rem 0.4rem;
       font-size: 0.66rem;
-    }
-
-    .member-tag-num {
-      display: none;
     }
 
     .lead-media {

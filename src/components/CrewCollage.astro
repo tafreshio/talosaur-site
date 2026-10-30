@@ -75,21 +75,22 @@ const colourOf = (role: string) => palette[Object.keys(palette).find((k) => role
 //   (none for the first card, which has a colour block instead); glow = where the colour glows on a
 //   stand-in panel.
 const BITE = 'var(--climb)';
-// Laptop drops that line edges up exactly at every width. A percentage margin on a grid item is a share
-// of its own width, and the cards' widths are fixed numbers of columns, so these work out exactly:
-//   Kabir's picture ends on the same line as Nicholas's, so their tags and names share a line too;
-//   Alvin's picture (as wide as Dominick's) starts where Dominick's ends, and Omeed's starts where
-//   Alvin's ends.
-const KM_LEVEL = 'calc(5rem + 60% + 0.267 * var(--col-gap))';
-const AZ_DROP = 'calc(var(--climb) + 75%)';
-const OT_DROP = 'calc(var(--climb) + 217% + 0.62 * var(--col-gap))';
+// Laptop drops, worked out from the cards' widths (a percentage margin on a grid item is a share of
+// its own width, and each card is a fixed number of columns), so the cards keep the same relation to
+// each other at every laptop width:
+//   Kabir's picture ends well below Nicholas's (never nearly level with it);
+//   Alvin's picture starts a little below the bottom of Dominick's, and Omeed's starts about 40% of
+//   the way down Alvin's, so the last three overlap in height instead of stepping down like stairs.
+const KM_DROP = 'calc(5rem + 60% + 0.267 * var(--col-gap) + 9rem)';
+const AZ_DROP = 'calc(var(--climb) + 58.33% - 0.1667 * var(--col-gap) + 3.5rem)';
+const OT_DROP = 'calc(var(--climb) + 105% + 0.3 * var(--col-gap) + 13rem)';
 const slots = [
   { d: [1, 11, '0rem'], t: [1, 7, '0rem', '1 / span 2'], m: ['100%', 'start', 'none', '0rem'], ratio: '4 / 5', strip: 'none', glow: '85% 15%', feature: true },
-  { d: [13, 5, KM_LEVEL], t: [9, 4, '5rem', '1'], m: ['74%', 'end', 'left', '4.75rem'], ratio: '1 / 1', strip: 'top-left', glow: '80% 20%' },
+  { d: [13, 5, KM_DROP], t: [9, 4, '3rem', '1'], m: ['74%', 'end', 'left', '4.75rem'], ratio: '1 / 1', strip: 'top-left', glow: '80% 20%' },
   { d: [19, 6, '5rem'], t: [10, 3, '2rem', '2'], m: ['62%', 'start', 'right', '4.75rem'], ratio: '3 / 4', strip: 'left-up', glow: '30% 20%' },
-  { d: [1, 5, OT_DROP], t: [1, 4, '-14rem', '5'], m: ['68%', 'end', 'left', '-1.25rem'], ratio: '4 / 5', strip: 'right-up', glow: '20% 15%', mClimb: true },
-  { d: [5, 7, BITE], t: [2, 4, BITE, '4'], m: ['100%', 'start', 'top', '4.1rem'], ratio: '4 / 3', strip: 'right-down', glow: '75% 30%', bleed: true },
-  { d: [18, 7, AZ_DROP], t: [7, 5, '2rem', '4'], m: ['72%', 'start', 'right', '4.75rem'], ratio: '5 / 4', strip: 'bottom', glow: '15% 85%' },
+  { d: [1, 5, OT_DROP], t: [1, 4, '8rem', '4'], m: ['74%', 'end', 'left', '-2.8rem'], ratio: '4 / 5', strip: 'right-up', glow: '20% 15%' },
+  { d: [5, 7, BITE], t: [2, 4, BITE, '4'], m: ['100%', 'start', 'top', '4.1rem'], ratio: '4 / 3', strip: 'right-down', glow: '75% 30%', bleed: true, climber: true },
+  { d: [16, 9, AZ_DROP], t: [8, 5, '2rem', '4'], m: ['72%', 'start', 'right', '4.75rem'], ratio: '5 / 4', strip: 'bottom', glow: '15% 85%' },
 ];
 
 // Laptop rows: the first three people share row 1, the statement is row 2, the next three share
@@ -141,7 +142,7 @@ const statementAfter = Math.min(3, members.length);
           return (
             <>
               <article
-                class:list={['crew-card', `crew-card--strip-${slot.strip}`, `crew-card--m-strip-${slot.m[2]}`, { 'crew-card--feature': slot.feature, 'crew-card--bleed': slot.bleed, 'crew-card--m-climb': slot.mClimb }]}
+                class:list={['crew-card', `crew-card--strip-${slot.strip}`, `crew-card--m-strip-${slot.m[2]}`, { 'crew-card--feature': slot.feature, 'crew-card--bleed': slot.bleed, 'crew-card--climber': slot.climber }]}
                 style={`--col: ${slot.d[0]}; --span: ${slot.d[1]}; --drop: ${slot.d[2]}; --d-row: ${desktopRow(i)}; --t-col: ${slot.t[0]}; --t-span: ${slot.t[1]}; --t-drop: ${slot.t[2]}; --t-row: ${tabletRow(String(slot.t[3]), i)}; --m-w: ${slot.m[0]}; --m-side: ${slot.m[1]}; --m-gap: ${slot.m[3]}; --glow: ${slot.glow}; --accent: ${colour.color}; --accent-ink: ${colour.ink};`}
                 data-reveal
               >
@@ -218,9 +219,10 @@ const statementAfter = Math.min(3, members.length);
     --row-gap: clamp(3rem, 5vw, 5.5rem);
     --pad: clamp(4.5rem, 9vw, 7.5rem);      /* lime above and below the statement box */
     --offset: clamp(1rem, 2.2vw, 2rem);     /* how far the frame sits up and right of the box */
-    /* how far the card after the statement climbs: on laptops up over the empty bottom left corner
-       of the statement box, on tablets onto the lime, leaving 3rem of lime above it */
-    --climb: calc(-1 * (var(--row-gap) + var(--pad) + 6rem));
+    /* how far the card after the statement climbs into the empty bottom left corner of the box: far
+       enough that its "[ Photo to come ]" label sits well above the box's sign off line */
+    --climb-into: calc(clamp(1.75rem, 3.5vw, 3.5rem) + 5rem);
+    --climb: calc(-1 * (var(--row-gap) + var(--pad) + var(--climb-into)));
     position: relative;
     /* extra room at the bottom: the feather star photo below reaches up into this section */
     padding-bottom: calc(var(--space-2xl) + 4rem);
@@ -346,6 +348,14 @@ const statementAfter = Math.min(3, members.length);
     bottom: 34%;
     right: -6px;
     width: 6px;
+  }
+
+  /* the card that climbs over the box: its strip comes out from under the box's bottom edge (on
+     phones the card doesn't climb, and its strip runs along the top) */
+  @media (min-width: 761px) {
+    .crew-card--climber.crew-card--strip-right-down .crew-media::after {
+      top: var(--climb-into);
+    }
   }
 
   /* top edge, running out past the left corner */
@@ -572,9 +582,9 @@ const statementAfter = Math.min(3, members.length);
   /* ---------- Tablets: 12 columns; the first person spans two rows beside the next two ---------- */
 
   @media (max-width: 1099px) {
-    /* the climb over the box's empty bottom left corner is a little smaller than on laptops */
+    /* on tablets the box's empty corner is taller, so the card climbs further into it */
     .crew {
-      --climb: calc(-1 * (var(--row-gap) + var(--pad) + 5rem));
+      --climb-into: calc(clamp(1.75rem, 3.5vw, 3.5rem) + 8rem);
     }
 
     /* the step's corner on the second card's left edge (column 9 of 12) */
@@ -702,14 +712,16 @@ const statementAfter = Math.min(3, members.length);
       font-size: 2.2rem;
     }
 
+    /* more lime under the box, so the next card can tuck into it with a clear strip of lime above */
     .crew-statement {
       margin-top: 3.75rem;
+      padding-bottom: 4.75rem;
     }
 
-    /* the card after the statement climbs a little way onto the bottom of the lime; its strip
-       stays level with the top of its picture, clear of the box */
-    .crew-card--m-climb .crew-media::after {
-      top: 0;
+    /* the first card is square on phones, so it doesn't take a whole screen */
+    .crew-card--feature .crew-panel,
+    .crew-card--feature :global(.photo) {
+      aspect-ratio: 1 / 1 !important;
     }
 
     .crew-statement::before {
