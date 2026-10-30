@@ -79,7 +79,7 @@ const photoUrl = imageUrl(`pages/${image}`);
   .page-header--image {
     display: flex;
     align-items: flex-end;
-    min-height: clamp(34rem, 88svh, 56rem);
+    min-height: 100svh; /* the whole first screen, down to the bottom of the window (like the Home video) */
     /* The menu floats on top, so pull the photo up underneath it (same as the Home hero) */
     margin-top: calc(-1 * var(--header-height));
     overflow: hidden;
@@ -101,27 +101,8 @@ const photoUrl = imageUrl(`pages/${image}`);
     animation: photo-in 1.4s var(--ease) both;
   }
 
-  /* A light shade so the text stays readable while the photo stays bright: a soft one on the left,
-     where the title and intro sit, and a thin one along the top behind the menu. The text itself
-     carries a soft shadow (below), which does most of the work. No dark band at the bottom: the
-     photo meets the light section below with a clean line (like Colossal). */
-  .page-header-media::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(90deg, rgb(6 18 31 / 0.42) 0%, rgb(6 18 31 / 0.24) 40%, transparent 70%),
-      linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 55%, transparent) 0%, transparent 18%);
-  }
-
-  /* Phones: the text runs the full width, so a light even shade instead */
-  @media (max-width: 760px) {
-    .page-header-media::after {
-      background:
-        linear-gradient(rgb(6 18 31 / 0.34), rgb(6 18 31 / 0.34)),
-        linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 55%, transparent) 0%, transparent 22%);
-    }
-  }
+  /* No dark shading over the photo: it shows at full brightness. The title and intro carry a soft
+     dark glow of their own (below), so they still read on a bright picture. */
 
   .page-header--image .page-header-inner {
     padding-block: calc(var(--header-height) + var(--space-xl)) var(--space-xl);
@@ -221,7 +202,7 @@ const photoUrl = imageUrl(`pages/${image}`);
 
   @media (max-width: 760px) {
     .page-header--image {
-      min-height: clamp(30rem, 88svh, 44rem);
+      min-height: 100svh;
     }
 
     /* Phones: stripe on top, caption under it, both left-aligned, so long captions wrap cleanly */
