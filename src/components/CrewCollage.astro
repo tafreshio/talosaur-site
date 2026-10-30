@@ -74,15 +74,24 @@ const colourOf = (role: string) => palette[Object.keys(palette).find((k) => role
 //   ratio = the picture's shape; strip = the edge the colour strip runs along on wider screens
 //   (none for the first card, which has a colour block instead); glow = where the colour glows on a
 //   stand-in panel.
-const BITE = 'calc(-1 * (var(--row-gap) + var(--bite)))';
+const BITE = 'var(--climb)';
 const slots = [
   { d: [1, 11, '0rem'], t: [1, 7, '0rem', '1 / span 2'], m: ['100%', 'start', 'none', '0rem'], ratio: '4 / 5', strip: 'none', glow: '85% 15%', feature: true },
-  { d: [13, 5, '7rem'], t: [9, 4, '0rem', '1'], m: ['74%', 'end', 'left', '3.5rem'], ratio: '1 / 1', strip: 'top', glow: '80% 20%' },
-  { d: [19, 6, '13rem'], t: [10, 3, '0rem', '2'], m: ['62%', 'start', 'right', '2rem'], ratio: '3 / 4', strip: 'right', glow: '30% 20%' },
-  { d: [2, 5, '10rem'], t: [9, 4, '3rem', '4'], m: ['68%', 'end', 'left', '5rem'], ratio: '4 / 5', strip: 'left', glow: '20% 15%' },
-  { d: [9, 8, BITE], t: [1, 7, BITE, '4'], m: ['100%', 'start', 'top', '3.5rem'], ratio: '4 / 3', strip: 'top', glow: '75% 30%', bleed: true },
-  { d: [18, 7, '1rem'], t: [3, 5, '-3rem', '5'], m: ['72%', 'start', 'right', '2.5rem'], ratio: '5 / 4', strip: 'bottom', glow: '15% 85%' },
+  { d: [13, 5, '18rem'], t: [9, 4, '5rem', '1'], m: ['74%', 'end', 'left', '4.4rem'], ratio: '1 / 1', strip: 'top-left', glow: '80% 20%' },
+  { d: [19, 6, '5rem'], t: [10, 3, '2rem', '2'], m: ['62%', 'start', 'right', '4.4rem'], ratio: '3 / 4', strip: 'left-up', glow: '30% 20%' },
+  { d: [1, 5, '13rem'], t: [1, 3, '2rem', '4'], m: ['68%', 'end', 'left', '5.5rem'], ratio: '4 / 5', strip: 'right-down', glow: '20% 15%' },
+  { d: [5, 8, BITE], t: [6, 6, BITE, '4 / span 2'], m: ['100%', 'start', 'top', '3.9rem'], ratio: '4 / 3', strip: 'right-up', glow: '75% 30%', bleed: true },
+  { d: [18, 7, '2rem'], t: [2, 4, '2rem', '5'], m: ['72%', 'start', 'right', '4.4rem'], ratio: '5 / 4', strip: 'bottom', glow: '15% 85%' },
 ];
+
+// Laptop rows: the first three people share row 1, the statement is row 2, the next three share
+// row 3 (set explicitly, so cards in one row may overlap a column); any further group of six carries
+// on below, three to a row.
+const desktopRow = (i: number) => {
+  const block = Math.floor(i / slots.length);
+  const second = i % slots.length >= 3 ? 1 : 0;
+  return block === 0 ? (second ? 3 : 1) : 3 + (block - 1) * 2 + 1 + second;
+};
 
 // Tablet rows: the first six people use rows 1 and 2, the statement row 3, then rows 4 and 5; any
 // further group of six carries on below.
@@ -125,7 +134,7 @@ const statementAfter = Math.min(3, members.length);
             <>
               <article
                 class:list={['crew-card', `crew-card--strip-${slot.strip}`, `crew-card--m-strip-${slot.m[2]}`, { 'crew-card--feature': slot.feature, 'crew-card--bleed': slot.bleed }]}
-                style={`--col: ${slot.d[0]}; --span: ${slot.d[1]}; --drop: ${slot.d[2]}; --t-col: ${slot.t[0]}; --t-span: ${slot.t[1]}; --t-drop: ${slot.t[2]}; --t-row: ${tabletRow(String(slot.t[3]), i)}; --m-w: ${slot.m[0]}; --m-side: ${slot.m[1]}; --m-gap: ${slot.m[3]}; --glow: ${slot.glow}; --accent: ${colour.color}; --accent-ink: ${colour.ink};`}
+                style={`--col: ${slot.d[0]}; --span: ${slot.d[1]}; --drop: ${slot.d[2]}; --d-row: ${desktopRow(i)}; --t-col: ${slot.t[0]}; --t-span: ${slot.t[1]}; --t-drop: ${slot.t[2]}; --t-row: ${tabletRow(String(slot.t[3]), i)}; --m-w: ${slot.m[0]}; --m-side: ${slot.m[1]}; --m-gap: ${slot.m[3]}; --glow: ${slot.glow}; --accent: ${colour.color}; --accent-ink: ${colour.ink};`}
                 data-reveal
               >
                 <div class="crew-media">
@@ -180,11 +189,16 @@ const statementAfter = Math.min(3, members.length);
     background: var(--color-bg);
   }
 
-  /* the disciplines strip; the navy starts right under its bottom rule on the left */
+  /* the disciplines strip; the navy starts right under it on the left. Its bottom hairline is left
+     out here, so no line runs across the step below it. */
   .crew-surface {
     display: flow-root;
     padding-top: var(--space-xl);
     background: var(--light-bg);
+  }
+
+  .crew-surface :global(.marquee) {
+    border-bottom: 0;
   }
 
   /* The step: on the right the light carries on down for a little way before the navy takes over the
@@ -194,9 +208,11 @@ const statementAfter = Math.min(3, members.length);
     --step: clamp(3.5rem, 2rem + 5vw, 7rem);
     --col-gap: clamp(0.75rem, 1.1vw, 1rem);
     --row-gap: clamp(3rem, 5vw, 5.5rem);
-    --pad: clamp(3rem, 7vw, 7rem);          /* lime above and below the statement box */
+    --pad: clamp(4.5rem, 9vw, 7.5rem);      /* lime above and below the statement box */
     --offset: clamp(1rem, 2.2vw, 2rem);     /* how far the frame sits up and right of the box */
-    --bite: calc(var(--pad) - 1.5rem);      /* how far a card climbs over the bottom of the lime */
+    /* how far the card after the statement climbs: on laptops up over the empty bottom left corner
+       of the statement box, on tablets onto the lime, leaving 3rem of lime above it */
+    --climb: calc(-1 * (var(--row-gap) + var(--pad) + 6rem));
     position: relative;
     /* extra room at the bottom: the feather star photo below reaches up into this section */
     padding-bottom: calc(var(--space-2xl) + 4rem);
@@ -238,13 +254,14 @@ const statementAfter = Math.min(3, members.length);
     position: relative;
     z-index: 3; /* above the lime band and the statement box where a card climbs over them */
     grid-column: var(--col) / span var(--span);
+    grid-row: var(--d-row);
     margin-top: var(--drop);
   }
 
   /* the rotated tag in the left margin, staying in view while the collage scrolls past */
   .crew-rail {
     position: absolute;
-    top: 0;
+    top: var(--space-lg); /* level with the top of the first card */
     bottom: 0;
     left: calc(-1 * var(--gutter) + 0.35rem);
     display: none;
@@ -293,32 +310,43 @@ const statementAfter = Math.min(3, members.length);
     display: none;
   }
 
-  .crew-card--strip-left .crew-media::after {
+  /* left edge, running out past the top corner */
+  .crew-card--strip-left-up .crew-media::after {
     top: -0.9rem;
-    bottom: 26%;
+    bottom: 30%;
     left: -6px;
     width: 6px;
   }
 
-  .crew-card--strip-right .crew-media::after {
-    top: -0.9rem;
-    bottom: 30%;
+  /* right edge, running out past the bottom corner (away from the tag, which sits on the left) */
+  .crew-card--strip-right-down .crew-media::after {
+    top: 30%;
+    bottom: -0.9rem;
     right: -6px;
     width: 6px;
   }
 
-  .crew-card--strip-top .crew-media::after {
+  /* right edge, running out past the top corner */
+  .crew-card--strip-right-up .crew-media::after {
+    top: -0.9rem;
+    bottom: 34%;
+    right: -6px;
+    width: 6px;
+  }
+
+  /* top edge, running out past the left corner */
+  .crew-card--strip-top-left .crew-media::after {
     top: -6px;
-    left: 26%;
-    right: -0.9rem;
+    left: -0.9rem;
+    right: 30%;
     height: 6px;
   }
 
-  /* along the bottom it starts past the role tag below, and runs out past the right corner */
+  /* along the bottom, from past the role tag below to the right corner */
   .crew-card--strip-bottom .crew-media::after {
     bottom: -6px;
     left: 58%;
-    right: -0.9rem;
+    right: 0;
     height: 6px;
   }
 
@@ -343,12 +371,12 @@ const statementAfter = Math.min(3, members.length);
     align-items: flex-start;
     padding: 0.8rem 0.9rem;
     overflow: hidden;
-    border: 1px solid rgb(232 241 245 / 0.1); /* keeps the dark panel apart from the navy around it */
-    background-color: #08182a;
+    border: 1px solid rgb(232 241 245 / 0.12); /* keeps the panel apart from the navy around it */
+    background-color: #0b1f33; /* a step lighter than the section's navy */
     background-image:
       var(--motif),
       radial-gradient(circle at var(--glow), color-mix(in srgb, var(--accent) 34%, transparent), transparent 60%),
-      linear-gradient(160deg, #0c2236, #06121f);
+      linear-gradient(160deg, #11304a, #0a1b2d);
   }
 
   .crew-panel--grid {
@@ -390,8 +418,9 @@ const statementAfter = Math.min(3, members.length);
     color: rgb(232 241 245 / 0.9);
   }
 
+  /* a little bigger than the others, but never bigger than the section title */
   .crew-card--feature .crew-initials {
-    font-size: clamp(4.5rem, 2rem + 6vw, 9rem);
+    font-size: clamp(3.5rem, 1.5rem + 4vw, 6rem);
   }
 
   .crew-initials--role {
@@ -456,6 +485,8 @@ const statementAfter = Math.min(3, members.length);
   .crew-statement {
     position: relative;
     grid-column: 1 / -1;
+    grid-row: 2;
+    margin-top: 3rem; /* a little more room under the first row of people */
     padding-block: var(--pad);
   }
 
@@ -472,10 +503,13 @@ const statementAfter = Math.min(3, members.length);
       var(--color-lime);
   }
 
+  /* the box starts four columns in, and stops short of the right margin by the frame's offset, so
+     the frame ends exactly on the margin */
   .crew-statement-inner {
     position: relative;
     z-index: 1;
     margin-left: calc((100% - 23 * var(--col-gap)) / 24 * 4 + 4 * var(--col-gap));
+    margin-right: var(--offset);
   }
 
   /* a hairline frame the size of the box, shifted up and to the right and tucked behind it, so its
@@ -513,17 +547,31 @@ const statementAfter = Math.min(3, members.length);
     font-size: clamp(2rem, 0.6rem + 2.7vw, 4rem);
   }
 
-  @media (min-width: 901px) {
+  @media (min-width: 1100px) {
     .crew-statement-box :global(.statement-body) {
       grid-column: 6 / -1;
+    }
+  }
+
+  /* tablets: the paragraph starts under the headline, so the box has no empty corner */
+  @media (min-width: 761px) and (max-width: 1099px) {
+    .crew-statement-box :global(.statement-body) {
+      grid-column: 1 / span 9;
+      margin-left: 0;
     }
   }
 
   /* ---------- Tablets: 12 columns; the first person spans two rows beside the next two ---------- */
 
   @media (max-width: 1099px) {
+    /* the climb is gentler: onto the lime, with 3rem of lime still showing above the card */
+    .crew {
+      --climb: calc(-1 * (var(--row-gap) + var(--pad) - 3rem));
+    }
+
+    /* the step's corner on the second card's left edge (column 9 of 12) */
     .crew::before {
-      left: 50%;
+      left: calc(var(--gutter) + (100% - 2 * var(--gutter) + var(--col-gap)) / 12 * 8);
     }
 
     .crew-grid {
@@ -542,7 +590,6 @@ const statementAfter = Math.min(3, members.length);
 
     .crew-statement-inner {
       margin-left: calc((100% - 11 * var(--col-gap)) / 12 + var(--col-gap));
-      margin-right: var(--offset);
     }
   }
 
@@ -557,6 +604,10 @@ const statementAfter = Math.min(3, members.length);
 
     .crew::before {
       left: 54%;
+    }
+
+    .crew-head {
+      padding-top: calc(var(--step) + 3rem);
     }
 
     .crew-grid {
@@ -605,14 +656,10 @@ const statementAfter = Math.min(3, members.length);
       display: none;
     }
 
-    /* the first card leaves room on its right for the colour block */
-    .crew-card--feature {
-      padding-right: 0.6rem;
-    }
-
+    /* the first card's colour block peeks out above it only, inside the margin */
     .crew-block {
       top: -0.6rem;
-      right: -0.6rem;
+      right: 0;
     }
 
     /* one picture runs to both edges of the screen: the single change of scale in the column */
