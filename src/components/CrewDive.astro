@@ -1,9 +1,10 @@
 ---
 // The crew on the Who we are page, drawn as a dive. A line runs down the middle of the section from
 // the surface (0 m) to the twilight zone (300 m), and each person hangs off it on alternating sides,
-// like the stops on the Home timeline. The water darkens as you go down: the section starts on the
-// light foam background and ends in deep navy, and the cards darken with it, light near the surface,
-// dark below the halfway line. At the bottom, in the dark, sits the team statement.
+// like the stops on the Home timeline. The heading sits on the light foam background; the dive itself
+// is on solid deep navy, and where the two meet the edge steps down at the line (the light runs on a
+// little further on the right), so the break is uneven rather than one straight edge. At the bottom,
+// in the dark, sits the team statement.
 //
 //   <CrewDive members={crew} firstNumber={2} disciplines={['Mechanical', 'Hydraulics']} statement={teamStatement} />
 //
@@ -62,11 +63,6 @@ const palette: Record<string, { color: string; ink: string }> = {
 const fallback = { color: 'var(--color-orange)', ink: 'var(--light-text)' };
 const colourOf = (role: string) => palette[Object.keys(palette).find((k) => role.toLowerCase().includes(k.slice(0, 8))) ?? ''] ?? fallback;
 
-// The water is pale teal only near the surface, so the first card (or the first few, in a bigger
-// crew) is set in navy ink and everyone below in foam white. On phones each card sits on a plate:
-// foam near the surface, navy below.
-const shallowCount = Math.max(1, Math.round(members.length / 6));
-const plateFor = (i: number) => (i < shallowCount ? { bg: '#f6faf9', deep: false } : { bg: '#0d2334', deep: true });
 
 // The depth ruler along the line, every 50 m from the surface to 300 m
 const depths = [0, 50, 100, 150, 200, 250, 300];
@@ -89,20 +85,19 @@ const depths = [0, 50, 100, 150, 200, 250, 300];
       <ul class="dive-list" data-reveal-group>
         <li class="dive-ruler" aria-hidden="true">
           {depths.map((d) => (
-            <span class:list={['dive-depth', { 'dive-depth--deep': d / 300 >= 0.5, 'dive-depth--end': d === 0 || d === 300 }]} style={`--at: ${d / 300};`}>
+            <span class:list={['dive-depth', { 'dive-depth--end': d === 0 || d === 300 }]} style={`--at: ${d / 300};`}>
               {(d === 0 || d === 300) && <>{d}&nbsp;m</>}
             </span>
           ))}
         </li>
         {members.map((member, i) => {
           const colour = colourOf(member.role);
-          const plate = plateFor(i);
           const hasPhoto = imageExists(`team/${member.photo}`);
           const side = i % 2 === 0 ? 'left' : 'right';
           return (
             <li
-              class:list={['diver', `diver--${side}`, { 'diver--deep': plate.deep }]}
-              style={`--row: ${i + 1}; --accent: ${colour.color}; --accent-ink: ${colour.ink}; --plate: ${plate.bg};`}
+              class:list={['diver', `diver--${side}`]}
+              style={`--row: ${i + 1}; --accent: ${colour.color}; --accent-ink: ${colour.ink};`}
             >
               <span class="diver-dot" aria-hidden="true"></span>
               <span class="diver-lead" aria-hidden="true"></span>
@@ -178,22 +173,24 @@ const depths = [0, 50, 100, 150, 200, 250, 300];
     color: var(--color-muted);
   }
 
-  /* the water: foam at the top, through grey-green, to deep navy at the bottom */
+  /* the dive: solid deep navy. A foam block carries the light on down the right of the line for a
+     little way, so the edge between the light heading and the dark dive steps down at the line. */
   .dive-water {
+    --step: calc(var(--space-xl) + clamp(6rem, 12vw, 11rem));   /* how much further the light runs on the right */
+    position: relative;
     padding-block: var(--space-lg) var(--space-2xl);
-    /* the same teal-to-navy water as the depth graphic on The Problem */
-    background: linear-gradient(
-      to bottom,
-      var(--light-bg) 0%,
-      #b9dcdb 6%,
-      #3a9ea4 17%,
-      #1f7480 30%,
-      #145465 42%,
-      #0d3a4c 56%,
-      #092737 72%,
-      #071a29 88%,
-      var(--color-bg) 100%
-    );
+    color: var(--color-text);
+    background: var(--color-bg);
+  }
+
+  .dive-water::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    right: 0;
+    height: var(--step);
+    background: var(--light-bg);
   }
 
   .dive-deep {
@@ -234,7 +231,7 @@ const depths = [0, 50, 100, 150, 200, 250, 300];
     list-style: none;
   }
 
-  /* the line itself, dark near the surface and pale in the deep */
+  /* the line itself */
   .dive-list::before {
     content: '';
     position: absolute;
@@ -242,7 +239,7 @@ const depths = [0, 50, 100, 150, 200, 250, 300];
     bottom: 0;
     left: 50%;
     width: 1px;
-    background: linear-gradient(rgb(11 22 32 / 0.55), rgb(11 22 32 / 0.35) 45%, rgb(232 241 245 / 0.35) 55%, rgb(232 241 245 / 0.55));
+    background: rgb(232 241 245 / 0.4);
   }
 
   /* depth marks along the line: a short tick and the depth on its left */
@@ -260,7 +257,7 @@ const depths = [0, 50, 100, 150, 200, 250, 300];
     font-family: var(--font-mono);
     font-size: 0.68rem;
     letter-spacing: 0.06em;
-    color: rgb(11 22 32 / 0.7);
+    color: rgb(232 241 245 / 0.75);
   }
 
   .dive-depth::after {
@@ -271,10 +268,6 @@ const depths = [0, 50, 100, 150, 200, 250, 300];
     width: 0.9rem;
     height: 1px;
     background: currentColor;
-  }
-
-  .dive-depth--deep {
-    color: rgb(232 241 245 / 0.75);
   }
 
   .dive-depth:not(.dive-depth--end)::after {
@@ -323,11 +316,7 @@ const depths = [0, 50, 100, 150, 200, 250, 300];
   .diver-lead {
     position: absolute;
     top: calc(2.2rem + 0.5rem);
-    border-top: 1px dashed rgb(11 22 32 / 0.45);
-  }
-
-  .diver--deep .diver-lead {
-    border-top-color: rgb(232 241 245 / 0.45);
+    border-top: 1px dashed rgb(232 241 245 / 0.45);
   }
 
   .diver--left .diver-dot {
@@ -405,21 +394,15 @@ const depths = [0, 50, 100, 150, 200, 250, 300];
     left: -1rem;
   }
 
-  /* the card sits straight on the water, like the founder's portrait (phones add a plate below) */
+  /* the card sits straight on the navy, like the founder's portrait (phones add a plate below) */
   .diver-plate {
-    --ink: var(--light-text);
-    --ink-muted: rgb(11 22 32 / 0.72);
-    --ink-line: rgb(11 22 32 / 0.25);
+    --ink: var(--color-text);
+    --ink-muted: rgb(232 241 245 / 0.7);
+    --ink-line: rgb(232 241 245 / 0.18);
     position: relative;
     z-index: 1;
     color: var(--ink);
     transition: translate var(--duration) var(--ease);
-  }
-
-  .diver--deep .diver-plate {
-    --ink: var(--color-text);
-    --ink-muted: rgb(232 241 245 / 0.7);
-    --ink-line: rgb(232 241 245 / 0.18);
   }
 
   .diver-card:hover .diver-plate {
@@ -567,6 +550,13 @@ const depths = [0, 50, 100, 150, 200, 250, 300];
 
   /* ---------- Phones: the line down the left, everyone in one column to its right ---------- */
 
+  /* phones: the light runs on a little way down the right half (the line is at the left edge here) */
+  @media (max-width: 760px) {
+    .dive-water {
+      --step: 4.5rem;
+    }
+  }
+
   @media (max-width: 760px) {
     .dive-list {
       --gap: 1.75rem;   /* from the line to the cards */
@@ -604,7 +594,7 @@ const depths = [0, 50, 100, 150, 200, 250, 300];
 
     /* the card becomes a row on a plate: a square portrait on the left, the words on the right */
     .diver-plate {
-      background: var(--plate);
+      background: var(--color-surface);
       border: 1px solid var(--ink-line);
       display: grid;
       grid-template-columns: 5.5rem minmax(0, 1fr);

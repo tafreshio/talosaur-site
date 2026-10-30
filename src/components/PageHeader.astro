@@ -101,25 +101,25 @@ const photoUrl = imageUrl(`pages/${image}`);
     animation: photo-in 1.4s var(--ease) both;
   }
 
-  /* Shading so the text stays readable, without a dark band at the bottom: the photo runs
-     right to its bottom edge and meets the light section below with a clean line (like
-     Colossal). Only the left side, where the title and intro sit, is darkened, plus a little
-     at the top behind the menu. */
+  /* A light shade so the text stays readable while the photo stays bright: a soft one on the left,
+     where the title and intro sit, and a thin one along the top behind the menu. The text itself
+     carries a soft shadow (below), which does most of the work. No dark band at the bottom: the
+     photo meets the light section below with a clean line (like Colossal). */
   .page-header-media::after {
     content: '';
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(90deg, rgb(6 18 31 / 0.72) 0%, rgb(6 18 31 / 0.5) 42%, rgb(6 18 31 / 0.16) 72%, transparent 90%),
-      linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 82%, transparent) 0%, color-mix(in srgb, var(--color-bg) 40%, transparent) 16%, transparent 30%);
+      linear-gradient(90deg, rgb(6 18 31 / 0.42) 0%, rgb(6 18 31 / 0.24) 40%, transparent 70%),
+      linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 55%, transparent) 0%, transparent 18%);
   }
 
-  /* Phones: the text runs the full width, so shade the whole photo evenly instead */
+  /* Phones: the text runs the full width, so a light even shade instead */
   @media (max-width: 760px) {
     .page-header-media::after {
       background:
-        linear-gradient(rgb(6 18 31 / 0.58), rgb(6 18 31 / 0.58)),
-        linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 72%, transparent) 0%, transparent 28%);
+        linear-gradient(rgb(6 18 31 / 0.34), rgb(6 18 31 / 0.34)),
+        linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 55%, transparent) 0%, transparent 22%);
     }
   }
 
@@ -158,6 +158,15 @@ const photoUrl = imageUrl(`pages/${image}`);
   .page-title {
     max-width: 16ch;
     font-size: var(--text-hero);
+  }
+
+  /* a soft dark glow behind the white words, so they read on a bright photo without darkening it */
+  .page-header--image .page-title {
+    text-shadow: 0 0 2rem rgb(6 18 31 / 0.55), 0 1px 3px rgb(6 18 31 / 0.45);
+  }
+
+  .page-header--image .page-intro {
+    text-shadow: 0 0 1.2rem rgb(6 18 31 / 0.75), 0 1px 2px rgb(6 18 31 / 0.6);
   }
 
   /* a long headline (Positions) a size down, so it takes two lines like the others, not three,
