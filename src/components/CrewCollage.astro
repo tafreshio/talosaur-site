@@ -82,15 +82,18 @@ const BITE = 'var(--climb)';
 //   Alvin's picture starts a little below the bottom of Dominick's, and Omeed's starts about 40% of
 //   the way down Alvin's, so the last three overlap in height instead of stepping down like stairs.
 const KM_DROP = 'calc(5rem + 60% + 0.267 * var(--col-gap) + 9rem)';
-const AZ_DROP = 'calc(var(--climb) + 58.33% - 0.1667 * var(--col-gap) + 3.5rem)';
-const OT_DROP = 'calc(var(--climb) + 105% + 0.3 * var(--col-gap) + 13rem)';
+const AZ_DROP = 'calc(var(--climb) + 70% - 0.3 * var(--col-gap) + 3.5rem)';
+const OT_DROP = 'calc(var(--climb) + 140% + 0.4 * var(--col-gap) + 13rem)';
+// Tablets: Omeed is as wide as Dominick and sits under him, so he starts below Dominick's square
+// picture (100% of his own width) plus Dominick's caption and some room
+const OT_TAB_DROP = 'calc(var(--climb) + 100% + 13rem)';
 const slots = [
   { d: [1, 11, '0rem'], t: [1, 7, '0rem', '1 / span 2'], m: ['100%', 'start', 'none', '0rem'], ratio: '4 / 5', strip: 'none', glow: '85% 15%', feature: true },
   { d: [13, 5, KM_DROP], t: [9, 4, '3rem', '1'], m: ['74%', 'end', 'left', '4.75rem'], ratio: '1 / 1', strip: 'top-left', glow: '80% 20%' },
   { d: [19, 6, '5rem'], t: [10, 3, '2rem', '2'], m: ['62%', 'start', 'right', '4.75rem'], ratio: '3 / 4', strip: 'left-up', glow: '30% 20%' },
-  { d: [1, 5, OT_DROP], t: [1, 4, '8rem', '4'], m: ['74%', 'end', 'left', '-2.8rem'], ratio: '4 / 5', strip: 'right-up', glow: '20% 15%' },
-  { d: [5, 7, BITE], t: [2, 4, BITE, '4'], m: ['100%', 'start', 'top', '4.1rem'], ratio: '4 / 3', strip: 'right-down', glow: '75% 30%', bleed: true, climber: true },
-  { d: [16, 9, AZ_DROP], t: [8, 5, '2rem', '4'], m: ['72%', 'start', 'right', '4.75rem'], ratio: '5 / 4', strip: 'bottom', glow: '15% 85%' },
+  { d: [1, 5, OT_DROP], t: [1, 4, OT_TAB_DROP, '4'], m: ['74%', 'end', 'left', '-2.8rem'], ratio: '4 / 5', strip: 'top-right', glow: '20% 15%' },
+  { d: [5, 7, BITE], t: [2, 4, BITE, '4'], m: ['100%', 'start', 'top', '6.25rem'], ratio: '1 / 1', strip: 'right-up', glow: '75% 30%', bleed: true },
+  { d: [15, 10, AZ_DROP], t: [8, 5, '2rem', '4'], m: ['72%', 'start', 'right', '4.75rem'], ratio: '5 / 4', strip: 'bottom', glow: '15% 85%' },
 ];
 
 // Laptop rows: the first three people share row 1, the statement is row 2, the next three share
@@ -142,7 +145,7 @@ const statementAfter = Math.min(3, members.length);
           return (
             <>
               <article
-                class:list={['crew-card', `crew-card--strip-${slot.strip}`, `crew-card--m-strip-${slot.m[2]}`, { 'crew-card--feature': slot.feature, 'crew-card--bleed': slot.bleed, 'crew-card--climber': slot.climber }]}
+                class:list={['crew-card', `crew-card--strip-${slot.strip}`, `crew-card--m-strip-${slot.m[2]}`, { 'crew-card--feature': slot.feature, 'crew-card--bleed': slot.bleed }]}
                 style={`--col: ${slot.d[0]}; --span: ${slot.d[1]}; --drop: ${slot.d[2]}; --d-row: ${desktopRow(i)}; --t-col: ${slot.t[0]}; --t-span: ${slot.t[1]}; --t-drop: ${slot.t[2]}; --t-row: ${tabletRow(String(slot.t[3]), i)}; --m-w: ${slot.m[0]}; --m-side: ${slot.m[1]}; --m-gap: ${slot.m[3]}; --glow: ${slot.glow}; --accent: ${colour.color}; --accent-ink: ${colour.ink};`}
                 data-reveal
               >
@@ -219,9 +222,11 @@ const statementAfter = Math.min(3, members.length);
     --row-gap: clamp(3rem, 5vw, 5.5rem);
     --pad: clamp(4.5rem, 9vw, 7.5rem);      /* lime above and below the statement box */
     --offset: clamp(1rem, 2.2vw, 2rem);     /* how far the frame sits up and right of the box */
-    /* how far the card after the statement climbs into the empty bottom left corner of the box: far
-       enough that its "[ Photo to come ]" label sits well above the box's sign off line */
-    --climb-into: calc(clamp(1.75rem, 3.5vw, 3.5rem) + 5rem);
+    /* how far the card after the statement climbs into the empty bottom left corner of the box:
+       just far enough that its "[ Photo to come ]" label sits on the same line as the box's sign off
+       (the box's bottom padding, plus the label's line and the panel's own padding and border); the
+       rest of the card hangs well below the lime */
+    --climb-into: calc(clamp(1.75rem, 3.5vw, 3.5rem) + 2rem + 1px);
     --climb: calc(-1 * (var(--row-gap) + var(--pad) + var(--climb-into)));
     position: relative;
     /* extra room at the bottom: the feather star photo below reaches up into this section */
@@ -326,10 +331,10 @@ const statementAfter = Math.min(3, members.length);
     display: none;
   }
 
-  /* left edge, running out past the top corner */
+  /* left edge, running out past the top corner and ending halfway down */
   .crew-card--strip-left-up .crew-media::after {
     top: -0.9rem;
-    bottom: 30%;
+    bottom: 50%;
     left: -6px;
     width: 6px;
   }
@@ -350,12 +355,12 @@ const statementAfter = Math.min(3, members.length);
     width: 6px;
   }
 
-  /* the card that climbs over the box: its strip comes out from under the box's bottom edge (on
-     phones the card doesn't climb, and its strip runs along the top) */
-  @media (min-width: 761px) {
-    .crew-card--climber.crew-card--strip-right-down .crew-media::after {
-      top: var(--climb-into);
-    }
+  /* top edge, running out past the right corner */
+  .crew-card--strip-top-right .crew-media::after {
+    top: -6px;
+    left: 30%;
+    right: -0.9rem;
+    height: 6px;
   }
 
   /* top edge, running out past the left corner */
@@ -560,6 +565,12 @@ const statementAfter = Math.min(3, members.length);
     background: var(--light-bg);
   }
 
+  /* the paragraph in the box doesn't drift with the scroll here: a card overlaps the box, and the
+     words should stay put inside it */
+  .crew-statement-box :global(.statement-body) {
+    transform: none !important;
+  }
+
   /* inside the box the big line is set a size smaller, so it fits with room to spare, and the
      paragraph starts a column further left so less of the box stands empty */
   .crew-statement-box :global(.statement-line) {
@@ -582,11 +593,6 @@ const statementAfter = Math.min(3, members.length);
   /* ---------- Tablets: 12 columns; the first person spans two rows beside the next two ---------- */
 
   @media (max-width: 1099px) {
-    /* on tablets the box's empty corner is taller, so the card climbs further into it */
-    .crew {
-      --climb-into: calc(clamp(1.75rem, 3.5vw, 3.5rem) + 8rem);
-    }
-
     /* the step's corner on the second card's left edge (column 9 of 12) */
     .crew::before {
       left: calc(var(--gutter) + (100% - 2 * var(--gutter) + var(--col-gap)) / 12 * 8);
@@ -714,8 +720,19 @@ const statementAfter = Math.min(3, members.length);
 
     /* more lime under the box, so the next card can tuck into it with a clear strip of lime above */
     .crew-statement {
-      margin-top: 3.75rem;
+      margin-top: 2.5rem;
       padding-bottom: 4.75rem;
+    }
+
+    /* the edge-to-edge card is wide on phones, and its strip starts on the same line as the step and
+       the first card's colour block */
+    .crew-card--bleed .crew-panel,
+    .crew-card--bleed :global(.photo) {
+      aspect-ratio: 4 / 3 !important;
+    }
+
+    .crew-card--bleed.crew-card--m-strip-top .crew-media::after {
+      left: calc(var(--gutter) + (100% - 2 * var(--gutter)) * 0.58);
     }
 
     /* the first card is square on phones, so it doesn't take a whole screen */

@@ -97,12 +97,20 @@ const run = Array.from({ length: Math.max(2, Math.ceil(8 / Math.max(words.length
     }
   }
 
-  /* standing still (reduced motion): the strip simply stops, one line running off the right edge,
-     like a frame of the moving version */
+  /* For people who ask for less motion the strip stands still, one line running off the right edge
+     like a frame of the moving version; its right end fades out, so the word cut off at the screen
+     edge reads as a strip that carries on, not a mistake */
   @media (prefers-reduced-motion: reduce) {
+    /* standing still, the first word starts on the page margin (on wide screens the page is
+       centred, so the margin sits further in) */
     .marquee-track {
       animation: none;
-      padding-left: var(--gutter);
+      padding-left: calc(max(0px, (100vw - var(--max-width)) / 2) + var(--gutter));
+    }
+
+    .marquee {
+      -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 6rem), transparent);
+      mask-image: linear-gradient(to right, #000 calc(100% - 6rem), transparent);
     }
   }
 </style>
