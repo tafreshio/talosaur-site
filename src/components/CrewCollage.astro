@@ -64,20 +64,34 @@ const palette: Record<string, { color: string; ink: string }> = {
 const fallback = { color: 'var(--color-orange)', ink: 'var(--light-text)' };
 const colourOf = (role: string) => palette[Object.keys(palette).find((k) => role.toLowerCase().includes(k.slice(0, 8))) ?? ''] ?? fallback;
 
-// Where each card sits, repeating every six people.
-//   Laptops (12 columns): col = first column, span = columns wide, drop = how far below the top of
-//   its row the card starts (a negative drop pulls it up over the lime band).
-//   Tablets (6 columns): tCol, tSpan, tDrop.
-//   Phones (one column): mW = width, mSide = start (left) or end (right).
-//   ratio = the picture's shape; strip = the edge the colour strip runs along.
+// Where each card sits, repeating every six people. Sizes and heights are chosen so that cards side
+// by side either line up exactly or are clearly apart, never nearly lined up.
+//   d = laptops (24 columns): col = first column, span = columns wide, drop = how far below the top
+//       of its row the card starts. BITE pulls a card up over the bottom of the lime band.
+//   t = tablets (12 columns): the same, plus row (the first person spans two rows beside the next two).
+//   m = phones (one column): w = width, side = start (left) or end (right), strip = the edge the
+//       colour strip runs along, gap = space above the card; bleed = the picture runs to the screen edges.
+//   ratio = the picture's shape; strip = the edge the colour strip runs along on wider screens
+//   (none for the first card, which has a colour block instead); glow = where the colour glows on a
+//   stand-in panel.
+const BITE = 'calc(-1 * (var(--row-gap) + var(--bite)))';
 const slots = [
-  { col: 1, span: 5, drop: '0rem', tCol: 1, tSpan: 4, tDrop: '0rem', mW: '100%', mSide: 'start', ratio: '4 / 5', strip: 'left', feature: true },
-  { col: 7, span: 3, drop: '6rem', tCol: 5, tSpan: 2, tDrop: '9rem', mW: '76%', mSide: 'end', ratio: '1 / 1', strip: 'top' },
-  { col: 10, span: 3, drop: '15rem', tCol: 2, tSpan: 3, tDrop: '0rem', mW: '64%', mSide: 'start', ratio: '3 / 4', strip: 'right' },
-  { col: 1, span: 3, drop: '8rem', tCol: 1, tSpan: 2, tDrop: '5rem', mW: '70%', mSide: 'end', ratio: '1 / 1', strip: 'left' },
-  { col: 5, span: 4, drop: '-4.5rem', tCol: 3, tSpan: 4, tDrop: '-3rem', mW: '100%', mSide: 'start', ratio: '4 / 3', strip: 'top' },
-  { col: 10, span: 3, drop: '11rem', tCol: 2, tSpan: 3, tDrop: '0rem', mW: '72%', mSide: 'start', ratio: '4 / 5', strip: 'right' },
+  { d: [1, 11, '0rem'], t: [1, 7, '0rem', '1 / span 2'], m: ['100%', 'start', 'none', '0rem'], ratio: '4 / 5', strip: 'none', glow: '85% 15%', feature: true },
+  { d: [13, 5, '7rem'], t: [9, 4, '0rem', '1'], m: ['74%', 'end', 'left', '3.5rem'], ratio: '1 / 1', strip: 'top', glow: '80% 20%' },
+  { d: [19, 6, '13rem'], t: [10, 3, '0rem', '2'], m: ['62%', 'start', 'right', '2rem'], ratio: '3 / 4', strip: 'right', glow: '30% 20%' },
+  { d: [2, 5, '10rem'], t: [9, 4, '3rem', '4'], m: ['68%', 'end', 'left', '5rem'], ratio: '4 / 5', strip: 'left', glow: '20% 15%' },
+  { d: [9, 8, BITE], t: [1, 7, BITE, '4'], m: ['100%', 'start', 'top', '3.5rem'], ratio: '4 / 3', strip: 'top', glow: '75% 30%', bleed: true },
+  { d: [18, 7, '1rem'], t: [3, 5, '-3rem', '5'], m: ['72%', 'start', 'right', '2.5rem'], ratio: '5 / 4', strip: 'bottom', glow: '15% 85%' },
 ];
+
+// Tablet rows: the first six people use rows 1 and 2, the statement row 3, then rows 4 and 5; any
+// further group of six carries on below.
+const tabletRow = (row: string, i: number) => {
+  const block = Math.floor(i / slots.length);
+  if (block === 0) return row;
+  const shift = 5 + (block - 1) * 4;
+  return row.replace(/^\d+/, (n) => String(Number(n) + shift - (Number(n) > 3 ? 1 : 0)));
+};
 
 // The statement goes in after the first three people (or at the end, for a smaller crew)
 const statementAfter = Math.min(3, members.length);
@@ -110,8 +124,8 @@ const statementAfter = Math.min(3, members.length);
           return (
             <>
               <article
-                class:list={['crew-card', `crew-card--strip-${slot.strip}`, { 'crew-card--feature': slot.feature }]}
-                style={`--col: ${slot.col}; --span: ${slot.span}; --drop: ${slot.drop}; --t-col: ${slot.tCol}; --t-span: ${slot.tSpan}; --t-drop: ${slot.tDrop}; --m-w: ${slot.mW}; --m-side: ${slot.mSide}; --accent: ${colour.color}; --accent-ink: ${colour.ink};`}
+                class:list={['crew-card', `crew-card--strip-${slot.strip}`, `crew-card--m-strip-${slot.m[2]}`, { 'crew-card--feature': slot.feature, 'crew-card--bleed': slot.bleed }]}
+                style={`--col: ${slot.d[0]}; --span: ${slot.d[1]}; --drop: ${slot.d[2]}; --t-col: ${slot.t[0]}; --t-span: ${slot.t[1]}; --t-drop: ${slot.t[2]}; --t-row: ${tabletRow(String(slot.t[3]), i)}; --m-w: ${slot.m[0]}; --m-side: ${slot.m[1]}; --m-gap: ${slot.m[3]}; --glow: ${slot.glow}; --accent: ${colour.color}; --accent-ink: ${colour.ink};`}
                 data-reveal
               >
                 <div class="crew-media">
@@ -142,10 +156,11 @@ const statementAfter = Math.min(3, members.length);
 
               {statement && i === statementAfter - 1 && (
                 <div class="crew-statement">
-                  <span class="crew-statement-frame" aria-hidden="true"></span>
-                  <div class="crew-statement-box theme-light">
-                    <span class="crew-statement-dot" aria-hidden="true"></span>
-                    <Statement tag={statement.tag} headline={statement.headline} text={statement.text} signoff={statement.signoff} />
+                  <div class="crew-statement-inner">
+                    <span class="crew-statement-frame" aria-hidden="true"><span class="crew-statement-mark"></span></span>
+                    <div class="crew-statement-box theme-light">
+                      <Statement tag={statement.tag} headline={statement.headline} text={statement.text} signoff={statement.signoff} />
+                    </div>
                   </div>
                 </div>
               )}
@@ -165,18 +180,26 @@ const statementAfter = Math.min(3, members.length);
     background: var(--color-bg);
   }
 
+  /* the disciplines strip; the navy starts right under its bottom rule on the left */
   .crew-surface {
     display: flow-root;
-    padding-block: var(--space-xl) var(--space-lg);
+    padding-top: var(--space-xl);
     background: var(--light-bg);
   }
 
-  /* The step: the light carries on down the right-hand side for a little way before the navy takes
-     over the full width, so the edge is uneven. The section title starts below it, in the dark. */
+  /* The step: on the right the light carries on down for a little way before the navy takes over the
+     full width, so the edge is uneven. Its corner sits on the left edge of the second card. The
+     section title starts below it, in the dark. */
   .crew {
     --step: clamp(3.5rem, 2rem + 5vw, 7rem);
+    --col-gap: clamp(0.75rem, 1.1vw, 1rem);
+    --row-gap: clamp(3rem, 5vw, 5.5rem);
+    --pad: clamp(3rem, 7vw, 7rem);          /* lime above and below the statement box */
+    --offset: clamp(1rem, 2.2vw, 2rem);     /* how far the frame sits up and right of the box */
+    --bite: calc(var(--pad) - 1.5rem);      /* how far a card climbs over the bottom of the lime */
     position: relative;
-    padding-bottom: var(--space-2xl);
+    /* extra room at the bottom: the feather star photo below reaches up into this section */
+    padding-bottom: calc(var(--space-2xl) + 4rem);
     color: var(--color-text);
     background: var(--color-bg);
   }
@@ -186,13 +209,13 @@ const statementAfter = Math.min(3, members.length);
     position: absolute;
     top: 0;
     right: 0;
-    width: 42%;
+    left: calc(50% + var(--col-gap) / 2);
     height: var(--step);
     background: var(--light-bg);
   }
 
   .crew-head {
-    padding-top: calc(var(--step) + var(--space-xl));
+    padding-top: calc(var(--step) + var(--space-xl) + 1.5rem);
   }
 
   .crew-count {
@@ -200,21 +223,20 @@ const statementAfter = Math.min(3, members.length);
     color: var(--color-muted);
   }
 
-  /* ---------- The collage ---------- */
+  /* ---------- The collage (laptops: 24 narrow columns, so sizes can vary finely) ---------- */
 
   .crew-grid {
     position: relative;
     display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    column-gap: clamp(1rem, 2.2vw, 2rem);
-    row-gap: clamp(3rem, 5vw, 5.5rem);
+    grid-template-columns: repeat(24, minmax(0, 1fr));
+    gap: var(--row-gap) var(--col-gap);
     align-items: start;
     padding-top: var(--space-lg);
   }
 
   .crew-card {
     position: relative;
-    z-index: 1;
+    z-index: 3; /* above the lime band and the statement box where a card climbs over them */
     grid-column: var(--col) / span var(--span);
     margin-top: var(--drop);
   }
@@ -258,8 +280,8 @@ const statementAfter = Math.min(3, members.length);
     translate: 0 -4px;
   }
 
-  /* the thin colour strip along one edge of the picture (Colossal's magenta edge strip): it starts a
-     little way along the edge and runs past the corner */
+  /* the thin colour strip along one edge of the picture (like Colossal's edge strips): it runs past
+     one corner, always away from the role tag below */
   .crew-media::after {
     content: '';
     position: absolute;
@@ -267,9 +289,13 @@ const statementAfter = Math.min(3, members.length);
     background: var(--accent);
   }
 
+  .crew-card--strip-none .crew-media::after {
+    display: none;
+  }
+
   .crew-card--strip-left .crew-media::after {
-    top: 22%;
-    bottom: -0.9rem;
+    top: -0.9rem;
+    bottom: 26%;
     left: -6px;
     width: 6px;
   }
@@ -288,7 +314,15 @@ const statementAfter = Math.min(3, members.length);
     height: 6px;
   }
 
-  /* the first (biggest) card gets a solid block offset behind its top right corner instead of a strip */
+  /* along the bottom it starts past the role tag below, and runs out past the right corner */
+  .crew-card--strip-bottom .crew-media::after {
+    bottom: -6px;
+    left: 58%;
+    right: -0.9rem;
+    height: 6px;
+  }
+
+  /* the first (biggest) card gets a solid block offset behind its top right corner instead */
   .crew-block {
     position: absolute;
     z-index: -1;
@@ -299,12 +333,8 @@ const statementAfter = Math.min(3, members.length);
     background: var(--accent);
   }
 
-  .crew-card--feature .crew-media::after {
-    display: none;
-  }
-
   /* Stand-in for a portrait: a dark panel with the initials, over a faint pattern for the person's
-     discipline and a glow in their colour */
+     discipline and a glow in their colour (placed differently on each card) */
   .crew-panel {
     position: relative;
     display: flex;
@@ -317,7 +347,7 @@ const statementAfter = Math.min(3, members.length);
     background-color: #08182a;
     background-image:
       var(--motif),
-      radial-gradient(circle at 85% 15%, color-mix(in srgb, var(--accent) 34%, transparent), transparent 60%),
+      radial-gradient(circle at var(--glow), color-mix(in srgb, var(--accent) 34%, transparent), transparent 60%),
       linear-gradient(160deg, #0c2236, #06121f);
   }
 
@@ -421,26 +451,53 @@ const statementAfter = Math.min(3, members.length);
 
   /* ---------- The statement, cut into the collage ---------- */
 
+  /* The lime band runs the full row from the content's left edge off the right edge of the screen,
+     with a fine dot screen. The box sits four columns in. */
   .crew-statement {
-    --pad: clamp(3rem, 5vw, 5rem);        /* lime above and below the box */
-    --offset: clamp(0.75rem, 1.4vw, 1.25rem);
     position: relative;
-    grid-column: 3 / -1;
+    grid-column: 1 / -1;
     padding-block: var(--pad);
   }
 
-  /* the lime band behind it, with a fine dot screen, running off the right edge of the screen */
   .crew-statement::before {
     content: '';
     position: absolute;
     z-index: 0;
     top: 0;
     bottom: 0;
-    left: 18%;
+    left: 0;
     right: calc(50% - 50vw);
     background:
       radial-gradient(circle, rgb(6 18 31 / 0.13) 1.1px, transparent 1.5px) 0 0 / 9px 9px,
       var(--color-lime);
+  }
+
+  .crew-statement-inner {
+    position: relative;
+    z-index: 1;
+    margin-left: calc((100% - 23 * var(--col-gap)) / 24 * 4 + 4 * var(--col-gap));
+  }
+
+  /* a hairline frame the size of the box, shifted up and to the right and tucked behind it, so its
+     top and right edges show on the lime, with a small navy square on its corner */
+  .crew-statement-frame {
+    position: absolute;
+    z-index: 1;
+    top: calc(-1 * var(--offset));
+    right: calc(-1 * var(--offset));
+    bottom: var(--offset);
+    left: var(--offset);
+    border: 1px solid rgb(6 18 31 / 0.6);
+    pointer-events: none;
+  }
+
+  .crew-statement-mark {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    width: 0.6rem;
+    height: 0.6rem;
+    background: var(--color-bg);
   }
 
   .crew-statement-box {
@@ -462,69 +519,80 @@ const statementAfter = Math.min(3, members.length);
     }
   }
 
-  /* a hairline frame the size of the box, shifted up and to the right and tucked behind it, so only
-     its top and right edges show on the lime, and an orange dot on the box's corner */
-  .crew-statement-frame {
-    position: absolute;
-    z-index: 1;
-    top: calc(var(--pad) - var(--offset));
-    bottom: calc(var(--pad) + var(--offset));
-    left: var(--offset);
-    right: calc(-1 * var(--offset));
-    border: 1px solid rgb(6 18 31 / 0.6);
-    pointer-events: none;
-  }
-
-  .crew-statement-dot {
-    position: absolute;
-    z-index: 2;
-    right: -0.7rem;
-    bottom: -0.7rem;
-    width: 1.4rem;
-    height: 1.4rem;
-    border-radius: 50%;
-    background: var(--color-orange);
-  }
-
-  /* ---------- Tablets: six columns ---------- */
+  /* ---------- Tablets: 12 columns; the first person spans two rows beside the next two ---------- */
 
   @media (max-width: 1099px) {
+    .crew::before {
+      left: 50%;
+    }
+
     .crew-grid {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
+      grid-template-columns: repeat(12, minmax(0, 1fr));
     }
 
     .crew-card {
       grid-column: var(--t-col) / span var(--t-span);
+      grid-row: var(--t-row);
       margin-top: var(--t-drop);
     }
 
     .crew-statement {
-      grid-column: 1 / -1;
+      grid-row: 3;
+    }
+
+    .crew-statement-inner {
+      margin-left: calc((100% - 11 * var(--col-gap)) / 12 + var(--col-gap));
+      margin-right: var(--offset);
     }
   }
 
   /* ---------- Phones: one column, the cards at different widths on alternating sides ---------- */
 
   @media (max-width: 760px) {
+    .crew {
+      --pad: var(--space-lg);
+      --offset: 0.6rem;
+      padding-bottom: calc(var(--space-2xl) + 3rem);
+    }
+
     .crew::before {
-      width: 46%;
+      left: 54%;
     }
 
     .crew-grid {
       display: flex;
       flex-direction: column;
-      gap: var(--space-xl);
+      gap: 0;
       padding-top: var(--space-md);
     }
 
     .crew-card {
       align-self: var(--m-side);
       width: var(--m-w);
-      margin-top: 0;
+      margin-top: var(--m-gap);
     }
 
-    /* on phones every strip runs along the top edge, so nothing pokes into the side margins */
+    /* on phones the strip runs along the side facing the middle of the screen, or the top, so
+       nothing pokes into the side margins */
     .crew-card .crew-media::after {
+      top: -0.9rem;
+      bottom: 30%;
+      left: auto;
+      right: auto;
+      width: 6px;
+      height: auto;
+      display: block;
+    }
+
+    .crew-card--m-strip-left .crew-media::after {
+      left: -6px;
+    }
+
+    .crew-card--m-strip-right .crew-media::after {
+      right: -6px;
+    }
+
+    .crew-card--m-strip-top .crew-media::after {
       top: -6px;
       bottom: auto;
       left: 30%;
@@ -533,17 +601,33 @@ const statementAfter = Math.min(3, members.length);
       height: 6px;
     }
 
-    .crew-block {
-      top: -0.6rem;
-      right: 0;
+    .crew-card--m-strip-none .crew-media::after {
+      display: none;
     }
 
-    .crew-media:has(.crew-block) {
-      margin-right: 0.6rem;
+    /* the first card leaves room on its right for the colour block */
+    .crew-card--feature {
+      padding-right: 0.6rem;
+    }
+
+    .crew-block {
+      top: -0.6rem;
+      right: -0.6rem;
+    }
+
+    /* one picture runs to both edges of the screen: the single change of scale in the column */
+    .crew-card--bleed .crew-media {
+      margin-inline: calc(-1 * var(--gutter));
+    }
+
+    /* its label and initials stay on the page margin, lined up with the words below */
+    .crew-card--bleed .crew-panel {
+      padding-inline: var(--gutter);
+      border-inline: 0;
     }
 
     .crew-soon {
-      font-size: 0.6rem;
+      font-size: 0.68rem;
     }
 
     .crew-name {
@@ -554,25 +638,22 @@ const statementAfter = Math.min(3, members.length);
       font-size: 2.2rem;
     }
 
+    .crew-statement {
+      margin-top: 5rem;
+    }
+
     .crew-statement::before {
       left: calc(50% - 50vw + 2.5rem);
     }
 
-    .crew-statement {
-      --pad: var(--space-lg);
-      --offset: 0.6rem;
+    .crew-statement-inner {
+      margin-left: 0;
+      margin-right: var(--offset);
     }
 
-    /* on phones the frame peeks out above only, so nothing pokes into the side margins */
-    .crew-statement-frame {
-      right: 0;
-    }
-
-    .crew-statement-dot {
-      right: 1.5rem;
-      bottom: -0.55rem;
-      width: 1.1rem;
-      height: 1.1rem;
+    /* inside the box the coloured phrases can hang a little to the left, like on wider screens */
+    .crew-statement-box :global(.statement-box) {
+      margin-left: -0.16em;
     }
   }
 </style>
