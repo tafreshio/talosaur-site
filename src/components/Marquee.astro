@@ -1,6 +1,6 @@
 ---
-// A slow, endless strip of very large thin words running across the whole screen, with an orange
-// ring between them. Every other word is drawn as an outline. Used on Who we are to list the
+// A slow, endless strip of very large thin words running across the whole screen, with a ring
+// between them (orange, or one colour per word). Every other word is drawn as an outline. Used on Who we are to list the
 // team's disciplines between the two rows of people.
 //
 //   <Marquee words={['Mechanical', 'Hydraulics', 'Ocean']} />
@@ -10,10 +10,11 @@
 // each word shows once, wrapped onto as many lines as it needs and centred.
 interface Props {
   words: string[];
+  colors?: string[]; // a colour for the ring after each word (CSS colours, in the same order); orange if left out
   speed?: number;   // seconds for one full loop (bigger = slower)
 }
 
-const { words, speed = 50 } = Astro.props;
+const { words, colors = [], speed = 50 } = Astro.props;
 
 // Enough copies to cover a wide screen; the whole run is drawn twice so the loop is seamless
 const run = Array.from({ length: Math.max(2, Math.ceil(8 / Math.max(words.length, 1))) }, () => words).flat();
@@ -25,7 +26,7 @@ const run = Array.from({ length: Math.max(2, Math.ceil(8 / Math.max(words.length
       <ul class:list={['marquee-run', { 'marquee-run--copy': copy === 1 }]}>
         {run.map((word, i) => (
           <li class:list={['marquee-word', { 'marquee-word--outline': i % 2 === 1, 'marquee-word--repeat': i >= words.length, 'marquee-word--last': i === words.length - 1 }]}>
-            {word}<span class="marquee-ring"></span>
+            {word}<span class="marquee-ring" style={colors.length ? `--ring: ${colors[i % words.length]};` : undefined}></span>
           </li>
         ))}
       </ul>
@@ -78,9 +79,9 @@ const run = Array.from({ length: Math.max(2, Math.ceil(8 / Math.max(words.length
     width: 0.22em;
     height: 0.22em;
     margin-inline: 0.45em;
-    border: 2px solid var(--color-orange);
+    border: 2px solid var(--ring, var(--color-orange));
     border-radius: 50%;
-    box-shadow: inset 0 0 0 0.05em transparent, inset 0 0 0 0.09em var(--color-orange);
+    box-shadow: inset 0 0 0 0.05em transparent, inset 0 0 0 0.09em var(--ring, var(--color-orange));
   }
 
   @keyframes marquee {

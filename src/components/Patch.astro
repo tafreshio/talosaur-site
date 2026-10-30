@@ -248,8 +248,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
     background: linear-gradient(90deg, var(--color-accent) 0 1.6rem, transparent 1.6rem calc(100% - 1.6rem), var(--color-accent) calc(100% - 1.6rem));
   }
 
+  /* centred under the lens */
   .patch--lens .patch-caption {
-    margin-top: 1.6rem;
+    display: block;
+    width: fit-content;
+    margin: 1.6rem auto 0;
     text-align: center;
   }
 

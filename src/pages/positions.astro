@@ -64,7 +64,7 @@ const life = {
   <StoryBand
     variant="split"
     image="story-join.jpg"
-    position="30% 50%"
+    position="50% 50%"
     tag="Now recruiting"
     title={`${String(positions.length).padStart(2, '0')} open roles`}
     items={positions.map((role) => ({ title: role.title }))}
@@ -121,6 +121,13 @@ const life = {
 </BaseLayout>
 
 <style>
+  /* Phones: the role names in the band get a size that fits the narrow column */
+  @media (max-width: 760px) {
+    :global(.story--split .split-list li) {
+      font-size: 0.95rem;
+    }
+  }
+
   /* ---------- Life on the team ---------- */
 
   .life {
@@ -213,7 +220,7 @@ const life = {
   /* Each role is a row: number | title | details | Apply, with the button at the right end */
   .role {
     display: grid;
-    grid-template-columns: 3rem minmax(0, 1.2fr) minmax(0, 2fr) auto;
+    grid-template-columns: 3rem minmax(0, 1.6fr) minmax(0, 2fr) auto;
     align-items: start;
     gap: var(--space-md) var(--space-lg);
     padding-block: var(--space-lg);

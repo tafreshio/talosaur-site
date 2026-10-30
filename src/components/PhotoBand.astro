@@ -98,9 +98,15 @@ const hasSlot = Astro.slots.has('default');
   }
 
   .photo-band-title {
-    max-width: 11ch;
+    max-width: 14ch; /* with balanced lines: "Our build log" and "How can we help?" never leave a word alone */
     font-size: var(--text-hero);
     color: var(--color-white);
+  }
+
+  /* the split band's headline shares the width with the list, so it's a size down: "How / can we / help?" */
+  .photo-band--split .photo-band-title {
+    max-width: 11ch;
+    font-size: clamp(3rem, 1rem + 7.5vw, 8rem);
   }
 
   .photo-band--md .photo-band-title {
@@ -139,6 +145,17 @@ const hasSlot = Astro.slots.has('default');
 
   .photo-band--split .photo-band-slot {
     margin-top: 0;
+  }
+
+  /* the split band (Home's "How can we help?") fades into the dark band below it */
+  .photo-band--split .photo-band-media::before {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    inset: auto 0 80px; /* the picture runs 80 px past the band's bottom edge (room to pan) */
+    height: 12rem;
+    background: linear-gradient(to top, var(--color-bg), transparent);
+    pointer-events: none;
   }
 
   @media (max-width: 900px) {

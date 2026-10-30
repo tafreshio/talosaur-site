@@ -407,7 +407,11 @@ const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
 
   /* Section 03: the cards sit in front of the radiolarian (Specimen.astro) */
   /* Section 03 above is light too, so its bottom padding already gives the usual gap; the
-     radiolarian sits across the join between the two, clear of the cards */
+     radiolarian sits across the join between the two, over the section's hairline, clear of the cards */
+  .band--specimen > :global(.specimen) {
+    z-index: 2;
+  }
+
   .band--specimen > .section {
     position: relative;
     z-index: 1;
@@ -560,9 +564,10 @@ const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
     position: relative; /* in front of the texture */
   }
 
-  /* the list is short, so a little less empty band under it than usual */
-  .band--sonar {
-    padding-bottom: var(--space-xl);
+  /* the sonar texture fades in from the top, so there's no hard line where the photo band above ends */
+  .band--sonar .band-texture {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14rem);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 14rem);
   }
 
   .news-grid {
