@@ -1,0 +1,654 @@
+---
+// The crew on the Who we are page, drawn as a dive. A line runs down the middle of the section from
+// the surface (0 m) to the twilight zone (300 m), and each person hangs off it on alternating sides,
+// like the stops on the Home timeline. The water darkens as you go down: the section starts on the
+// light foam background and ends in deep navy, and the cards darken with it, light near the surface,
+// dark below the halfway line. At the bottom, in the dark, sits the team statement.
+//
+//   <CrewDive members={crew} firstNumber={2} disciplines={['Mechanical', 'Hydraulics']} statement={teamStatement} />
+//
+// Each card is a "specimen plate": a mono label row, the portrait (or, until the photo exists, a dark
+// panel with the person's initials over a pattern for their discipline), then role, name, major and
+// year, and LinkedIn if there is one. A colour block sits off one corner, and on wide screens a big
+// thin number sits in the open space beside the card. People's photos stay natural; only the blocks
+// and patterns carry colour.
+//
+// Team members are listed in src/data/team.ts; photos go in public/images/team/.
+import Photo from './Photo.astro';
+import Marquee from './Marquee.astro';
+import SectionHeader from './SectionHeader.astro';
+import Statement from './Statement.astro';
+import { isPlaceholder } from '../data/site';
+import { imageExists } from '../lib/images';
+import type { TeamMember } from '../data/team';
+
+interface Props {
+  members: TeamMember[];
+  firstNumber?: number;       // the number on the first card (the founder above is 01)
+  disciplines?: string[];     // the words for the strip at the top
+  statement?: { tag?: string; headline: string; text?: string; signoff?: string };
+}
+
+const { members, firstNumber = 1, disciplines = [], statement } = Astro.props;
+
+const pad = (n: number) => String(n).padStart(2, '0');
+
+// Big text on a panel: "Sam Cakici" -> "SC". A [Name] placeholder shows the role instead.
+const panelText = (name: string, role: string) =>
+  isPlaceholder(name) ? role : name.split(/\s+/).map((part) => part[0]).join('').slice(0, 3).toUpperCase();
+
+// The discipline from the role ("Lead Mechanical Engineer" -> "Mechanical"), and the pattern drawn
+// behind that person's initials: engineering grid, flowing water, a zigzag, a dot matrix, sonar rings
+const disciplineOf = (role: string) => role.replace(/\b(lead|senior|engineer|engineering)\b/gi, '').trim() || role;
+const motifOf = (role: string) => {
+  const r = role.toLowerCase();
+  if (r.includes('mechanical')) return 'grid';
+  if (r.includes('hydraulic')) return 'waves';
+  if (r.includes('electrical')) return 'zigzag';
+  if (r.includes('software')) return 'dots';
+  if (r.includes('ocean')) return 'rings';
+  return 'stripes';
+};
+
+// The colour block behind each card, in turn, and which corner it sits off
+const looks = [
+  { color: 'violet', corner: 'tr' },
+  { color: 'orange', corner: 'bl' },
+  { color: 'magenta', corner: 'tr' },
+  { color: 'lime', corner: 'bl' },
+  { color: 'violet', corner: 'tr' },
+  { color: 'orange', corner: 'bl' },
+];
+
+// Card colours: the first half are light plates (near the surface), the rest dark plates (deep water),
+// each a shade darker than the one before
+const hex = (h: string) => [1, 3, 5].map((k) => parseInt(h.slice(k, k + 2), 16));
+const mix = (a: string, b: string, t: number) =>
+  '#' + hex(a).map((v, k) => Math.round(v * (1 - t) + hex(b)[k] * t).toString(16).padStart(2, '0')).join('');
+const lightCount = Math.ceil(members.length / 2);
+const darkCount = members.length - lightCount;
+const plateFor = (i: number) =>
+  i < lightCount
+    ? { bg: mix('#f8fbfa', '#c7d4d6', lightCount > 1 ? i / (lightCount - 1) : 0), deep: false }
+    : { bg: mix('#1f3d50', '#0b1d2d', darkCount > 1 ? (i - lightCount) / (darkCount - 1) : 0), deep: true };
+
+// The depth ruler along the line, every 50 m from the surface to 300 m
+const depths = [0, 50, 100, 150, 200, 250, 300];
+---
+
+<div class="band dive-band">
+  <!-- Surface: the disciplines strip and the section heading, on the light background -->
+  <div class="theme-light dive-surface">
+    {disciplines.length > 0 && <Marquee words={disciplines} />}
+    <section class="container dive-head">
+      <SectionHeader number={1} title="The crew">
+        <p class="label dive-count">[ {pad(members.length)} crew · {pad(disciplines.length)} disciplines ]</p>
+      </SectionHeader>
+    </section>
+  </div>
+
+  <!-- The water: the line from 0 m to 300 m, with the crew on alternating sides -->
+  <div class="dive-water">
+    <div class="container">
+      <ul class="dive-list" data-reveal-group>
+        <li class="dive-ruler" aria-hidden="true">
+          {depths.map((d) => (
+            <span class:list={['dive-depth', { 'dive-depth--deep': d / 300 >= 0.5 }]} style={`--at: ${d / 300};`}>{d}&nbsp;m</span>
+          ))}
+        </li>
+        {members.map((member, i) => {
+          const look = looks[i % looks.length];
+          const plate = plateFor(i);
+          const hasPhoto = imageExists(`team/${member.photo}`);
+          const side = i % 2 === 0 ? 'left' : 'right';
+          return (
+            <li
+              class:list={['diver', `diver--${side}`, { 'diver--deep': plate.deep }]}
+              style={`--row: ${i + 1}; --accent: var(--color-${look.color}); --plate: ${plate.bg};`}
+            >
+              <span class="diver-dot" aria-hidden="true"></span>
+              <span class="diver-lead" aria-hidden="true"></span>
+              <span class="diver-num" aria-hidden="true">{pad(i + firstNumber)}</span>
+              <article class="diver-card">
+                <span class:list={['diver-block', `diver-block--${look.corner}`]} aria-hidden="true"></span>
+                <div class="diver-plate">
+                  <p class="label diver-label">
+                    <span>{pad(i + firstNumber)} · Crew</span>
+                    <span>{disciplineOf(member.role)}</span>
+                  </p>
+                  <div class="diver-media">
+                    {hasPhoto ? (
+                      <Photo file={`team/${member.photo}`} label={member.name} ratio="4 / 3" />
+                    ) : (
+                      <div class:list={['diver-panel', `diver-panel--${motifOf(member.role)}`]} aria-hidden="true">
+                        <span class="label diver-soon">[ Photo to come ]</span>
+                        <span class:list={['diver-initials', { 'diver-initials--role': isPlaceholder(member.name) }]}>{panelText(member.name, member.role)}</span>
+                      </div>
+                    )}
+                  </div>
+                  <p class="label diver-role">{member.role}</p>
+                  <h2 class="diver-name">{member.name}</h2>
+                  <div class="diver-foot">
+                    <p class="diver-major">{member.majorYear}</p>
+                    {member.linkedin && (
+                      <a class="label diver-linkedin" href={member.linkedin} target="_blank" rel="noopener noreferrer">
+                        LinkedIn <span aria-hidden="true">↗</span>
+                        <span class="visually-hidden">(opens in a new tab)</span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </article>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </div>
+
+  <!-- The deep: the team statement, on navy -->
+  {statement && (
+    <div class="dive-deep">
+      <div class="container">
+        <p class="label dive-bottom" aria-hidden="true"><span class="dive-bottom-dot"></span>300&nbsp;m · The twilight zone</p>
+        <Statement tag={statement.tag} headline={statement.headline} text={statement.text} signoff={statement.signoff} />
+      </div>
+    </div>
+  )}
+</div>
+
+<style>
+  /* ---------- The three parts of the band ---------- */
+
+  .dive-band {
+    padding-bottom: 0;
+    background: var(--color-bg);
+  }
+
+  .dive-surface {
+    display: flow-root; /* keeps the heading's bottom margin inside, so no dark strip shows under it */
+    background: var(--light-bg);
+  }
+
+  .dive-head {
+    padding-top: var(--space-2xl);
+  }
+
+  .dive-count {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  /* the water: foam at the top, through grey-green, to deep navy at the bottom */
+  .dive-water {
+    padding-block: var(--space-lg) var(--space-2xl);
+    background: linear-gradient(
+      to bottom,
+      var(--light-bg) 0%,
+      #d3dfe0 20%,
+      #7d97a2 44%,
+      #24425a 58%,
+      #0f263a 80%,
+      var(--color-bg) 100%
+    );
+  }
+
+  .dive-deep {
+    padding-bottom: var(--space-2xl);
+    color: var(--color-text);
+    background: var(--color-bg);
+  }
+
+  /* the end of the line: an orange ring with the depth, like the timeline's stops */
+  .dive-bottom {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 0 var(--space-xl);
+    color: var(--color-accent);
+  }
+
+  .dive-bottom-dot {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--color-orange);
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 2px var(--color-bg), inset 0 0 0 5px var(--color-orange);
+  }
+
+  /* ---------- The line and the two columns ---------- */
+
+  .dive-list {
+    --gap: clamp(7rem, 11vw, 11rem);     /* the space between the two columns, with the line in the middle */
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-auto-rows: minmax(0, auto);
+    gap: clamp(1.5rem, 3vw, 3rem) var(--gap);   /* rows: the space between two cards on the same side */
+    margin: 0;
+    padding: var(--space-xl) 0 var(--space-md);
+    list-style: none;
+  }
+
+  /* the line itself, dark near the surface and pale in the deep */
+  .dive-list::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: linear-gradient(rgb(11 22 32 / 0.55), rgb(11 22 32 / 0.35) 45%, rgb(232 241 245 / 0.35) 55%, rgb(232 241 245 / 0.55));
+  }
+
+  /* depth marks along the line: a short tick and the depth on its left */
+  .dive-ruler {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .dive-depth {
+    position: absolute;
+    top: calc(var(--at) * 100%);
+    right: calc(50% + 0.9rem);
+    transform: translateY(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    color: rgb(11 22 32 / 0.7);
+  }
+
+  .dive-depth::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 0.45rem);
+    width: 0.9rem;
+    height: 1px;
+    background: currentColor;
+  }
+
+  .dive-depth--deep {
+    color: rgb(232 241 245 / 0.75);
+  }
+
+  /* Each person takes two rows, starting one row after the person before, on alternating sides,
+     so the cards overlap by half their height and zigzag down the line */
+  .diver {
+    position: relative;
+    grid-row: var(--row) / span 2;
+    width: min(22rem, 100%);
+  }
+
+  .diver--left {
+    grid-column: 1;
+    justify-self: end;
+  }
+
+  .diver--right {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  /* the ring on the line, level with the top of the card, and a dashed line out to the card */
+  .diver-dot {
+    position: absolute;
+    z-index: 2;
+    top: 2.2rem;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--color-orange);
+    border-radius: 50%;
+    background: var(--plate);
+    box-shadow: inset 0 0 0 2px var(--plate), inset 0 0 0 5px var(--color-orange);
+  }
+
+  .diver-lead {
+    position: absolute;
+    top: calc(2.2rem + 0.5rem);
+    width: calc(var(--gap) / 2);
+    border-top: 1px dashed rgb(11 22 32 / 0.45);
+  }
+
+  .diver--deep .diver-lead {
+    border-top-color: rgb(232 241 245 / 0.45);
+  }
+
+  .diver--left .diver-dot {
+    right: calc(-1 * var(--gap) / 2 - 0.5rem);
+  }
+
+  .diver--left .diver-lead {
+    left: 100%;
+  }
+
+  .diver--right .diver-dot {
+    left: calc(-1 * var(--gap) / 2 - 0.5rem);
+  }
+
+  .diver--right .diver-lead {
+    right: 100%;
+  }
+
+  /* the big thin number in the open space on the outer side of each card (wide screens only) */
+  .diver-num {
+    position: absolute;
+    top: 0.4rem;
+    display: none;
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-stretch: 125%;
+    font-size: clamp(3.5rem, 1rem + 4vw, 6.5rem);
+    line-height: 1;
+    color: var(--accent);
+    pointer-events: none;
+  }
+
+  .diver--left .diver-num {
+    right: calc(100% + 2rem);
+  }
+
+  .diver--right .diver-num {
+    left: calc(100% + 2rem);
+  }
+
+  @media (min-width: 1200px) {
+    .diver-num {
+      display: block;
+    }
+  }
+
+  /* ---------- The card ---------- */
+
+  .diver-card {
+    position: relative;
+  }
+
+  /* colour block off one corner, behind the plate */
+  .diver-block {
+    position: absolute;
+    z-index: 0;
+    width: 46%;
+    height: 38%;
+    background: var(--accent);
+  }
+
+  .diver-block--tr {
+    top: -1rem;
+    right: -1rem;
+  }
+
+  .diver-block--bl {
+    bottom: -1rem;
+    left: -1rem;
+  }
+
+  .diver-plate {
+    --ink: var(--light-text);
+    --ink-muted: var(--light-muted);
+    --ink-line: rgb(11 22 32 / 0.18);
+    position: relative;
+    z-index: 1;
+    padding: 0.9rem 0.9rem 1.1rem;
+    color: var(--ink);
+    background: var(--plate);
+    border: 1px solid var(--ink-line);
+    transition: translate var(--duration) var(--ease), border-color var(--duration) var(--ease);
+  }
+
+  .diver--deep .diver-plate {
+    --ink: var(--color-text);
+    --ink-muted: rgb(232 241 245 / 0.7);
+    --ink-line: rgb(232 241 245 / 0.18);
+  }
+
+  .diver-card:hover .diver-plate {
+    translate: 0 -4px;
+    border-color: var(--accent);
+  }
+
+  /* the plate's label row: number on the left, discipline on the right, a hairline under */
+  .diver-label {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    margin: 0 0 0.75rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--ink-line);
+    color: var(--ink-muted);
+  }
+
+  .diver-media {
+    position: relative;
+  }
+
+  /* Stand-in for a portrait: a dark panel with the initials, over a faint pattern for the person's
+     discipline and a glow in the card's colour */
+  .diver-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    aspect-ratio: 4 / 3;
+    padding: 0.8rem 0.9rem;
+    overflow: hidden;
+    background-color: #08182a;
+    background-image:
+      var(--motif),
+      radial-gradient(circle at 85% 15%, color-mix(in srgb, var(--accent) 38%, transparent), transparent 60%),
+      linear-gradient(160deg, #0c2236, #06121f);
+  }
+
+  .diver-panel--grid {
+    --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M20 0V20M0 20H20' stroke='%23e8f1f5' stroke-opacity='.13' fill='none'/%3E%3C/svg%3E");
+  }
+
+  .diver-panel--waves {
+    --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='16'%3E%3Cpath d='M0 8 Q12 1 24 8 T48 8' stroke='%23e8f1f5' stroke-opacity='.16' fill='none'/%3E%3C/svg%3E");
+  }
+
+  .diver-panel--zigzag {
+    --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16'%3E%3Cpath d='M0 12 L6 4 L12 12 L18 4 L24 12' stroke='%23e8f1f5' stroke-opacity='.15' fill='none'/%3E%3C/svg%3E");
+  }
+
+  .diver-panel--dots {
+    --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Ccircle cx='6' cy='6' r='1.1' fill='%23e8f1f5' fill-opacity='.2'/%3E%3C/svg%3E");
+  }
+
+  .diver-panel--rings {
+    --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Cg fill='none' stroke='%23e8f1f5' stroke-opacity='.15'%3E%3Ccircle cx='340' cy='60' r='40'/%3E%3Ccircle cx='340' cy='60' r='80'/%3E%3Ccircle cx='340' cy='60' r='120'/%3E%3Ccircle cx='340' cy='60' r='160'/%3E%3Ccircle cx='340' cy='60' r='200'/%3E%3Ccircle cx='340' cy='60' r='240'/%3E%3Ccircle cx='340' cy='60' r='280'/%3E%3Ccircle cx='340' cy='60' r='320'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: cover, auto, auto;
+  }
+
+  .diver-panel--stripes {
+    --motif: repeating-linear-gradient(135deg, rgb(232 241 245 / 0.07) 0 1px, transparent 1px 14px);
+  }
+
+  .diver-soon {
+    color: var(--color-lime);
+  }
+
+  .diver-initials {
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    font-weight: 900;
+    font-size: clamp(3.5rem, 1.5rem + 4.5vw, 6.5rem);
+    line-height: 0.85;
+    letter-spacing: -0.02em;
+    color: rgb(232 241 245 / 0.9);
+  }
+
+  .diver-initials--role {
+    font-size: clamp(1.3rem, 0.9rem + 1vw, 2rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  /* role in an orange tag, then the name, then major and year under a hairline */
+  .diver-role {
+    display: inline-block;
+    margin: 0.9rem 0 0;
+    padding: 0.25rem 0.5rem;
+    color: var(--color-accent-ink);
+    background: var(--color-orange);
+  }
+
+  .diver-name {
+    margin-top: 0.6rem;
+    font-size: clamp(1.6rem, 1.1rem + 1.2vw, 2.4rem);
+    color: var(--ink);
+  }
+
+  .diver-foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-xs) var(--space-md);
+    margin-top: 0.8rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--ink-line);
+  }
+
+  .diver-major {
+    margin: 0;
+    color: var(--ink-muted);
+  }
+
+  .diver-linkedin {
+    display: inline-block;
+    padding-block: 0.35rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .diver-linkedin:hover {
+    color: var(--accent);
+  }
+
+  /* ---------- Tablets: the same dive, closer to the line ---------- */
+
+  @media (max-width: 1099px) {
+    .dive-list {
+      --gap: 4.5rem;
+    }
+
+    /* closer to the line there's no room for the depths beside it */
+    .dive-depth {
+      display: none;
+    }
+  }
+
+  /* ---------- Phones: the line down the left, everyone in one column to its right ---------- */
+
+  @media (max-width: 760px) {
+    .dive-list {
+      --gap: 2.75rem;   /* from the line to the cards */
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: var(--space-lg);
+      padding-left: var(--gap);
+      padding-right: 0.6rem; /* the colour blocks poke out this far; this keeps them inside the margin */
+    }
+
+    .dive-list::before {
+      left: 0.9rem;
+    }
+
+    .diver,
+    .diver--left,
+    .diver--right {
+      grid-column: 1;
+      grid-row: auto;
+      justify-self: stretch;
+      width: 100%;
+    }
+
+    .diver--left .diver-dot,
+    .diver--right .diver-dot {
+      left: calc(-1 * var(--gap) + 0.9rem - 0.5rem);
+      right: auto;
+    }
+
+    .diver--left .diver-lead,
+    .diver--right .diver-lead {
+      left: calc(-1 * var(--gap) + 0.9rem);
+      right: auto;
+      width: calc(var(--gap) - 0.9rem);
+    }
+
+    /* the plate turns into a row: a square portrait on the left, the words on the right */
+    .diver-plate {
+      display: grid;
+      grid-template-columns: 6.5rem minmax(0, 1fr);
+      grid-template-rows: auto auto auto 1fr;
+      column-gap: var(--space-md);
+      padding: 0.75rem;
+    }
+
+    .diver-label {
+      grid-column: 1 / -1;
+    }
+
+    .diver-media {
+      grid-row: 2 / 5;
+    }
+
+    .diver-panel,
+    .diver-media > :global(.photo) {
+      aspect-ratio: 1 / 1 !important;
+    }
+
+    .diver-panel {
+      padding: 0.5rem;
+    }
+
+    .diver-soon {
+      display: none;
+    }
+
+    .diver-initials {
+      font-size: 2.5rem;
+    }
+
+    .diver-initials--role {
+      font-size: 0.85rem;
+    }
+
+    .diver-role {
+      justify-self: start;
+      margin-top: 0;
+      font-size: 0.62rem;
+    }
+
+    .diver-name {
+      margin-top: 0.45rem;
+      font-size: 1.3rem;
+    }
+
+    .diver-foot {
+      margin-top: 0.45rem;
+      padding-top: 0.4rem;
+    }
+
+    .diver-major {
+      font-size: var(--text-sm);
+    }
+
+    .diver-block {
+      width: 40%;
+      height: 50%;
+    }
+
+    .diver-block--tr {
+      top: -0.6rem;
+      right: -0.6rem;
+    }
+
+    .diver-block--bl {
+      bottom: -0.6rem;
+      left: -0.6rem;
+    }
+  }
+</style>

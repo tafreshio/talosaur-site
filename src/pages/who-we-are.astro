@@ -2,11 +2,9 @@
 // Who we are: the team, in the style of the people sections on Colossal's Company page.
 //   - The lead (lead: true in src/data/team.ts) gets a row of their own: a big portrait with their name
 //     in violet boxes over its corner, and a description box beside it (like Colossal's chairman feature).
-//   - Everyone else is a staggered collage below: cards of different sizes, columns at different
-//     heights, colour blocks and frames offset behind the photos, and each card drifting at its own
-//     speed as you scroll.
-//   - The collage is split in two rows of three. Between them: a slow strip of the team's disciplines
-//     (taken from the roles) and a few lines about the team as a whole (teamStatement in team.ts).
+//   - Everyone else follows as a dive (src/components/CrewDive.astro): a line down the page from the
+//     surface to 300 m, each person hanging off it on alternating sides, the water and the cards
+//     darkening as it goes down, and the team statement (teamStatement in team.ts) at the bottom.
 //
 // Team members are listed in src/data/team.ts. A member with a photo in public/images/team/ gets a
 // photo card; without one, a plain panel with their initials. People's photos stay natural (no colour
@@ -18,9 +16,7 @@ import Patch from '../components/Patch.astro';
 import StoryBand from '../components/StoryBand.astro';
 import { url } from '../lib/url';
 import Photo from '../components/Photo.astro';
-import Marquee from '../components/Marquee.astro';
-import SectionHeader from '../components/SectionHeader.astro';
-import Statement from '../components/Statement.astro';
+import CrewDive from '../components/CrewDive.astro';
 import { team, teamIntro, teamStatement } from '../data/team';
 import { isPlaceholder } from '../data/site';
 import { imageExists } from '../lib/images';
@@ -29,31 +25,11 @@ import { imageExists } from '../lib/images';
 const panelText = (name: string, role: string) =>
   isPlaceholder(name) ? role : name.split(/\s+/).map((part) => part[0]).join('').slice(0, 3).toUpperCase();
 
-const pad = (n: number) => String(n).padStart(2, '0');
-
 // The lead goes on top on their own; the rest of the team follows in the collage
 const lead = team.find((member) => member.lead);
 const rest = team.filter((member) => member !== lead);
 const firstNumber = lead ? 2 : 1; // the lead is 01, the collage carries on from 02
 const leadHasPhoto = lead ? imageExists(`team/${lead.photo}`) : false;
-
-// How each crew card looks, in order. Every portrait is the same shape (4:5); only the colour block
-// behind it changes: its colour, and whether it sits off the top right or the bottom left corner.
-// drift: how far it drifts as you scroll (see BaseLayout.astro); the middle column moves a little more.
-const RATIO = '1 / 1'; // square crew panels: the initials read as a typographic portrait
-const looks = [
-  { accent: 'tr', color: 'violet', drift: 50 },
-  { accent: 'bl', color: 'orange', drift: 80 },
-  { accent: 'tr', color: 'magenta', drift: 50 },
-  { accent: 'bl', color: 'violet', drift: 50 },
-  { accent: 'tr', color: 'orange', drift: 80 },
-  { accent: 'bl', color: 'magenta', drift: 50 },
-];
-const lookFor = (i: number) => looks[i % looks.length];
-
-// Two rows of three. The strip of disciplines and the team statement go between them
-// (or after the first row, if there are only three people).
-const rows = [rest.slice(0, 3), rest.slice(3)];
 
 // The disciplines for the strip, from the roles: 'Lead Mechanical Engineer' -> 'Mechanical'
 const disciplines = [
@@ -122,61 +98,9 @@ const stats = [
        Copy: the Home "Who we are" card (Content doc). -->
   <StoryBand variant="stats" image="story-team.jpg" position="55% 40%" tag="The team in numbers" title="A Texas-based student team" items={stats} />
 
-  <!-- Light band: everyone else, in two rows of three with the disciplines strip and the team
-       statement between them, so the people get room to breathe -->
-  <div class="band band--top theme-light">
-    {rows.map((row, r) => (
-      <Fragment>
-        {r === 1 && disciplines.length > 0 && <Marquee words={disciplines} />}
-        <section class:list={['container', 'team', r === 0 ? 'team--before' : 'team--after']}>
-          {r === 0 && <SectionHeader number={1} title="The crew" />}
-
-          <!-- A few lines about the team as a whole (teamStatement in src/data/team.ts) -->
-          {r === 1 && (
-            <div class="ethos">
-              <Statement tag={teamStatement.tag} headline={teamStatement.headline} text={teamStatement.text} signoff={teamStatement.signoff} />
-            </div>
-          )}
-
-          {row.length > 0 && (
-            <ul class="crew" data-reveal-group>
-              {row.map((member, j) => {
-                const i = r * 3 + j; // position in the whole crew, for the number and the look
-                const hasPhoto = imageExists(`team/${member.photo}`);
-                const look = lookFor(i);
-                return (
-                  <li class="member">
-                    <div class="member-card" data-drift={look.drift}>
-                      <div class="member-media">
-                        <span class:list={['member-accent', `member-accent--${look.accent}`]} style={`--accent: var(--color-${look.color});`} aria-hidden="true"></span>
-                        {hasPhoto ? (
-                          <Photo file={`team/${member.photo}`} label={member.name} ratio={RATIO} />
-                        ) : (
-                          <div class="member-panel" style={`aspect-ratio: ${RATIO};`} aria-hidden="true">
-                            <span class="label member-soon">[ Photo to come ]</span>
-                            <span class:list={['member-initials', { 'member-initials--role': isPlaceholder(member.name) }]}>{panelText(member.name, member.role)}</span>
-                          </div>
-                        )}
-                        <!-- Orange tag on the photo's corner, like Colossal's role tags -->
-                        <p class="label member-tag"><span class="member-tag-num">{pad(i + firstNumber)} · </span>{member.role}</p>
-                      </div>
-                      <h2 class="member-name">{member.name}</h2>
-                      <p class="member-major">{member.majorYear}</p>
-                      {member.linkedin && (
-                        <a class="member-linkedin label" href={member.linkedin} target="_blank" rel="noopener noreferrer">
-                          LinkedIn <span aria-hidden="true">↗</span>
-                        </a>
-                      )}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </section>
-      </Fragment>
-    ))}
-  </div>
+  <!-- The crew as a dive from the surface to 300 m, with the team statement at the bottom
+       (src/components/CrewDive.astro) -->
+  <CrewDive members={rest} firstNumber={firstNumber} disciplines={disciplines} statement={teamStatement} />
 
   <!-- One photo with an offset frame across the edge into the photo below (natural NOAA footage) -->
   <Patch variant="frame" image="feather-star-wide.jpg" caption="Feather star · NOAA" side="right" straddle />
@@ -188,47 +112,6 @@ const stats = [
 </BaseLayout>
 
 <style>
-  /* ---------- The collage ---------- */
-
-  .team {
-    position: relative;
-  }
-
-  /* Three equal columns, the middle one a step lower, the same in both rows. Cards fill them left to
-     right, row by row (so screen readers still read the team in order). */
-  .crew {
-    --step: clamp(3rem, 6vw, 5.5rem);   /* how far the middle column sits lower */
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-items: start;
-    gap: clamp(4rem, 7vw, 7rem) clamp(2rem, 4vw, 4rem);
-    margin: 0;
-    padding: var(--space-md) 1.25rem var(--step);   /* the side padding leaves room for the colour blocks */
-    list-style: none;
-  }
-
-  /* "translate" (not "transform"), so it adds to the fade-in animation instead of being replaced by it */
-  .member:nth-child(3n + 2) {
-    translate: 0 var(--step);
-  }
-
-  /* room between the first row and the disciplines strip, and between the strip and the statement;
-     and the same gap above "The crew" as above every other section after a story band */
-  .team--before {
-    padding-top: var(--space-xl);
-    padding-bottom: var(--space-xl);
-  }
-
-  .team--after {
-    padding-top: var(--space-2xl);
-  }
-
-  /* ---------- What we share (src/components/Statement.astro) ---------- */
-
-  .ethos {
-    margin-bottom: var(--space-2xl);
-  }
-
   /* ---------- The lead: big portrait on the left, description box on the right ---------- */
 
   .lead {
@@ -327,11 +210,6 @@ const stats = [
 
   /* ---------- Photo, colour accents and tag ---------- */
 
-  .member-media {
-    position: relative;
-  }
-
-  .member-media > :global(.photo),
   .member-panel {
     position: relative;
     z-index: 1;
@@ -350,24 +228,6 @@ const stats = [
     width: 58%;
     height: 46%;
     background: var(--color-lime);
-  }
-
-  /* the crew's blocks: one shape, off the top right or the bottom left corner, in the card's colour */
-  .member-accent--tr,
-  .member-accent--bl {
-    width: 48%;
-    height: 46%;
-    background: var(--accent, var(--color-violet));
-  }
-
-  .member-accent--tr {
-    top: -1.25rem;
-    right: -1.25rem;
-  }
-
-  .member-accent--bl {
-    bottom: -1.25rem;
-    left: -1.25rem;
   }
 
   .member-tag {
@@ -418,29 +278,6 @@ const stats = [
     text-transform: uppercase;
   }
 
-  /* ---------- Name and details ---------- */
-
-  .member-name {
-    margin-top: calc(var(--space-md) + 0.5rem);
-    font-size: clamp(1.5rem, 1.1rem + 1vw, 2.25rem);
-  }
-
-  .member-major {
-    margin: var(--space-xs) 0 0;
-    color: var(--color-muted);
-  }
-
-  .member-linkedin {
-    display: inline-block;
-    margin-top: var(--space-sm);
-    color: var(--color-text);
-    text-decoration: none;
-  }
-
-  .member-linkedin:hover {
-    color: var(--color-accent);
-  }
-
   /* ---------- Tablet and phone: the lead stacks, the collage becomes two staggered columns ---------- */
 
   @media (max-width: 900px) {
@@ -473,33 +310,6 @@ const stats = [
     }
   }
 
-  @media (max-width: 1099px) {
-    .crew {
-      --step: clamp(2.5rem, 9vw, 5rem);
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--space-xl) var(--space-lg);
-    }
-
-    /* every second card sits lower */
-    .member:nth-child(3n + 2) {
-      translate: none;
-    }
-
-    .member:nth-child(2n) {
-      translate: 0 var(--step);
-    }
-
-    /* each row has three people, so the third goes across both columns as a wider card */
-    .member:nth-child(3) {
-      grid-column: 1 / -1;
-    }
-
-    .member:nth-child(3) .member-panel,
-    .member:nth-child(3) .member-media > :global(.photo) {
-      aspect-ratio: 16 / 10 !important;
-    }
-  }
-
   @media (max-width: 760px) {
     .lead-name {
       right: -0.75rem;
@@ -510,23 +320,9 @@ const stats = [
       font-size: var(--text-base);
     }
 
-    .crew {
-      gap: var(--space-xl) var(--space-md);
-    }
-
     .member-accent--block-lime {
       left: -0.6rem;
       bottom: -0.6rem;
-    }
-
-    .member-accent--tr {
-      top: -0.6rem;
-      right: -0.6rem;
-    }
-
-    .member-accent--bl {
-      bottom: -0.6rem;
-      left: -0.6rem;
     }
 
     /* on phones the tag drops its number; a long role wraps onto two even lines */
@@ -543,99 +339,12 @@ const stats = [
       display: none;
     }
 
-    /* the colour blocks poke out about 0.6rem; this keeps them inside the page margin */
-    .crew {
-      padding-inline: 0.6rem;
-    }
-
     .lead-media {
       margin-left: 0.6rem;
     }
 
     .member-panel {
       padding: var(--space-sm);
-    }
-
-    .member-name {
-      margin-top: var(--space-md);
-      font-size: 1.25rem;
-    }
-
-    .member-major {
-      font-size: var(--text-sm);
-    }
-  }
-
-  /* Phones: one column of rows, each a square portrait (or initials panel) with the role, name and
-     major beside it. Every card is the same size, and the role tag has room to stay on one line. */
-  @media (max-width: 600px) {
-    .crew {
-      grid-template-columns: minmax(0, 1fr);
-      gap: var(--space-lg);
-      padding-bottom: var(--space-md);
-    }
-
-    .member:nth-child(n) {
-      grid-column: auto;
-      translate: none;
-    }
-
-    .member-card {
-      display: grid;
-      grid-template-columns: 7rem minmax(0, 1fr);
-      grid-template-rows: auto auto 1fr;
-      column-gap: var(--space-md);
-      align-items: start;
-    }
-
-    .member-media {
-      grid-row: 1 / 4;
-    }
-
-    .member:nth-child(n) .member-panel,
-    .member:nth-child(n) .member-media > :global(.photo) {
-      aspect-ratio: 1 / 1 !important;
-    }
-
-    .member-panel {
-      padding: 0.6rem;
-    }
-
-    .crew .member-soon {
-      display: none;
-    }
-
-    .crew .member-initials {
-      font-size: 2.6rem;
-    }
-
-    .member-initials--role {
-      font-size: 0.9rem;
-    }
-
-    /* the role tag moves off the portrait, to the top of the text column beside it */
-    .member-media > .member-tag {
-      position: absolute;
-      top: 0;
-      left: calc(100% + var(--space-md));
-      right: auto;
-      white-space: nowrap;
-    }
-
-    .member-name {
-      grid-column: 2;
-      margin-top: 2.1rem;
-    }
-
-    .member-major,
-    .member-linkedin {
-      grid-column: 2;
-    }
-
-    .member-accent--tr,
-    .member-accent--bl {
-      width: 52%;
-      height: 52%;
     }
   }
 </style>
