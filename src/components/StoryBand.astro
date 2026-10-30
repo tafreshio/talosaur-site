@@ -496,7 +496,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
   .art {
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: auto 1fr;
     grid-template-areas:
       'title fig'
       'stats fig';
@@ -504,9 +504,10 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     align-items: center;
   }
 
+  /* the title and numbers run from the top of the column, straight under the tag */
   .story-title--art {
     grid-area: title;
-    align-self: end;
+    align-self: start;
     max-width: 14ch;
     font-size: clamp(2rem, 0.9rem + 2.6vw, 3.6rem);
   }

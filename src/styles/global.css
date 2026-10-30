@@ -233,6 +233,7 @@ h3 {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  padding-block: 0.45rem; /* a comfortable tap target, even in the small label type */
   font-weight: 600;
   color: var(--color-accent);
   text-decoration: none;

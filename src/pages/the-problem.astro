@@ -662,6 +662,16 @@ const pad = (n: number) => String(n).padStart(2, '0');
     }
 
     /* one column, in reading order: title, first paragraph, map, facts, then the rest of the text */
+    /* the Earth's key and note sit right under the Earth, before the number */
+    .fig-globe + .fig-text .fig-key {
+      order: -2;
+    }
+
+    .fig-globe + .fig-text .fig-note {
+      order: -1;
+      margin-bottom: var(--space-sm);
+    }
+
     .habitat-grid {
       display: flex;
       flex-direction: column;

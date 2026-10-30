@@ -149,10 +149,11 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
 
   /* Badge: a small dark pill in the photo's top-left corner, e.g. "● LIVE".
      It always uses the dark palette, so it reads the same on light and dark bands. */
+  /* inset past the placeholder's corner bracket, so the two don't touch */
   .card-badge {
     position: absolute;
-    top: var(--space-sm);
-    left: var(--space-sm);
+    top: calc(var(--space-sm) + 0.6rem);
+    left: calc(var(--space-sm) + 0.6rem);
     display: inline-flex;
     align-items: center;
     gap: 0.5em;

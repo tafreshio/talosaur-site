@@ -335,8 +335,25 @@ const pad = (n: number) => String(n).padStart(2, '0');
     width: clamp(18rem, 50%, 42rem);
   }
 
+  /* a little taller than a letterbox, so the photo still shows its subject (the tool, not just slush) */
   .patch--pano img {
-    aspect-ratio: 18 / 5;
+    aspect-ratio: 12 / 5;
+    object-fit: cover;
+    object-position: 50% 30%;
+  }
+
+  /* the caption hangs under the photo, outside the corner brackets, so they frame the photo alone */
+  .patch--pano .patch-caption {
+    position: absolute;
+    top: calc(100% + 1rem);
+    right: 0;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .patch-row--left .patch--pano .patch-caption {
+    right: auto;
+    left: 0;
   }
 
   .pano-corners {

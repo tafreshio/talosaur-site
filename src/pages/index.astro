@@ -110,10 +110,10 @@ const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
   </div>
 
   <!-- Light band: Section 04 (light, so the page doesn't run dark from here to the news). A radiolarian
-       from the 1887 HMS Challenger plates (false colour) runs off the right edge behind the cards,
-       like Colossal's cut-out animals. -->
+       from the 1887 HMS Challenger plates (false colour) runs off the right edge across the join with
+       Section 03, like Colossal's cut-out animals. -->
   <div class="band theme-light band--specimen">
-    <Specimen image="radiolarian.webp" label="Radiolarian · HMS Challenger, 1887" top="clamp(1rem, 2vw, 2rem)" size="clamp(14rem, 26vw, 25rem)" />
+    <Specimen image="radiolarian.webp" label="Radiolarian · HMS Challenger, 1887" top="clamp(-6rem, -6vw, -3rem)" size="clamp(11rem, 16vw, 15rem)" drift={20} />
     <!-- Section 04: featured content -->
     <section class="container section">
       <SectionHeader number={4} title={featuredHeading} />
@@ -149,7 +149,7 @@ const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
     <!-- Section 06: latest news -->
     <section class="container section">
       <SectionHeader number={6} title="Latest news">
-        <a class="text-link" href={url('/news')}>All news <span aria-hidden="true">→</span></a>
+        <a class="text-link label" href={url('/news')}>All news <span aria-hidden="true">→</span></a>
       </SectionHeader>
       <ol class="news-grid" data-reveal-group>
         {latestNews.map((entry) => (
@@ -305,7 +305,7 @@ const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-sm);
+    gap: var(--space-md); /* more room between the two figures than inside each */
   }
 
   .intro-stat {
@@ -406,9 +406,12 @@ const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
   }
 
   /* Section 03: the cards sit in front of the radiolarian (Specimen.astro) */
+  /* Section 03 above is light too, so its bottom padding already gives the usual gap; the
+     radiolarian sits across the join between the two, clear of the cards */
   .band--specimen > .section {
     position: relative;
     z-index: 1;
+    padding-top: 0;
   }
 
   /* phones: the radiolarian sits on its own above the heading, smaller, instead of behind it */
@@ -440,6 +443,34 @@ const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
 
     .band--specimen :global(.specimen-label::before) {
       display: none;
+    }
+
+    /* every featured photo still to come: on phones each card becomes a compact row, a small
+       "photo to come" square beside its text, instead of three big empty panels in a row */
+    .card-grid--pending > :global(.card) {
+      display: grid;
+      grid-template-columns: 6rem minmax(0, 1fr);
+      gap: var(--space-md);
+      align-items: start;
+    }
+
+    .card-grid--pending :global(.card-media) {
+      aspect-ratio: 1 / 1 !important;
+    }
+
+    .card-grid--pending :global(.ph) {
+      padding: 0.5rem;
+    }
+
+    /* in the small square only what the photo should show, like the News thumbnails */
+    .card-grid--pending :global(.ph-corner),
+    .card-grid--pending :global(.ph-tag),
+    .card-grid--pending :global(.ph-file) {
+      display: none;
+    }
+
+    .card-grid--pending :global(.ph-what) {
+      font-size: 0.72rem;
     }
 
     /* the Turtle drawing shows only its side view on phones, where the small labels can still be read */
@@ -525,9 +556,9 @@ const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
     position: relative; /* in front of the texture */
   }
 
-  /* the list is short, so less empty band under it */
+  /* the list is short, so a little less empty band under it than usual */
   .band--sonar {
-    padding-bottom: var(--space-lg);
+    padding-bottom: var(--space-xl);
   }
 
   .news-grid {

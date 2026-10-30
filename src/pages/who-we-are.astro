@@ -454,10 +454,12 @@ const stats = [
       width: min(30rem, 84%);
     }
 
-    /* the box tucks up under the photo, a little to the right */
+    /* the box tucks up under the photo, a little to the right, with a faint edge so the two dark
+       shapes don't merge into one */
     .lead-box {
       margin: calc(-1 * var(--space-md)) 0 0 auto;
       width: min(34rem, 88%);
+      box-shadow: 0 0 0 1px rgb(232 241 245 / 0.22), 0 1rem 2rem rgb(6 18 31 / 0.25);
     }
 
     /* the name sits higher, clear of the box */
@@ -599,11 +601,11 @@ const stats = [
       padding: 0.6rem;
     }
 
-    .member-soon {
+    .crew .member-soon {
       display: none;
     }
 
-    .member-initials {
+    .crew .member-initials {
       font-size: 2.6rem;
     }
 

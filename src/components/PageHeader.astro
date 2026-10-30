@@ -235,5 +235,13 @@ const photoUrl = imageUrl(`pages/${image}`);
     .page-intro {
       font-size: var(--text-base);
     }
+
+    /* one size for every page title on phones, comfortably bigger than the section headings below;
+       long titles wrap to a third line rather than shrink */
+    .page-title,
+    .page-title--long {
+      max-width: none;
+      font-size: clamp(2.75rem, 12.5vw, 3.6rem);
+    }
   }
 </style>
