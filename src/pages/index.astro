@@ -39,20 +39,18 @@ const pad = (n: number) => String(n).padStart(2, '0');
           <!-- two figures from The Problem (explored in src/data/problem.ts), as still pictures: the dotted
                Earth with the mapped share lit, and how little of the deep seafloor anyone has seen -->
           <div class="intro-figures">
-            <figure class="intro-fig">
-              <img class="intro-globe" src={imageUrl('figures/globe-mapped.svg')} alt="" width="600" height="600" loading="lazy" decoding="async" />
-              <figcaption>
+            <img class="intro-globe" src={imageUrl('figures/globe-mapped.svg')} alt="" width="600" height="600" loading="lazy" decoding="async" />
+            <div class="intro-stats">
+              <p class="intro-stat">
                 <span class="intro-fig-value">{explored.mapped.value}</span>
                 <span class="intro-fig-text">of the seafloor is mapped in detail.</span>
-              </figcaption>
-            </figure>
-            <figure class="intro-fig">
-              <span class="intro-fig-value intro-fig-value--big">{explored.seen.value}</span>
-              <figcaption>
-                <span class="intro-fig-text">of the deep seafloor has ever been seen. On a football field, that would be less than a sheet of paper.</span>
-                <a class="label intro-fig-src" href={url('/the-problem')}>See the figures <span aria-hidden="true">→</span></a>
-              </figcaption>
-            </figure>
+              </p>
+              <p class="intro-stat">
+                <span class="intro-fig-value">{explored.seen.value}</span>
+                <span class="intro-fig-text">of the deep seafloor has ever been seen.</span>
+              </p>
+              <a class="label intro-fig-src" href={url('/the-problem')}>See the figures <span aria-hidden="true">→</span></a>
+            </div>
           </div>
         </div>
       </div>
@@ -107,9 +105,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
     </section>
   </div>
 
-  <!-- Dark band: Section 04. A radiolarian from the 1887 HMS Challenger plates (false colour)
-       runs off the right edge behind the cards, like Colossal's cut-out animals. -->
-  <div class="band band--specimen">
+  <!-- Light band: Section 04 (light, so the page doesn't run dark from here to the news). A radiolarian
+       from the 1887 HMS Challenger plates (false colour) runs off the right edge behind the cards,
+       like Colossal's cut-out animals. -->
+  <div class="band theme-light band--specimen">
     <Specimen image="radiolarian.webp" label="Radiolarian · HMS Challenger, 1887" top="clamp(1rem, 2vw, 2rem)" size="clamp(14rem, 26vw, 25rem)" />
     <!-- Section 04: featured content -->
     <section class="container section">
@@ -279,7 +278,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
   /* two small figures side by side under the button, filling the space beside the tall headline */
   .intro-figures {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-md);
     width: 100%;
     margin-top: var(--space-md);
@@ -287,39 +285,40 @@ const pad = (n: number) => String(n).padStart(2, '0');
     border-top: 1px solid var(--color-line);
   }
 
-  .intro-fig {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-    margin: 0;
-  }
-
-  .intro-fig figcaption {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.3rem;
+  /* the Earth on the left, its two numbers beside it at the same size */
+  .intro-figures {
+    grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+    align-items: center;
   }
 
   .intro-globe {
     display: block;
-    width: min(100%, 11rem);
+    width: 100%;
     height: auto;
+  }
+
+  .intro-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .intro-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    margin: 0;
   }
 
   .intro-fig-value {
     font-family: var(--font-display);
     font-stretch: var(--display-width);
+    word-spacing: 0.1em; /* the condensed face squeezes the spaces too */
     font-weight: 800;
-    font-size: 1.75rem;
-    line-height: 1;
-    color: var(--color-accent);
-  }
-
-  /* without a picture, the number itself is the picture */
-  .intro-fig-value--big {
-    font-size: clamp(2.75rem, 1.5rem + 2.5vw, 4rem);
+    font-size: clamp(2.25rem, 1.4rem + 1.6vw, 3rem);
     line-height: 0.9;
+    color: var(--color-accent);
   }
 
   .intro-fig-text {
@@ -327,8 +326,29 @@ const pad = (n: number) => String(n).padStart(2, '0');
     line-height: 1.45;
   }
 
+  /* phones: the Earth centred, the two numbers side by side under it */
   @media (max-width: 760px) {
-    .intro-fig-value--big {
+    .intro-figures {
+      grid-template-columns: 1fr;
+      justify-items: center;
+    }
+
+    .intro-globe {
+      width: min(15rem, 70%);
+    }
+
+    .intro-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: 100%;
+      gap: var(--space-sm) var(--space-md);
+    }
+
+    .intro-fig-src {
+      grid-column: 1 / -1;
+    }
+
+    .intro-fig-value {
       font-size: 2rem;
     }
   }
@@ -378,6 +398,22 @@ const pad = (n: number) => String(n).padStart(2, '0');
     z-index: 1;
   }
 
+  /* phones: the radiolarian sits on its own above the heading, smaller, instead of behind it */
+  @media (max-width: 760px) {
+    .band--specimen {
+      padding-top: calc(40vw + 1rem);
+    }
+
+    .band--specimen :global(.specimen) {
+      top: 1.25rem;
+      width: 40vw;
+    }
+
+    .band--specimen :global(.specimen--right) {
+      right: -8vw;
+    }
+  }
+
   /* ---------- Section 04: three big rows ---------- */
 
   .help-list {
@@ -405,6 +441,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .help-label {
     font-family: var(--font-display);
     font-stretch: var(--display-width);
+    word-spacing: 0.1em; /* the condensed face squeezes the spaces too */
     font-weight: 800;
     font-size: var(--text-2xl);
     line-height: 1;
@@ -442,6 +479,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     height: 100%;
     max-width: none;
     object-fit: cover;
+    opacity: 0.55;   /* quieter, so the headlines on top read easily */
     pointer-events: none;
   }
 
@@ -464,7 +502,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     flex-direction: column;
     gap: var(--space-sm);
     padding-top: var(--space-sm);
-    border-top: 1px solid var(--color-line);
+    border-top: 1px solid rgb(232 241 245 / 0.35);
     transition: border-color var(--duration) var(--ease);
   }
 
@@ -493,7 +531,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     font-family: var(--font-body);
     font-stretch: normal;
     font-weight: 600;
-    font-size: var(--text-lg);
+    font-size: clamp(1.25rem, 1rem + 0.6vw, 1.6rem);
     line-height: 1.3;
     text-transform: none;
     letter-spacing: 0;

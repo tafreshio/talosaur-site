@@ -458,7 +458,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
     /* a section right under a straddling patch starts its content below the patch */
     :global(.patch-row--straddle + .photo-band .photo-band-inner) {
-      padding-top: calc(var(--space-2xl) + 7rem);
+      padding-top: calc(var(--space-2xl) + 8.5rem);
     }
 
     :global(.patch-row--straddle + .band) {
@@ -478,9 +478,15 @@ const pad = (n: number) => String(n).padStart(2, '0');
     }
   }
 
-  @media (max-width: 1099px) {
+  /* the section after the round lens starts below the lens and its caption: the lens's width,
+     less the part that hangs over the band above, plus a little room */
+  :global(.patch-row--lens.patch-row--straddle + .band) {
+    padding-top: calc(clamp(11rem, 22vw, 20rem) - clamp(3rem, 1rem + 5vw, 8rem) + 1rem);
+  }
+
+  @media (max-width: 760px) {
     :global(.patch-row--lens.patch-row--straddle + .band) {
-      padding-top: 9rem;
+      padding-top: 46vw;
     }
   }
 </style>

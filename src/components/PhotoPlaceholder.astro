@@ -9,17 +9,19 @@
 interface Props {
   label: string;      // what the photo should show, e.g. 'the whole team'
   file?: string;      // the file name it goes in, shown small (optional)
+  compact?: boolean;  // for small thumbnails: a small frame mark and the words, nothing else
 }
 
-const { label, file } = Astro.props;
+const { label, file, compact = false } = Astro.props;
 ---
 
-<div class="ph" aria-hidden="true">
-  <span class="ph-corner ph-corner--tl"></span>
-  <span class="ph-corner ph-corner--br"></span>
-  <p class="label ph-tag">[ Photo to come ]</p>
+<div class:list={['ph', { 'ph--compact': compact }]} aria-hidden="true">
+  {!compact && <span class="ph-corner ph-corner--tl"></span>}
+  {!compact && <span class="ph-corner ph-corner--br"></span>}
+  {compact && <span class="ph-frame"></span>}
+  <p class="label ph-tag">{compact ? 'Photo to come' : '[ Photo to come ]'}</p>
   <p class="ph-what">{label}</p>
-  {file && <p class="label ph-file">{file}</p>}
+  {file && !compact && <p class="label ph-file">{file}</p>}
 </div>
 
 <style>
@@ -71,11 +73,50 @@ const { label, file } = Astro.props;
     margin: 0;
     font-family: var(--font-display);
     font-stretch: var(--display-width);
+    word-spacing: 0.1em; /* the condensed face squeezes the spaces too */
     font-weight: 800;
     font-size: clamp(1rem, 0.8rem + 0.8vw, 1.5rem);
     line-height: 1.05;
     text-transform: uppercase;
     text-wrap: balance;
+  }
+
+  /* Compact: for thumbnails a few centimetres wide. A small square frame mark (like a viewfinder),
+     then the words in small type, so it reads as "photo to come" at a glance without crowding. */
+  .ph--compact {
+    gap: 0.3rem;
+    padding: 0.5rem;
+  }
+
+  .ph-frame {
+    width: 1.1rem;
+    height: 0.8rem;
+    border: 1px solid rgb(232 241 245 / 0.6);
+    border-radius: 2px;
+    background: radial-gradient(circle, rgb(232 241 245 / 0.6) 0 22%, transparent 26%);
+  }
+
+  .ph--compact .ph-tag {
+    font-size: 0.55rem;
+    letter-spacing: 0.08em;
+  }
+
+  .ph--compact .ph-what {
+    max-width: none;
+    font-family: var(--font-body);
+    font-stretch: 100%;
+    font-weight: 500;
+    font-size: 0.72rem;
+    line-height: 1.2;
+    text-transform: none;
+    color: rgb(232 241 245 / 0.8);
+  }
+
+  /* in the smallest thumbnails (phones) the frame mark says "photo" on its own */
+  @media (max-width: 600px) {
+    .ph--compact .ph-tag {
+      display: none;
+    }
   }
 
   .ph-file {

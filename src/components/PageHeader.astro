@@ -41,7 +41,7 @@ const photoUrl = imageUrl(`pages/${image}`);
     <!-- Caption line: a hairline with a hatched stripe on the left and the caption in brackets on the right -->
     {caption && (
       <div class="page-meta">
-        <span class="page-hatch" aria-hidden="true"></span>
+        <span class="page-hatch slashes" aria-hidden="true"></span>
         <p class="label page-caption">[ {keepDots(caption)} ]</p>
       </div>
     )}
@@ -179,11 +179,7 @@ const photoUrl = imageUrl(`pages/${image}`);
   .page-hatch {
     flex: 0 1 22rem;
     height: 0.9rem;
-    background: repeating-linear-gradient(
-      115deg,
-      color-mix(in srgb, var(--color-text) 55%, transparent) 0 1px,
-      transparent 1px 7px
-    );
+    background-color: color-mix(in srgb, var(--color-text) 55%, transparent);
   }
 
   /* A boxed tag: a dark glassy backing keeps it readable on any photo, bright or dark */
@@ -204,6 +200,7 @@ const photoUrl = imageUrl(`pages/${image}`);
     margin: var(--space-lg) 0 0;
     font-size: var(--text-lg);
     line-height: 1.5;
+    text-wrap: pretty; /* no single word left alone on the last line */
   }
 
   @media (max-width: 760px) {

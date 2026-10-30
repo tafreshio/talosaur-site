@@ -19,7 +19,8 @@ interface Stop {
   image: string;      // photo file name in public/images/sections/
   needs: string;      // what that photo should show
   text: string;       // a line about the test ([bracket] placeholder until written)
-  labelLeft?: boolean; // put the number on the left of the dot (when two stops are close)
+  lead?: [number, number]; // when two stops are close: move the number this far from the dot
+                           // (right, down, in rem; negative = left or up) with a thin line to it
 }
 
 interface Props {
@@ -31,21 +32,29 @@ interface Props {
 
 const { number, title, tag, stops } = Astro.props;
 const pad = (n: number) => String(n + 1).padStart(2, '0');
+
+// the leader line from a dot to its moved number: its length and angle
+const leadLine = ([dx, dy]: [number, number]) =>
+  `width: ${Math.hypot(dx, dy).toFixed(2)}rem; transform: rotate(${(Math.atan2(dy, dx) * 180 / Math.PI).toFixed(1)}deg);`;
 ---
 
 <section class="route">
   <div class="container">
-    <div class="route-top">
-      <SectionHeader number={number} title={title} />
+    <SectionHeader number={number} title={title}>
       {tag && <p class="label route-tag">[ {tag} ]</p>}
-    </div>
+    </SectionHeader>
 
     <div class="route-grid">
       <figure class="route-map">
         <img src={imageUrl('sections/test-route-map.png')} alt="Map of East Texas and the Gulf of Mexico with the test stops: College Station, Lake Bryan, Lake Travis, Galveston and Flower Garden Banks" width="1600" height="1302" loading="lazy" decoding="async" />
         {stops.map((stop, i) => (
-          <span class:list={['route-pin', { 'route-pin--left': stop.labelLeft }]} style={`left: ${stop.x}%; top: ${stop.y}%;`} aria-hidden="true">
-            <span class="route-dot"></span><span class="label route-num">{pad(i)}</span>
+          <span class="route-pin" style={`left: ${stop.x}%; top: ${stop.y}%;`} aria-hidden="true">
+            <span class="route-dot"></span>
+            {stop.lead && <span class="route-lead" style={leadLine(stop.lead)}></span>}
+            <span
+              class:list={['label', 'route-num', { 'route-num--lead': stop.lead, 'route-num--west': stop.lead && stop.lead[0] < 0 }]}
+              style={stop.lead ? `--dx: ${stop.lead[0]}rem; --dy: ${stop.lead[1]}rem;` : undefined}
+            >{pad(i)}</span>
           </span>
         ))}
       </figure>
@@ -57,7 +66,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
               {imageExists(`sections/${stop.image}`) ? (
                 <img src={imageUrl(`sections/${stop.image}`)} alt="" loading="lazy" decoding="async" />
               ) : (
-                <PhotoPlaceholder label={stop.needs} />
+                <PhotoPlaceholder label={stop.needs} compact />
               )}
             </div>
             <div class="route-body">
@@ -85,22 +94,14 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     background: var(--color-orange);
   }
 
-  .route-top {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: end;
-    gap: var(--space-sm) var(--space-lg);
-  }
-
   /* the section title in the thin, wide capitals of the story bands */
-  .route-top :global(.section-title) {
+  .route :global(.section-title) {
     font-weight: 200;
     font-stretch: 125%;
   }
 
   .route-tag {
-    margin: 0 0 var(--space-sm);
+    margin: 0;
     padding: 0.3rem 0.55rem;
     border: 1px solid var(--color-line);
   }
@@ -123,31 +124,52 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     height: auto;
   }
 
+  /* each pin is a point on the map: the dot is centred on it, the number sits just to its right */
   .route-pin {
     position: absolute;
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    transform: translate(-0.45rem, -50%);
-  }
-
-  .route-pin--left {
-    flex-direction: row-reverse;
-    transform: translate(calc(-100% + 0.45rem), -50%);
+    width: 0;
+    height: 0;
   }
 
   .route-dot {
-    width: 0.9rem;
-    height: 0.9rem;
+    position: absolute;
+    left: -0.4rem;
+    top: -0.4rem;
+    width: 0.8rem;
+    height: 0.8rem;
     border-radius: 50%;
     background: var(--color-white);
     box-shadow: 0 0 0 2px var(--light-text);
   }
 
   .route-num {
+    position: absolute;
+    left: 0.7rem;
+    top: 0;
+    transform: translateY(-50%);
     padding: 0.15rem 0.35rem;
     color: var(--color-white);
     background: var(--light-text);
+    white-space: nowrap;
+  }
+
+  /* two stops close together: the number moves out along a thin line */
+  .route-num--lead {
+    left: var(--dx);
+    top: var(--dy);
+  }
+
+  .route-num--west {
+    transform: translate(-100%, -50%);
+  }
+
+  .route-lead {
+    position: absolute;
+    left: 0;
+    top: -0.5px;
+    height: 1px;
+    background: var(--light-text);
+    transform-origin: 0 50%;
   }
 
   .route-list {
@@ -175,23 +197,6 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     width: 100%;
     height: 100%;
     object-fit: cover;
-  }
-
-  /* the placeholder is small here, so only its main words show */
-  .route-thumb :global(.ph) {
-    padding: 0.5rem;
-  }
-
-  .route-thumb :global(.ph-tag) {
-    font-size: 0.55rem;
-  }
-
-  .route-thumb :global(.ph-what) {
-    font-size: 0.7rem;
-  }
-
-  .route-thumb :global(.ph-corner) {
-    display: none;
   }
 
   .route-head {
@@ -223,9 +228,10 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     color: var(--color-muted);
   }
 
+  /* full navy ink: the lighter grey was hard to read on orange */
   .route-text {
     margin: 0.3rem 0 0;
-    color: var(--color-muted);
+    color: var(--color-text);
     line-height: 1.45;
   }
 
@@ -243,6 +249,13 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
 
     .route-num {
       font-size: 0.55rem;
+    }
+
+    .route-dot {
+      left: -0.3rem;
+      top: -0.3rem;
+      width: 0.6rem;
+      height: 0.6rem;
     }
   }
 </style>

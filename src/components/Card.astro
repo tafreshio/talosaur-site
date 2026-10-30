@@ -33,7 +33,7 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
 ---
 
 <article class:list={['card', { 'card--feature': feature }]}>
-  <div class="card-media" style={`aspect-ratio: ${ratio};`}>
+  <div class:list={['card-media', { 'card-media--pending': !hasPhoto && standIn }]} style={`aspect-ratio: ${ratio};`}>
     {hasPhoto && <img src={imageUrl(photo)} alt={photoLabel} loading="lazy" decoding="async" />}
     {!hasPhoto && standIn && <PhotoPlaceholder label={standIn} file={photo} />}
     {badge && <span class="card-badge label"><span class="card-badge-dot" aria-hidden="true"></span>{badge}</span>}
@@ -168,14 +168,11 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
     background: var(--color-live);
   }
 
-  /* Feature card: same parts, bigger title */
+  /* Feature card: same parts, bigger title (the text stays the same size as the cards beside it) */
   .card--feature .card-title {
     font-size: clamp(1.8rem, 1.2rem + 1.8vw, 3rem);
   }
 
-  .card--feature .card-text {
-    font-size: var(--text-lg);
-  }
 
   .card:hover .card-arrow {
     transform: translateX(6px);
@@ -187,5 +184,14 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
 
   .card:hover .card-body {
     border-top-color: var(--color-accent);
+  }
+
+  /* Phones: a "photo to come" panel is a slim strip rather than a full-size dark box, so a row of
+     cards still waiting for photos doesn't read as a long run of empty panels. The real photo,
+     once added, keeps the full shape. */
+  @media (max-width: 600px) {
+    .card-media--pending {
+      aspect-ratio: 5 / 2 !important;
+    }
   }
 </style>

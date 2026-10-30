@@ -25,7 +25,7 @@ const lastBox = parts.length - 2;
   {tag && (
     <div class="statement-head" data-reveal>
       <p class="label statement-tag">[ {tag} ]</p>
-      <span class="statement-hatch" aria-hidden="true"></span>
+      <span class="statement-hatch slashes" aria-hidden="true"></span>
     </div>
   )}
   <p class="statement-line" data-reveal>
@@ -66,7 +66,7 @@ const lastBox = parts.length - 2;
   .statement-hatch {
     flex: 0 0 8rem;
     height: 0.9rem;
-    background: repeating-linear-gradient(115deg, var(--color-muted) 0 1px, transparent 1px 7px);
+    background-color: var(--color-muted);
   }
 
   .statement-line {

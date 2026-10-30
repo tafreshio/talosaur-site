@@ -116,6 +116,23 @@ a {
   text-underline-offset: 0.15em;
 }
 
+/* The "//////" strips beside tags. Each slash is a small picture used as a stencil (mask), repeated
+   only as many whole times as fit and spaced evenly, so a strip never starts or ends on a cut-off
+   slash. The element's background-color is the slash colour. */
+.slashes {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='14' viewBox='0 0 7 14'%3E%3Cpath d='M1 14 L6.2 0' stroke='%23000' stroke-width='1.1' fill='none'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='14' viewBox='0 0 7 14'%3E%3Cpath d='M1 14 L6.2 0' stroke='%23000' stroke-width='1.1' fill='none'/%3E%3C/svg%3E");
+  -webkit-mask-size: 7px 100%;
+  mask-size: 7px 100%;
+  -webkit-mask-repeat: space no-repeat;
+  mask-repeat: space no-repeat;
+}
+
+/* Paragraphs avoid ending on a single short word where the browser can manage it */
+p {
+  text-wrap: pretty;
+}
+
 /* Links inside running text */
 p a {
   color: var(--color-accent);
@@ -127,10 +144,12 @@ h3 {
   margin: 0;
   font-family: var(--font-display);
   font-stretch: var(--display-width);
+  word-spacing: 0.1em; /* the condensed face squeezes the spaces too */
   font-weight: 800;
   line-height: 0.95;
   text-transform: uppercase;
   letter-spacing: -0.01em;
+  text-wrap: balance;  /* no single word left alone on the last line */
 }
 
 :focus-visible {
@@ -169,6 +188,7 @@ h3 {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-muted);
+  text-wrap: balance;  /* bracket tags that wrap on phones split evenly, not with one word left over */
 }
 
 /* Pill-shaped cyan button. Add "button--outline" for the see-through version */

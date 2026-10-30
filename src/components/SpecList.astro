@@ -29,9 +29,9 @@ const { items, image, width = 1522, height = 959 } = Astro.props;
     {items.map((item) => (
       <div class="spec-row">
         <dt class="label spec-label">{item.label} /</dt>
-        <dd class="label spec-value">
+        <dd class="spec-value">
           {keepUnits(item.value)}
-          {item.source && <a class="spec-src" href={item.source.href} target="_blank" rel="noopener">[ {item.source.label} ]</a>}
+          {item.source && <a class="label spec-src" href={item.source.href} target="_blank" rel="noopener">[ {item.source.label} ]</a>}
         </dd>
       </div>
     ))}
@@ -73,19 +73,22 @@ const { items, image, width = 1522, height = 959 } = Astro.props;
     letter-spacing: 0.12em;
   }
 
+  /* the facts themselves in the body face, in sentence case, so they read as sentences beside the boxed labels */
   .spec-value {
     margin: 0;
+    font-size: var(--text-lg);
     color: var(--color-text);
-    letter-spacing: 0.12em;
-    line-height: 1.6;
+    line-height: 1.45;
+    text-wrap: pretty;
   }
 
   /* source link: padded so it's an easier tap target on phones */
   .spec-src {
     display: inline-block;
     padding-block: 0.35rem;
-    margin-left: 0.6rem;
+    margin-left: 0.5rem;
     color: var(--color-accent);
+    vertical-align: 0.1em;
     text-decoration: none;
     white-space: nowrap;
   }

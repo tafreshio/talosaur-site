@@ -109,14 +109,17 @@ const posterSrc = url(`/${posterFile}`);
     object-fit: cover;
   }
 
-  /* Dark fade at the top so the menu stays readable. There is no fade at the bottom:
-     the wordmark inverts the video instead (see .hero-wordmark below), and a dark fade
-     there would leave it nothing to invert. */
+  /* Dark fade at the top so the menu stays readable, and a deeper one along the bottom under the
+     wordmark. The wordmark inverts what's behind it (see .hero-wordmark below); over the dark fade
+     that comes out close to white, so it stays crisp even on bright shots like the opening eye,
+     while still picking up a tint from each shot. */
   .hero-media::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 50%, transparent) 0%, transparent 20%);
+    background:
+      linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 50%, transparent) 0%, transparent 20%),
+      linear-gradient(to top, color-mix(in srgb, var(--color-bg) 82%, transparent) 0%, color-mix(in srgb, var(--color-bg) 45%, transparent) 30%, transparent 55%);
   }
 
   /* Belt and braces: if the script hasn't run yet, still hide the video */

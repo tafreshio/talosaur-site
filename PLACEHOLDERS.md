@@ -13,7 +13,7 @@ section explains sizes.
 | Team LinkedIn links (optional, hidden until filled in) | Who we are | `src/data/team.ts` (`linkedin`) |
 | `[Photographer and source for these four photos.]` (zoanthids, porcelain crab, soft coral, pygmy seahorse headers) | Image credits page | `src/pages/image-credits.astro` |
 | `[photographer and source]` for the brain coral photo (The Problem, Habitat) | Image credits page | `src/pages/image-credits.astro` |
-| `[Date]` for "Project kicks off" (its line is now written from Fernando's description; change it if you like) | News | `src/content/news/project-kicks-off.md` |
+| `[ Date ]` for "Project kicks off" (its line is now written from Fernando's description; change it if you like) | News | `src/content/news/project-kicks-off.md` |
 | `[Sources still to find for some homepage video stills...]` (the known ones are now credited) | Image credits page | `src/pages/image-credits.astro` |
 
 ### Photos still needed ("photo to come" panels)

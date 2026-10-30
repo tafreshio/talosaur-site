@@ -6,7 +6,8 @@
 //   <Marquee words={['Mechanical', 'Hydraulics', 'Ocean']} />
 //
 // The words are repeated so the strip never runs out, and it is decorative (the same roles are on
-// the cards), so screen readers skip it. For visitors with "reduce motion" turned on, it stands still.
+// the cards), so screen readers skip it. For visitors with "reduce motion" turned on, it doesn't move:
+// each word shows once, wrapped onto as many lines as it needs and centred.
 interface Props {
   words: string[];
   speed?: number;   // seconds for one full loop (bigger = slower)
@@ -20,10 +21,10 @@ const run = Array.from({ length: Math.max(2, Math.ceil(8 / Math.max(words.length
 
 <div class="marquee" aria-hidden="true" style={`--marquee-speed: ${speed}s;`}>
   <div class="marquee-track">
-    {[0, 1].map(() => (
-      <ul class="marquee-run">
+    {[0, 1].map((copy) => (
+      <ul class:list={['marquee-run', { 'marquee-run--copy': copy === 1 }]}>
         {run.map((word, i) => (
-          <li class:list={['marquee-word', { 'marquee-word--outline': i % 2 === 1 }]}>
+          <li class:list={['marquee-word', { 'marquee-word--outline': i % 2 === 1, 'marquee-word--repeat': i >= words.length }]}>
             {word}<span class="marquee-ring"></span>
           </li>
         ))}
@@ -88,9 +89,34 @@ const run = Array.from({ length: Math.max(2, Math.ceil(8 / Math.max(words.length
     }
   }
 
+  /* smaller on phones, so a whole word or two fits across */
+  @media (max-width: 760px) {
+    .marquee-word {
+      font-size: clamp(2.25rem, 1rem + 6vw, 3rem);
+    }
+  }
+
+  /* standing still: every word once, wrapped and centred */
   @media (prefers-reduced-motion: reduce) {
     .marquee-track {
+      width: auto;
       animation: none;
+    }
+
+    .marquee-run {
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+      padding-inline: var(--gutter);
+    }
+
+    .marquee-run--copy,
+    .marquee-word--repeat {
+      display: none;
+    }
+
+    .marquee-word {
+      font-size: clamp(2rem, 1rem + 4vw, 5rem);
     }
   }
 </style>

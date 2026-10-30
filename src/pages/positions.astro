@@ -58,16 +58,15 @@ const life = {
     </section>
   </div>
 
-  <!-- Story band, split in two like "Bringing back the woolly mammoth" on Colossal's mammoth page:
-       a school of fish (violet with lime) on the left, a magenta and orange blur on the right, big type
-       across both, and the open roles listed on the right (from src/data/positions.ts). -->
+  <!-- Story band like "Bringing back the woolly mammoth" on Colossal's mammoth page: big type across a
+       school of fish (violet with lime), with the Apply button under it. The roles themselves are listed
+       just above, so the band only gives the count (from src/data/positions.ts). -->
   <StoryBand
     variant="split"
     image="story-join.jpg"
-    position="30% 50%"
+    position="50% 50%"
     tag="Now recruiting"
     title={`${String(positions.length).padStart(2, '0')} open roles`}
-    items={positions.map((role) => ({ title: role.title }))}
   >
     <a class="button" href={applicationFormUrl} target="_blank" rel="noopener noreferrer">
       Apply now <span aria-hidden="true">→</span>
@@ -210,10 +209,10 @@ const life = {
     border-bottom: 1px solid var(--color-line);
   }
 
-  /* Each role is a row: number | title | details */
+  /* Each role is a row: number | title | details | Apply, with the button at the right end */
   .role {
     display: grid;
-    grid-template-columns: 3rem minmax(0, 1.2fr) minmax(0, 2fr);
+    grid-template-columns: 3rem minmax(0, 1.2fr) minmax(0, 2fr) auto;
     align-items: start;
     gap: var(--space-md) var(--space-lg);
     padding-block: var(--space-lg);
@@ -230,8 +229,8 @@ const life = {
   }
 
   .role-apply {
-    grid-column: -2 / -1;
-    justify-self: start;
+    justify-self: end;
+    white-space: nowrap;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
@@ -266,9 +265,15 @@ const life = {
     line-height: 1.5;
   }
 
+  /* tablets: number | title | Apply on the first line, the details under the title */
   @media (max-width: 1023px) {
     .role {
-      grid-template-columns: 3rem 1fr;
+      grid-template-columns: 3rem minmax(0, 1fr) auto;
+    }
+
+    .role-apply {
+      grid-column: 3;
+      grid-row: 1;
     }
 
     .role-details {
@@ -291,6 +296,14 @@ const life = {
       grid-column: auto;
       grid-row: auto;
       grid-template-columns: 1fr;
+    }
+
+    /* phones: the button closes each role, under its details */
+    .role-apply {
+      grid-column: auto;
+      grid-row: auto;
+      justify-self: start;
+      margin-top: var(--space-xs);
     }
   }
 </style>

@@ -76,7 +76,18 @@ const animals = [
           <path d="M150 118 L154 96 L164 96 L168 118 Z M157 100 L236 62 L240 68 L161 106 Z M106 118 L106 104 L136 104 L136 118 Z" />
         </svg>
         <span class="tether" aria-hidden="true"></span>
-        <span class="vehicle" aria-hidden="true"><span class="label vehicle-label">[ Deep vehicle ]</span></span>
+        <span class="vehicle" aria-hidden="true">
+          <!-- a plain side view of a generic research vehicle: float on top, open frame, side thrusters, a light underneath -->
+          <svg class="vehicle-art" viewBox="0 0 48 30">
+            <rect x="8" y="1" width="32" height="8" rx="2" />
+            <path fill-rule="evenodd" d="M5 10 H43 V22 H5 Z M9 13 V19 H17 V13 Z M31 13 V19 H39 V13 Z" />
+            <rect x="0" y="12" width="5" height="8" rx="2" />
+            <rect x="43" y="12" width="5" height="8" rx="2" />
+            <rect x="19" y="22" width="10" height="4" rx="1" />
+            <circle class="vehicle-light" cx="24" cy="27.5" r="2.5" />
+          </svg>
+          <span class="label vehicle-label">[ Deep vehicle ]</span>
+        </span>
 
         <!-- Animal cut-outs, drifting a little as you scroll -->
         {animals.map((a) => (
@@ -188,7 +199,7 @@ const animals = [
   }
 
   .is-live [data-zone] {
-    opacity: 0.75;
+    opacity: 0.85;
   }
 
   .is-live[data-zone='sunlit'] [data-zone='sunlit'],
@@ -321,6 +332,7 @@ const animals = [
     margin: 0;
     font-family: var(--font-display);
     font-stretch: var(--display-width);
+    word-spacing: 0.1em; /* the condensed face squeezes the spaces too */
     font-weight: 800;
     font-size: clamp(2rem, 1.2rem + 3vw, 4rem);
     line-height: 0.95;
@@ -377,8 +389,11 @@ const animals = [
     color: var(--color-accent);
   }
 
+  /* plain wrapping here (not balanced): the notes sit at fixed depths, so a title that took an
+     extra line would push its text into the next note */
   .note-title {
     font-size: clamp(1.6rem, 1.1rem + 1.4vw, 2.4rem);
+    text-wrap: wrap;
   }
 
   .note-text,
@@ -470,14 +485,22 @@ const animals = [
     position: absolute;
     left: calc(56% + clamp(170px, 24vw, 360px) * 53 / 600);
     top: calc(335 * var(--m));
-    width: 1.5rem;
-    height: 1rem;
+    width: 2.6rem;
     transform: translateX(-50%);
-    border-radius: 3px;
-    background: rgb(232 241 245 / 0.9);
-    /* its lights */
-    box-shadow: 0 0.6rem 1.2rem -0.2rem rgb(61 224 208 / 0.55);
     z-index: 1;
+  }
+
+  .vehicle-art {
+    display: block;
+    width: 100%;
+    height: auto;
+    fill: rgb(232 241 245 / 0.92);
+    /* the glow of its light on the water below */
+    filter: drop-shadow(0 0.5rem 0.6rem rgb(61 224 208 / 0.5));
+  }
+
+  .vehicle-art .vehicle-light {
+    fill: var(--color-accent);
   }
 
   .vehicle-label {
@@ -599,6 +622,7 @@ const animals = [
     margin: 0;
     font-family: var(--font-display);
     font-stretch: var(--display-width);
+    word-spacing: 0.1em; /* the condensed face squeezes the spaces too */
     font-weight: 800;
     font-size: clamp(3rem, 1.5rem + 5vw, 7.5rem);
     font-variant-numeric: tabular-nums;
@@ -675,6 +699,11 @@ const animals = [
       padding: 0.75rem 0 0 0.75rem;
     }
 
+    /* the twilight brackets step in a little, so the left one clears the Flower Garden Banks label */
+    .zone--twilight {
+      left: calc(var(--rule-w) + 0.5rem);
+    }
+
     .zone-text {
       font-size: var(--text-base);
     }
@@ -712,7 +741,9 @@ const animals = [
       right: calc(clamp(170px, 24vw, 360px) * 53 / 600);
     }
 
+    /* a little smaller here, so it stays inside the page margin */
     .vehicle {
+      width: 2.1rem;
       transform: translateX(50%);
     }
 
@@ -772,6 +803,20 @@ const animals = [
       left: auto;
       right: -14%;
       width: 44vw;
+    }
+
+    /* On phones the notes run almost to the edge, so the three animals behind them become a faint
+       texture and the text stays easy to read. The jellyfish beside the short sunlit line stays brighter. */
+    @media (max-width: 760px) {
+      .animal--squid,
+      .animal--oval,
+      .animal--long {
+        opacity: 0.18;
+      }
+
+      .animal--jelly {
+        opacity: 0.55;
+      }
     }
 
     /* The readout becomes a small tag sitting on the ruler at the line */

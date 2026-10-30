@@ -76,7 +76,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     {tag && (
       <div class="story-head">
         <p class="label story-tag">[ {keepDots(tag)} ]</p>
-        <span class="story-hatch" aria-hidden="true"></span>
+        <span class="story-hatch slashes" aria-hidden="true"></span>
       </div>
     )}
 
@@ -124,7 +124,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     )}
 
     {variant === 'split' && (
-      <div class="split">
+      <div class:list={['split', { 'split--short': !subtitle && items.length === 0 }]}>
         {title && <h2 class="story-title story-title--split" data-reveal>{title}</h2>}
         {subtitle && <p class="split-sub" data-reveal>{subtitle}</p>}
         <div class="split-foot" data-reveal>
@@ -222,10 +222,17 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     background: rgb(6 18 31 / 0.18);
   }
 
-  /* statement and stats have text on the left, so the left side gets a little more shade */
-  .story--statement .story-media::after,
+  /* stats has its text on the left, so the left side gets a little more shade */
   .story--stats .story-media::after {
     background: linear-gradient(90deg, rgb(6 18 31 / 0.55) 0%, rgb(6 18 31 / 0.3) 55%, rgb(6 18 31 / 0.1) 100%);
+  }
+
+  /* statement: the big line on the left and the columns of text running right across the bottom,
+     so the shade is deeper on the left and along the bottom, where the smaller text sits */
+  .story--statement .story-media::after {
+    background:
+      linear-gradient(to top, rgb(6 18 31 / 0.6) 0%, rgb(6 18 31 / 0.25) 45%, transparent 70%),
+      linear-gradient(90deg, rgb(6 18 31 / 0.62) 0%, rgb(6 18 31 / 0.4) 55%, rgb(6 18 31 / 0.22) 100%);
   }
 
   /* art: the picture behind is toned down all over, so the artwork stays the loudest thing */
@@ -269,7 +276,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
   .story-hatch {
     flex: 0 0 8rem;
     height: 0.9rem;
-    background: repeating-linear-gradient(115deg, rgb(255 255 255 / 0.7) 0 1px, transparent 1px 7px);
+    background-color: rgb(255 255 255 / 0.7);
   }
 
   /* Colossal's thin, wide, technical capitals: the display font at its lightest and widest */
@@ -429,6 +436,14 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
       '. sub'
       '. foot';
     gap: var(--space-lg) var(--space-xl);
+  }
+
+  /* just a title and a button: the button sits under the title, on the left */
+  .split--short {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'title'
+      'foot';
   }
 
   .story-title--split {
@@ -682,7 +697,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
       gap: var(--space-md);
     }
 
-    .split {
+    .split:not(.split--short) {
       grid-template-columns: 1fr;
       grid-template-areas: 'title' 'sub' 'foot';
     }
@@ -718,6 +733,12 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
 
     .story-title--sm {
       font-size: clamp(1.8rem, 0.9rem + 5.5vw, 2.4rem);
+    }
+
+    /* the full width on phones, so titles break into fewer, fuller lines */
+    .story-title,
+    .story-title--art {
+      max-width: none;
     }
 
     .story-hatch {
