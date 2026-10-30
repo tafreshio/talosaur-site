@@ -109,14 +109,15 @@ const posterSrc = url(`/${posterFile}`);
     object-fit: cover;
   }
 
-  /* Dark fade at the top so the menu stays readable. There is no fade at the bottom:
-     the wordmark inverts the video instead (see .hero-wordmark below), and a dark fade
-     there would leave it nothing to invert. */
+  /* Dark fade at the top so the menu stays readable, and a deeper one along the bottom under the
+     wordmark, so the white wordmark reads over any shot, bright or dark. */
   .hero-media::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 50%, transparent) 0%, transparent 20%);
+    background:
+      linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 50%, transparent) 0%, transparent 20%),
+      linear-gradient(to top, color-mix(in srgb, var(--color-bg) 82%, transparent) 0%, color-mix(in srgb, var(--color-bg) 45%, transparent) 30%, transparent 55%);
   }
 
   /* Belt and braces: if the script hasn't run yet, still hide the video */
@@ -146,19 +147,15 @@ const posterSrc = url(`/${posterFile}`);
     padding-bottom: clamp(2rem, 6svh, 4rem);
   }
 
-  /* Giant logo in the lower part of the video: the white lockup from the brand pack.
-     mix-blend-mode: difference subtracts the video's colors from the white logo, so the
-     stripes and letters show the video inverted: copper over blue water, black over a
-     white flash. It stays readable over any shot without a dark fade, and changes with
-     every cut. It needs a pure white logo to be a true invert, and only works because
-     .hero has "isolation: isolate", which keeps the blend inside the hero. */
+  /* Giant logo in the lower part of the video: the white lockup from the brand pack, in plain foam
+     white over the dark fade. (It used to invert the video behind it; on light shots like the
+     opening eye that came out a muddy beige.) */
   .hero-wordmark {
     display: block;
     flex: 1 1 auto;
     width: 100%;
     max-width: calc(100% - 7rem); /* leaves room for "Scroll" on wide screens */
     height: auto;
-    mix-blend-mode: difference;
     animation: rise 1.2s var(--ease) both;
   }
 

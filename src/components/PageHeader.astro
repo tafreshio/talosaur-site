@@ -9,7 +9,7 @@
 import { mainNav } from '../data/site';
 import { imageExists, imageUrl } from '../lib/images';
 import { url } from '../lib/url';
-import { keepDots } from '../lib/text';
+import { keepDots, keepUnits } from '../lib/text';
 
 interface Props {
   title: string;          // the page name, shown in the small label ("02 · The Problem")
@@ -37,15 +37,15 @@ const photoUrl = imageUrl(`pages/${image}`);
 
   <div class="container page-header-inner" data-reveal-group>
     {number && <p class="label page-num">{number} · {title}</p>}
-    <h1 class="page-title">{heading}</h1>
+    <h1 class:list={['page-title', { 'page-title--long': heading.length > 24 }]}>{keepUnits(heading)}</h1>
     <!-- Caption line: a hairline with a hatched stripe on the left and the caption in brackets on the right -->
     {caption && (
       <div class="page-meta">
-        <span class="page-hatch" aria-hidden="true"></span>
-        <p class="label page-caption">[ {keepDots(caption)} ]</p>
+        <span class="page-hatch slashes" aria-hidden="true"></span>
+        <p class="label page-caption">[ {keepDots(keepUnits(caption))} ]</p>
       </div>
     )}
-    {intro && <p class="page-intro">{intro}</p>}
+    {intro && <p class="page-intro">{keepUnits(intro)}</p>}
     <!-- Anything placed inside <PageHeader>...</PageHeader> (e.g. a button) shows here -->
     {Astro.slots.has('default') && <div class="page-actions"><slot /></div>}
   </div>
@@ -79,7 +79,7 @@ const photoUrl = imageUrl(`pages/${image}`);
   .page-header--image {
     display: flex;
     align-items: flex-end;
-    min-height: clamp(32rem, 82svh, 54rem);
+    min-height: 100svh; /* the whole first screen, down to the bottom of the window (like the Home video) */
     /* The menu floats on top, so pull the photo up underneath it (same as the Home hero) */
     margin-top: calc(-1 * var(--header-height));
     overflow: hidden;
@@ -101,27 +101,8 @@ const photoUrl = imageUrl(`pages/${image}`);
     animation: photo-in 1.4s var(--ease) both;
   }
 
-  /* Shading so the text stays readable, without a dark band at the bottom: the photo runs
-     right to its bottom edge and meets the light section below with a clean line (like
-     Colossal). Only the left side, where the title and intro sit, is darkened, plus a little
-     at the top behind the menu. */
-  .page-header-media::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(90deg, rgb(6 18 31 / 0.72) 0%, rgb(6 18 31 / 0.5) 42%, rgb(6 18 31 / 0.16) 72%, transparent 90%),
-      linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 72%, transparent) 0%, transparent 28%);
-  }
-
-  /* Phones: the text runs the full width, so shade the whole photo evenly instead */
-  @media (max-width: 760px) {
-    .page-header-media::after {
-      background:
-        linear-gradient(rgb(6 18 31 / 0.58), rgb(6 18 31 / 0.58)),
-        linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 72%, transparent) 0%, transparent 28%);
-    }
-  }
+  /* No dark shading over the photo: it shows at full brightness. The title and intro carry a soft
+     dark glow of their own (below), so they still read on a bright picture. */
 
   .page-header--image .page-header-inner {
     padding-block: calc(var(--header-height) + var(--space-xl)) var(--space-xl);
@@ -160,6 +141,22 @@ const photoUrl = imageUrl(`pages/${image}`);
     font-size: var(--text-hero);
   }
 
+  /* a soft dark glow behind the white words, so they read on a bright photo without darkening it */
+  .page-header--image .page-title {
+    text-shadow: 0 0 2rem rgb(6 18 31 / 0.55), 0 1px 3px rgb(6 18 31 / 0.45);
+  }
+
+  .page-header--image .page-intro {
+    text-shadow: 0 0 1.2rem rgb(6 18 31 / 0.75), 0 1px 2px rgb(6 18 31 / 0.6);
+  }
+
+  /* a long headline (Positions) a size down, so it takes two lines like the others, not three,
+     and every page's header keeps about the same shape */
+  .page-title--long {
+    max-width: 20ch;
+    font-size: clamp(2.6rem, 1rem + 6.4vw, 6.75rem);
+  }
+
   .page-actions {
     margin-top: var(--space-lg);
   }
@@ -179,11 +176,7 @@ const photoUrl = imageUrl(`pages/${image}`);
   .page-hatch {
     flex: 0 1 22rem;
     height: 0.9rem;
-    background: repeating-linear-gradient(
-      115deg,
-      color-mix(in srgb, var(--color-text) 55%, transparent) 0 1px,
-      transparent 1px 7px
-    );
+    background-color: color-mix(in srgb, var(--color-text) 55%, transparent);
   }
 
   /* A boxed tag: a dark glassy backing keeps it readable on any photo, bright or dark */
@@ -204,11 +197,12 @@ const photoUrl = imageUrl(`pages/${image}`);
     margin: var(--space-lg) 0 0;
     font-size: var(--text-lg);
     line-height: 1.5;
+    text-wrap: pretty; /* no single word left alone on the last line */
   }
 
   @media (max-width: 760px) {
     .page-header--image {
-      min-height: clamp(30rem, 88svh, 44rem);
+      min-height: 100svh;
     }
 
     /* Phones: stripe on top, caption under it, both left-aligned, so long captions wrap cleanly */
@@ -230,6 +224,14 @@ const photoUrl = imageUrl(`pages/${image}`);
 
     .page-intro {
       font-size: var(--text-base);
+    }
+
+    /* one size for every page title on phones, comfortably bigger than the section headings below;
+       long titles wrap to a third line rather than shrink */
+    .page-title,
+    .page-title--long {
+      max-width: none;
+      font-size: clamp(2.75rem, 12.5vw, 3.6rem);
     }
   }
 </style>

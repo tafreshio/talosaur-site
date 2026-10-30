@@ -39,6 +39,7 @@ const { value, unit, caption, index, source } = Astro.props;
     margin: 0;
     font-family: var(--font-display);
     font-stretch: var(--display-width);
+    word-spacing: 0.1em; /* the condensed face squeezes the spaces too */
     font-weight: 800;
     font-size: clamp(3rem, 1rem + 4.2vw, 6rem);
     line-height: 0.9;

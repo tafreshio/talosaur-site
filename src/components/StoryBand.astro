@@ -62,7 +62,7 @@ const hasSlot = Astro.slots.has('default');
 const pad = (n: number) => String(n + 1).padStart(2, '0');
 ---
 
-<section class:list={['story', `story--${variant}`]}>
+<section class:list={['story', `story--${variant}`]} style={variant === 'split' ? `--story-img: url(${imageUrl(`bands/${image}`)});` : undefined}>
   <div class="story-media" aria-hidden="true">
     <img src={imageUrl(`bands/${image}`)} alt="" width="2400" height="1350" loading="lazy" decoding="async" style={`object-position: ${position};`} data-pan="140" />
   </div>
@@ -76,7 +76,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     {tag && (
       <div class="story-head">
         <p class="label story-tag">[ {keepDots(tag)} ]</p>
-        <span class="story-hatch" aria-hidden="true"></span>
+        <span class="story-hatch slashes" aria-hidden="true"></span>
       </div>
     )}
 
@@ -98,7 +98,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
           {items.map((item) => (
             <div class="stat">
               <dt class="story-word stat-num">{item.title}</dt>
-              <dd class="stat-text"><span class="stat-dot" aria-hidden="true"></span>{item.text}</dd>
+              <dd class="stat-text"><span class="stat-dot" aria-hidden="true"></span>{keepUnits(item.text)}</dd>
             </div>
           ))}
         </dl>
@@ -115,7 +115,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
               <li class="col">
                 <p class="label col-num"><span class="col-dot" aria-hidden="true"></span>{pad(i)}</p>
                 <h3 class="col-title">{item.title}</h3>
-                {item.text && <p class="col-text">{item.text}</p>}
+                {item.text && <p class="col-text">{keepUnits(item.text)}</p>}
               </li>
             ))}
           </ol>
@@ -124,7 +124,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     )}
 
     {variant === 'split' && (
-      <div class="split">
+      <div class:list={['split', { 'split--short': !subtitle && items.length === 0 }]}>
         {title && <h2 class="story-title story-title--split" data-reveal>{title}</h2>}
         {subtitle && <p class="split-sub" data-reveal>{subtitle}</p>}
         <div class="split-foot" data-reveal>
@@ -149,16 +149,20 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
           </span>
           <figcaption class="label art-credit">[ {art.credit} ]</figcaption>
         </figure>
-        {items.length > 0 && (
-          <dl class="art-stats" data-reveal-group>
-            {items.map((item) => (
-              <div class="art-stat">
-                <dt class="story-word art-num">{item.title}</dt>
-                <dd class="art-text">{item.text}</dd>
-              </div>
-            ))}
-          </dl>
-        )}
+        <div class="art-side">
+          {items.length > 0 && (
+            <dl class="art-stats" data-reveal-group>
+              {items.map((item) => (
+                <div class="art-stat">
+                  <dt class="story-word art-num">{item.title}</dt>
+                  <dd class="art-text">{keepUnits(item.text)}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          <!-- the source sits right under the numbers it backs up -->
+          {source && variant !== 'art' && <a class="label story-src" href={source.href} target="_blank" rel="noopener">[ Source: {source.label} ]</a>}
+        </div>
       </div>
     )}
 
@@ -182,7 +186,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     )}
 
     {hasSlot && variant !== 'split' && <div class="story-slot"><slot /></div>}
-    {source && <a class="label story-src" href={source.href} target="_blank" rel="noopener">[ Source: {source.label} ]</a>}
+    {source && variant !== 'art' && <a class="label story-src" href={source.href} target="_blank" rel="noopener">[ Source: {source.label} ]</a>}
   </div>
 </section>
 
@@ -222,15 +226,22 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     background: rgb(6 18 31 / 0.18);
   }
 
-  /* statement and stats have text on the left, so the left side gets a little more shade */
-  .story--statement .story-media::after,
+  /* stats has its text on the left, so the left side gets a little more shade */
   .story--stats .story-media::after {
     background: linear-gradient(90deg, rgb(6 18 31 / 0.55) 0%, rgb(6 18 31 / 0.3) 55%, rgb(6 18 31 / 0.1) 100%);
   }
 
+  /* statement: the big line on the left and the columns of text running right across the bottom,
+     so the shade is deeper on the left and along the bottom, where the smaller text sits */
+  .story--statement .story-media::after {
+    background:
+      linear-gradient(to top, rgb(6 18 31 / 0.6) 0%, rgb(6 18 31 / 0.25) 45%, transparent 70%),
+      linear-gradient(90deg, rgb(6 18 31 / 0.62) 0%, rgb(6 18 31 / 0.4) 55%, rgb(6 18 31 / 0.22) 100%);
+  }
+
   /* art: the picture behind is toned down all over, so the artwork stays the loudest thing */
   .story--art .story-media::after {
-    background: linear-gradient(90deg, rgb(6 18 31 / 0.72) 0%, rgb(6 18 31 / 0.6) 55%, rgb(6 18 31 / 0.56) 100%);
+    background: linear-gradient(90deg, rgb(6 18 31 / 0.8) 0%, rgb(6 18 31 / 0.72) 55%, rgb(6 18 31 / 0.68) 100%);
   }
 
   .story-rail {
@@ -269,7 +280,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
   .story-hatch {
     flex: 0 0 8rem;
     height: 0.9rem;
-    background: repeating-linear-gradient(115deg, rgb(255 255 255 / 0.7) 0 1px, transparent 1px 7px);
+    background-color: rgb(255 255 255 / 0.7);
   }
 
   /* Colossal's thin, wide, technical capitals: the display font at its lightest and widest */
@@ -327,8 +338,15 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     text-shadow: 0 0 1.2rem rgb(255 255 255 / 0.55), 0 0 3.5rem rgb(255 255 255 / 0.35);
   }
 
+  /* the small captions on a dark chip, so they read on the bright picture */
   .echo-cap {
+    padding: 0.25rem 0.5rem;
     color: var(--color-white);
+    background: rgb(6 18 31 / 0.6);
+  }
+
+  .story--echo .story-media::after {
+    background: rgb(6 18 31 / 0.32);
   }
 
   /* ---------- stats ---------- */
@@ -431,6 +449,14 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     gap: var(--space-lg) var(--space-xl);
   }
 
+  /* just a title and a button: the button sits under the title, on the left */
+  .split--short {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'title'
+      'foot';
+  }
+
   .story-title--split {
     grid-area: title;
     max-width: none;
@@ -444,12 +470,17 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     line-height: 1.3;
   }
 
+  /* the list and the button on a dark glassy panel, so the white type reads on the bright half */
   .split-foot {
     grid-area: foot;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-md);
+    padding: var(--space-md);
+    background: rgb(6 18 31 / 0.55);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
   }
 
   .split-list {
@@ -481,7 +512,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
   .art {
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: auto 1fr;
     grid-template-areas:
       'title fig'
       'stats fig';
@@ -489,17 +520,25 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     align-items: center;
   }
 
+  /* the title and numbers run from the top of the column, straight under the tag */
   .story-title--art {
     grid-area: title;
-    align-self: end;
-    max-width: 13ch;
+    align-self: start;
+    max-width: 14ch;
     font-size: clamp(2rem, 0.9rem + 2.6vw, 3.6rem);
   }
 
-  .art-stats {
+  .art-side {
     grid-area: stats;
     align-self: start;
+  }
+
+  .art-stats {
     margin: 0;
+  }
+
+  .art-side .story-src {
+    margin-top: var(--space-md);
   }
 
   .art-stat {
@@ -682,7 +721,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
       gap: var(--space-md);
     }
 
-    .split {
+    .split:not(.split--short) {
       grid-template-columns: 1fr;
       grid-template-areas: 'title' 'sub' 'foot';
     }
@@ -718,6 +757,30 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
 
     .story-title--sm {
       font-size: clamp(1.8rem, 0.9rem + 5.5vw, 2.4rem);
+    }
+
+    .story--statement .story-media::after {
+      background: rgb(6 18 31 / 0.62);
+    }
+
+    /* split: the two halves of the picture stack on phones instead of sitting side by side (each
+       would only be a sliver): the left half behind the title, the right half behind the list, with
+       the seam running across the middle */
+    .story--split .story-media img {
+      object-position: 0% 50% !important;
+    }
+
+    .story--split .story-media::before {
+      content: '';
+      position: absolute;
+      inset: 52% 0 0;
+      background: var(--story-img) right center / auto 200% no-repeat;
+    }
+
+    /* the full width on phones, so titles break into fewer, fuller lines */
+    .story-title,
+    .story-title--art {
+      max-width: none;
     }
 
     .story-hatch {

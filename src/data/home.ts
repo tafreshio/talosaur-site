@@ -104,7 +104,7 @@ export const interestedCards = [
 // In the headline, words between ** and ** get a coloured box.
 export const plan = {
   tag: 'Our plan',
-  headline: 'From a pool in College Station to the **twilight zone**, and then to **anyone who needs it**.',
+  headline: 'From a pool in College Station to the **twilight\u00a0zone**, and then to **anyone who needs it**.', // no-break space: "twilight zone" stays on one line
   text: "Divers can't reach the twilight zone, and robots and research ships cost too much to send often. We're building a robot that costs far less, testing it a step at a time from the pool to the reef, and then putting it in other people's hands.",
   depth: '50–300 m',
   steps: [

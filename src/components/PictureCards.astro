@@ -6,6 +6,7 @@
 //
 // Photos live in public/images/sections/. People, lab and machine photos stay natural; nature
 // photos may have false colour (see the photo rule in the README).
+import { keepUnits } from '../lib/text';
 import { imageExists, imageUrl } from '../lib/images';
 import PhotoPlaceholder from './PhotoPlaceholder.astro';
 
@@ -42,7 +43,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       </div>
       <p class="label pcard-num">{pad(i + 1)}</p>
       <h3 class="pcard-title">{item.title}</h3>
-      <p class="pcard-text">{item.text}</p>
+      <p class="pcard-text">{keepUnits(item.text)}</p>
     </li>
   ))}
 </ol>
@@ -139,8 +140,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
       translate: none;
     }
 
+    /* a wider, shorter shape on phones, so a row of four doesn't become a very long scroll */
     .pcard-media {
-      aspect-ratio: 4 / 3;
+      aspect-ratio: 16 / 9;
     }
 
     .pcard-title {

@@ -1,4 +1,5 @@
 ---
+import { keepUnits } from '../lib/text';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import SectionHeader from '../components/SectionHeader.astro';
@@ -25,7 +26,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     href="/the-problem"
     intro={problemIntro}
     caption="50–300 m · The twilight zone" image="the-problem.jpg"
-    imagePosition="50% 30%"
+    imagePosition="76% 50%"
   />
 
   <!-- Light band: how little we've seen, then the big numbers on cost. It ends where the sea
@@ -153,29 +154,33 @@ const pad = (n: number) => String(n).padStart(2, '0');
           <PhotoPlaceholder label="the reef at Flower Garden Banks" file="sections/habitat-pano.jpg" />
         )}
       </div>
+      <!-- Desktop: the title and text on the left; the map with the facts under it on the right.
+           Phones: title, first paragraph, map, facts, then the rest of the text. -->
       <div class="habitat-grid">
-        <div class="habitat-copy" data-reveal>
+        <div class="habitat-copy">
           <h3 class="habitat-title">{habitat.title}</h3>
-          {habitat.paragraphs.map((text) => <p class="habitat-text">{text}</p>)}
+          {habitat.paragraphs.map((text, i) => <p class:list={['habitat-text', { 'habitat-text--first': i === 0 }]}>{keepUnits(text)}</p>)}
+        </div>
+        <div class="habitat-side">
+          <!-- Map of the coast: Flower Garden Banks in magenta, College Station as a dot.
+               The labels sit at the same spots as on the picture (left %, top %). -->
+          <figure class="habitat-map">
+            <img src={imageUrl('sections/habitat-map.png')} alt="Map of the Texas and Louisiana coast with Flower Garden Banks offshore and College Station inland" width="1600" height="1100" loading="lazy" decoding="async" />
+            <span class="map-pin map-pin--fgb" style="left: 50.3%; top: 65.1%;"><span class="label">Flower Garden Banks</span></span>
+            <span class="map-pin map-pin--home" style="left: 25.4%; top: 21.9%;"><span class="label">College Station</span></span>
+          </figure>
           <dl class="habitat-facts">
             {habitat.facts.map((fact) => (
               <div class="habitat-fact">
                 <dt class="label">{fact.label}</dt>
                 <dd>
-                  {fact.value}
+                  {keepUnits(fact.value)}{fact.source && ' '}
                   {fact.source && <a class="label habitat-src" href={fact.source.href} target="_blank" rel="noopener">[ {fact.source.label} ]</a>}
                 </dd>
               </div>
             ))}
           </dl>
         </div>
-        <!-- Map of the coast: Flower Garden Banks in magenta, College Station as a dot.
-             The labels sit at the same spots as on the picture (left %, top %). -->
-        <figure class="habitat-map" data-drift="50">
-          <img src={imageUrl('sections/habitat-map.png')} alt="Map of the Texas and Louisiana coast with Flower Garden Banks offshore and College Station inland" width="1600" height="1100" loading="lazy" decoding="async" />
-          <span class="map-pin map-pin--fgb" style="left: 50.3%; top: 65.1%;"><span class="label">Flower Garden Banks</span></span>
-          <span class="map-pin map-pin--home" style="left: 25.4%; top: 21.9%;"><span class="label">College Station</span></span>
-        </figure>
       </div>
     </section>
   </div>
@@ -188,7 +193,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     image="story-fgb.jpg"
     position="50% 60%"
     tag="Flower Garden Banks"
-    title="Most of it lies in the twilight zone"
+    title={"Most of it lies in the twilight\u00a0zone"}
     items={fgbStats}
     art={{
       image: 'sections/fgb-poster-art.jpg',
@@ -338,6 +343,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     margin: 0;
     font-family: var(--font-display);
     font-stretch: var(--display-width);
+    word-spacing: 0.1em; /* the condensed face squeezes the spaces too */
     font-weight: 800;
     font-size: clamp(3.5rem, 1.5rem + 5vw, 7rem);
     line-height: 0.85;
@@ -487,6 +493,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     margin: 0;
     font-family: var(--font-display);
     font-stretch: var(--display-width);
+    word-spacing: 0.1em; /* the condensed face squeezes the spaces too */
     font-weight: 800;
     font-size: clamp(1.3rem, 1rem + 0.8vw, 1.75rem);
     line-height: 1;
@@ -560,6 +567,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   .habitat-facts {
     margin: var(--space-lg) 0 0;
+    border-bottom: 1px solid var(--color-line);
   }
 
   .habitat-fact {
@@ -582,7 +590,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .habitat-src {
     display: inline-block;
     padding-block: 0.3rem; /* an easier tap target on phones */
-    margin-left: 0.5rem;
     color: var(--color-accent);
     text-decoration: none;
   }
@@ -654,8 +661,48 @@ const pad = (n: number) => String(n).padStart(2, '0');
       grid-template-columns: 1fr 1fr;
     }
 
+    /* one column, in reading order: title, first paragraph, map, facts, then the rest of the text */
+    /* the Earth's key and note sit right under the Earth, before the number */
+    .fig-globe + .fig-text .fig-key {
+      order: -2;
+    }
+
+    .fig-globe + .fig-text .fig-note {
+      order: -1;
+      margin-bottom: var(--space-sm);
+    }
+
     .habitat-grid {
-      grid-template-columns: 1fr;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .habitat-copy,
+    .habitat-side {
+      display: contents;
+    }
+
+    .habitat-title {
+      order: 1;
+    }
+
+    .habitat-text--first {
+      order: 2;
+    }
+
+    .habitat-map {
+      order: 3;
+      margin-top: var(--space-lg);
+    }
+
+    .habitat-facts {
+      order: 4;
+    }
+
+    .habitat-text:not(.habitat-text--first) {
+      order: 5;
+      margin-top: var(--space-lg);
     }
   }
 
@@ -679,8 +726,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
       left: 0;
     }
 
+    /* the numeral sits above its heading, so the text gets the full width */
     .naming-item {
-      grid-template-columns: 3rem minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.6rem;
     }
 
     .naming-num {

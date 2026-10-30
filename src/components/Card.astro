@@ -4,6 +4,7 @@
 //
 // Every card has the same shape, so a row of cards always lines up. If the photo file
 // is missing from public/images/, a quiet dark panel of the same shape takes its place.
+import { keepUnits } from '../lib/text';
 import { imageExists, imageUrl } from '../lib/images';
 import { url } from '../lib/url';
 import PhotoPlaceholder from './PhotoPlaceholder.astro';
@@ -33,7 +34,7 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
 ---
 
 <article class:list={['card', { 'card--feature': feature }]}>
-  <div class="card-media" style={`aspect-ratio: ${ratio};`}>
+  <div class:list={['card-media', { 'card-media--pending': !hasPhoto && standIn }]} style={`aspect-ratio: ${ratio};`}>
     {hasPhoto && <img src={imageUrl(photo)} alt={photoLabel} loading="lazy" decoding="async" />}
     {!hasPhoto && standIn && <PhotoPlaceholder label={standIn} file={photo} />}
     {badge && <span class="card-badge label"><span class="card-badge-dot" aria-hidden="true"></span>{badge}</span>}
@@ -59,7 +60,7 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
         >{titleParts.map(({ part, keep }) => (keep ? <span class="keep-case">{part}</span> : part))}</a>
       )}
     </h3>
-    <p class="card-text">{text}</p>
+    <p class="card-text">{keepUnits(text)}</p>
   </div>
 </article>
 
@@ -148,10 +149,11 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
 
   /* Badge: a small dark pill in the photo's top-left corner, e.g. "● LIVE".
      It always uses the dark palette, so it reads the same on light and dark bands. */
+  /* inset past the placeholder's corner bracket, so the two don't touch */
   .card-badge {
     position: absolute;
-    top: var(--space-sm);
-    left: var(--space-sm);
+    top: calc(var(--space-sm) + 0.6rem);
+    left: calc(var(--space-sm) + 0.6rem);
     display: inline-flex;
     align-items: center;
     gap: 0.5em;
@@ -168,14 +170,11 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
     background: var(--color-live);
   }
 
-  /* Feature card: same parts, bigger title */
+  /* Feature card: same parts, bigger title (the text stays the same size as the cards beside it) */
   .card--feature .card-title {
     font-size: clamp(1.8rem, 1.2rem + 1.8vw, 3rem);
   }
 
-  .card--feature .card-text {
-    font-size: var(--text-lg);
-  }
 
   .card:hover .card-arrow {
     transform: translateX(6px);

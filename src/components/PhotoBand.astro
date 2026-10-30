@@ -8,7 +8,7 @@
 // To cross the edge below the band with an inset photo, put a <Patch> right after it.
 import { url } from '../lib/url';
 import { imageUrl } from '../lib/images';
-import { keepDots } from '../lib/text';
+import { keepDots, keepUnits } from '../lib/text';
 
 interface Props {
   image: string;              // file name in public/images/bands/
@@ -32,11 +32,11 @@ const hasSlot = Astro.slots.has('default');
   <div class="container photo-band-inner">
     <div class="photo-band-head" data-reveal>
       {label && <p class="label photo-band-label">{label}</p>}
-      {heading && <h2 class="photo-band-title">{heading}</h2>}
+      {heading && <h2 class="photo-band-title">{keepUnits(heading)}</h2>}
       {tag && (
         <div class="photo-band-meta">
-          <span class="photo-band-hatch" aria-hidden="true"></span>
-          <p class="label photo-band-tag">[ {keepDots(tag)} ]</p>
+          <span class="photo-band-hatch slashes" aria-hidden="true"></span>
+          <p class="label photo-band-tag">[ {keepDots(keepUnits(tag))} ]</p>
         </div>
       )}
     </div>
@@ -98,9 +98,15 @@ const hasSlot = Astro.slots.has('default');
   }
 
   .photo-band-title {
-    max-width: 11ch;
+    max-width: 14ch; /* with balanced lines: "Our build log" and "How can we help?" never leave a word alone */
     font-size: var(--text-hero);
     color: var(--color-white);
+  }
+
+  /* the split band's headline shares the width with the list, so it's a size down: "How / can we / help?" */
+  .photo-band--split .photo-band-title {
+    max-width: 11ch;
+    font-size: clamp(3rem, 1rem + 7.5vw, 8rem);
   }
 
   .photo-band--md .photo-band-title {
@@ -119,7 +125,7 @@ const hasSlot = Astro.slots.has('default');
   .photo-band-hatch {
     flex: 0 0 7rem;
     height: 0.9rem;
-    background: repeating-linear-gradient(115deg, rgb(255 255 255 / 0.6) 0 1px, transparent 1px 7px);
+    background-color: rgb(255 255 255 / 0.6);
   }
 
   .photo-band-tag {
@@ -141,6 +147,16 @@ const hasSlot = Astro.slots.has('default');
     margin-top: 0;
   }
 
+  /* the split band (Home's "How can we help?") fades into the dark band below it */
+  .photo-band--split .photo-band-media::before {
+    content: '';
+    position: absolute;
+    inset: auto 0 80px; /* the picture runs 80 px past the band's bottom edge (room to pan) */
+    height: 12rem;
+    background: linear-gradient(to top, var(--color-bg), transparent);
+    pointer-events: none;
+  }
+
   @media (max-width: 900px) {
     .photo-band--split .photo-band-inner {
       grid-template-columns: 1fr;
@@ -149,6 +165,11 @@ const hasSlot = Astro.slots.has('default');
     /* the text covers most of the photo on narrow screens, so darken it evenly */
     .photo-band-media::after {
       background: rgb(6 18 31 / 0.5);
+    }
+
+    /* the split band's list of links runs over the brightest part of its photo: a deeper shade */
+    .photo-band--split .photo-band-media::after {
+      background: rgb(6 18 31 / 0.68);
     }
 
     /* slashes on their own line above the tag, like the page headers */
@@ -161,6 +182,24 @@ const hasSlot = Astro.slots.has('default');
     .photo-band-hatch {
       flex: none;
       width: 7rem;
+    }
+  }
+
+  /* phones: the band hugs its text, with the same space above and below, instead of
+     filling most of the screen and leaving an empty stretch of photo under the button */
+  @media (max-width: 600px) {
+    .photo-band {
+      min-height: 0;
+    }
+
+    .photo-band-inner {
+      padding-block: calc(var(--space-2xl) + var(--space-md));
+    }
+
+    /* the full width for the headline, so it breaks into even lines (no "LOG" on its own) */
+    .photo-band-title,
+    .photo-band--md .photo-band-title {
+      max-width: none;
     }
   }
 </style>
