@@ -101,7 +101,12 @@ const year = new Date().getFullYear();
     color: var(--color-accent);
   }
 
-  /* a channel with no link yet: the same name style as the others, with a small "[ soon ]" after it */
+  /* a channel with no link yet: the same name style as the others, with a small "[ soon ]" after it,
+     the two kept together on one line */
+  .footer-pending {
+    white-space: nowrap;
+  }
+
   .footer-soon {
     margin-left: 0.35rem;
     white-space: nowrap;

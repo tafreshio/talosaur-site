@@ -24,7 +24,7 @@ const run = Array.from({ length: Math.max(2, Math.ceil(8 / Math.max(words.length
     {[0, 1].map((copy) => (
       <ul class:list={['marquee-run', { 'marquee-run--copy': copy === 1 }]}>
         {run.map((word, i) => (
-          <li class:list={['marquee-word', { 'marquee-word--outline': i % 2 === 1, 'marquee-word--repeat': i >= words.length }]}>
+          <li class:list={['marquee-word', { 'marquee-word--outline': i % 2 === 1, 'marquee-word--repeat': i >= words.length, 'marquee-word--first': i === 0 }]}>
             {word}<span class="marquee-ring"></span>
           </li>
         ))}
@@ -117,6 +117,27 @@ const run = Array.from({ length: Math.max(2, Math.ceil(8 / Math.max(words.length
 
     .marquee-word {
       font-size: clamp(2rem, 1rem + 4vw, 5rem);
+    }
+
+    /* the rings go between the words (before each one but the first), so a wrapped list never
+       ends on a ring or has its rings zigzag down the right */
+    .marquee-ring {
+      order: -1;
+    }
+
+    .marquee-word--first .marquee-ring {
+      display: none;
+    }
+  }
+
+  /* standing still on a phone: one word per line, left-aligned, no rings */
+  @media (prefers-reduced-motion: reduce) and (max-width: 760px) {
+    .marquee-run {
+      justify-content: flex-start;
+    }
+
+    .marquee-ring {
+      display: none;
     }
   }
 </style>

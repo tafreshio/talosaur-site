@@ -193,13 +193,14 @@ const animals = [
     top: calc(var(--d) * var(--m));
   }
 
-  /* While the readout runs, things outside the band you are in fade back */
+  /* While the readout runs, the depth lines outside the band you are in fade back (the notes
+     themselves stay at full strength, so their headings never look grey) */
   [data-zone] {
     transition: opacity 400ms var(--ease);
   }
 
-  .is-live [data-zone] {
-    opacity: 0.85;
+  .is-live .mark[data-zone] {
+    opacity: 0.7;
   }
 
   .is-live[data-zone='sunlit'] [data-zone='sunlit'],
@@ -724,6 +725,11 @@ const animals = [
       font-size: 0.975rem;
     }
 
+    /* a touch smaller on phones, so short titles like "Too deep for divers." stay on one line */
+    .note-title {
+      font-size: 1.45rem;
+    }
+
     .mark-text {
       left: 0.75rem;
     }
@@ -805,8 +811,8 @@ const animals = [
       width: 44vw;
     }
 
-    /* On phones the notes run almost to the edge, so the three animals behind them become a faint
-       texture and the text stays easy to read. The jellyfish beside the short sunlit line stays brighter. */
+    /* On phones the notes run almost to the edge, so the animals behind them become a faint
+       texture and the text stays easy to read. */
     @media (max-width: 760px) {
       .animal--squid,
       .animal--oval,
@@ -815,7 +821,12 @@ const animals = [
       }
 
       .animal--jelly {
-        opacity: 0.55;
+        opacity: 0.35;
+      }
+
+      /* the vehicle is drawn clearly enough on its own; its label would sit on the cable */
+      .vehicle-label {
+        display: none;
       }
     }
 

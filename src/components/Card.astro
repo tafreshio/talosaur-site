@@ -4,6 +4,7 @@
 //
 // Every card has the same shape, so a row of cards always lines up. If the photo file
 // is missing from public/images/, a quiet dark panel of the same shape takes its place.
+import { keepUnits } from '../lib/text';
 import { imageExists, imageUrl } from '../lib/images';
 import { url } from '../lib/url';
 import PhotoPlaceholder from './PhotoPlaceholder.astro';
@@ -59,7 +60,7 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
         >{titleParts.map(({ part, keep }) => (keep ? <span class="keep-case">{part}</span> : part))}</a>
       )}
     </h3>
-    <p class="card-text">{text}</p>
+    <p class="card-text">{keepUnits(text)}</p>
   </div>
 </article>
 
@@ -184,14 +185,5 @@ const num = index !== undefined ? String(index).padStart(2, '0') : undefined;
 
   .card:hover .card-body {
     border-top-color: var(--color-accent);
-  }
-
-  /* Phones: a "photo to come" panel is a slim strip rather than a full-size dark box, so a row of
-     cards still waiting for photos doesn't read as a long run of empty panels. The real photo,
-     once added, keeps the full shape. */
-  @media (max-width: 600px) {
-    .card-media--pending {
-      aspect-ratio: 5 / 2 !important;
-    }
   }
 </style>

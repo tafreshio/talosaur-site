@@ -98,7 +98,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
           {items.map((item) => (
             <div class="stat">
               <dt class="story-word stat-num">{item.title}</dt>
-              <dd class="stat-text"><span class="stat-dot" aria-hidden="true"></span>{item.text}</dd>
+              <dd class="stat-text"><span class="stat-dot" aria-hidden="true"></span>{keepUnits(item.text)}</dd>
             </div>
           ))}
         </dl>
@@ -115,7 +115,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
               <li class="col">
                 <p class="label col-num"><span class="col-dot" aria-hidden="true"></span>{pad(i)}</p>
                 <h3 class="col-title">{item.title}</h3>
-                {item.text && <p class="col-text">{item.text}</p>}
+                {item.text && <p class="col-text">{keepUnits(item.text)}</p>}
               </li>
             ))}
           </ol>
@@ -154,7 +154,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
             {items.map((item) => (
               <div class="art-stat">
                 <dt class="story-word art-num">{item.title}</dt>
-                <dd class="art-text">{item.text}</dd>
+                <dd class="art-text">{keepUnits(item.text)}</dd>
               </div>
             ))}
           </dl>
@@ -237,7 +237,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
 
   /* art: the picture behind is toned down all over, so the artwork stays the loudest thing */
   .story--art .story-media::after {
-    background: linear-gradient(90deg, rgb(6 18 31 / 0.72) 0%, rgb(6 18 31 / 0.6) 55%, rgb(6 18 31 / 0.56) 100%);
+    background: linear-gradient(90deg, rgb(6 18 31 / 0.8) 0%, rgb(6 18 31 / 0.72) 55%, rgb(6 18 31 / 0.68) 100%);
   }
 
   .story-rail {
@@ -507,7 +507,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
   .story-title--art {
     grid-area: title;
     align-self: end;
-    max-width: 13ch;
+    max-width: 14ch;
     font-size: clamp(2rem, 0.9rem + 2.6vw, 3.6rem);
   }
 
@@ -733,6 +733,10 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
 
     .story-title--sm {
       font-size: clamp(1.8rem, 0.9rem + 5.5vw, 2.4rem);
+    }
+
+    .story--statement .story-media::after {
+      background: rgb(6 18 31 / 0.62);
     }
 
     /* the full width on phones, so titles break into fewer, fuller lines */

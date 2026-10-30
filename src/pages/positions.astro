@@ -292,10 +292,13 @@ const life = {
       margin: 0;
     }
 
+    /* the two short details side by side, so the six roles take less scrolling */
     .role-details {
       grid-column: auto;
       grid-row: auto;
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-sm) var(--space-md);
+      font-size: 0.95rem;
     }
 
     /* phones: the button closes each role, under its details */

@@ -110,9 +110,7 @@ const posterSrc = url(`/${posterFile}`);
   }
 
   /* Dark fade at the top so the menu stays readable, and a deeper one along the bottom under the
-     wordmark. The wordmark inverts what's behind it (see .hero-wordmark below); over the dark fade
-     that comes out close to white, so it stays crisp even on bright shots like the opening eye,
-     while still picking up a tint from each shot. */
+     wordmark, so the white wordmark reads over any shot, bright or dark. */
   .hero-media::after {
     content: '';
     position: absolute;
@@ -149,19 +147,15 @@ const posterSrc = url(`/${posterFile}`);
     padding-bottom: clamp(2rem, 6svh, 4rem);
   }
 
-  /* Giant logo in the lower part of the video: the white lockup from the brand pack.
-     mix-blend-mode: difference subtracts the video's colors from the white logo, so the
-     stripes and letters show the video inverted: copper over blue water, black over a
-     white flash. It stays readable over any shot without a dark fade, and changes with
-     every cut. It needs a pure white logo to be a true invert, and only works because
-     .hero has "isolation: isolate", which keeps the blend inside the hero. */
+  /* Giant logo in the lower part of the video: the white lockup from the brand pack, in plain foam
+     white over the dark fade. (It used to invert the video behind it; on light shots like the
+     opening eye that came out a muddy beige.) */
   .hero-wordmark {
     display: block;
     flex: 1 1 auto;
     width: 100%;
     max-width: calc(100% - 7rem); /* leaves room for "Scroll" on wide screens */
     height: auto;
-    mix-blend-mode: difference;
     animation: rise 1.2s var(--ease) both;
   }
 

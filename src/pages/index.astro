@@ -8,7 +8,7 @@ import PhotoBand from '../components/PhotoBand.astro';
 import Patch from '../components/Patch.astro';
 import Card from '../components/Card.astro';
 import Specimen from '../components/Specimen.astro';
-import { imageUrl } from '../lib/images';
+import { imageUrl, imageExists } from '../lib/images';
 import { heroCards, featuredHeading, featuredCards, helpButtons, interestedCards, echoFigures } from '../data/home';
 import { explored } from '../data/problem';
 import { getSortedNews, formatNewsDate } from '../lib/news';
@@ -17,6 +17,10 @@ import { url } from '../lib/url';
 // The four newest news entries (newest first)
 const latestNews = (await getSortedNews()).slice(0, 4);
 const pad = (n: number) => String(n).padStart(2, '0');
+
+// While none of the featured photos exist yet, the row sits level with shorter panels (a staircase of
+// three empty panels looks half-loaded). The steps come back as soon as one photo is added.
+const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
 ---
 
 <BaseLayout headerOverlay>
@@ -114,7 +118,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     <section class="container section">
       <SectionHeader number={4} title={featuredHeading} />
       <!-- Stepped layout: each card sits a little lower than the one before -->
-      <div class="card-grid card-grid--stepped" data-reveal-group data-drift="140">
+      <div class:list={['card-grid', 'card-grid--stepped', { 'card-grid--pending': featuredPending }]} data-reveal-group data-drift="140">
         {featuredCards.map((card, i) => <Card {...card} index={i + 1} ratio="16 / 9" />)}
       </div>
     </section>
@@ -227,7 +231,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   /* on phones it stays thin, but not so thin the fish disappear */
   @media (max-width: 760px) {
     .strip {
-      aspect-ratio: 3 / 1;
+      aspect-ratio: 2.2 / 1;
     }
   }
 
@@ -392,6 +396,15 @@ const pad = (n: number) => String(n).padStart(2, '0');
     margin-top: calc(var(--space-xl) * 2);
   }
 
+  /* every featured photo still to come: no steps, and shorter panels */
+  .card-grid--pending > :global(*) {
+    margin-top: 0 !important;
+  }
+
+  .card-grid--pending :global(.card-media) {
+    aspect-ratio: 2 / 1 !important;
+  }
+
   /* Section 03: the cards sit in front of the radiolarian (Specimen.astro) */
   .band--specimen > .section {
     position: relative;
@@ -411,6 +424,31 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
     .band--specimen :global(.specimen--right) {
       right: -8vw;
+    }
+
+    /* its caption stays on phones, small, to the left of it, so it reads as a specimen */
+    .band.band--specimen :global(.specimen--right .specimen-label) {
+      display: block;
+      top: 42%;
+      right: calc(100% + 0.25rem);
+      width: 9.5rem;
+      font-size: 0.6rem;
+      white-space: normal;
+      text-align: right;
+      text-wrap: balance;
+    }
+
+    .band--specimen :global(.specimen-label::before) {
+      display: none;
+    }
+
+    /* the Turtle drawing shows only its side view on phones, where the small labels can still be read */
+    .card-grid--feature > :global(:first-child .card-media) {
+      aspect-ratio: 16 / 10 !important;
+    }
+
+    .card-grid--feature > :global(:first-child .card-media img) {
+      object-position: 50% 0%;
     }
   }
 
@@ -487,6 +525,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
     position: relative; /* in front of the texture */
   }
 
+  /* the list is short, so less empty band under it */
+  .band--sonar {
+    padding-bottom: var(--space-lg);
+  }
+
   .news-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -527,14 +570,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
     color: var(--color-muted);
   }
 
+  /* the news titles in the condensed capitals of the News page, so the dated list holds its own
+     on the big dark band */
   .news-title {
-    font-family: var(--font-body);
-    font-stretch: normal;
-    font-weight: 600;
-    font-size: clamp(1.25rem, 1rem + 0.6vw, 1.6rem);
-    line-height: 1.3;
-    text-transform: none;
-    letter-spacing: 0;
+    font-size: clamp(1.5rem, 1rem + 1.1vw, 2.2rem);
+    line-height: 1;
     transition: color var(--duration) var(--ease);
   }
 

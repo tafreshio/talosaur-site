@@ -17,7 +17,7 @@ export const positions = [
     skills: 'C/C++, Arduino or ESP32',
   },
   {
-    title: 'Computer Vision / ML Engineer',
+    title: 'Computer Vision\u00a0/ ML Engineer', // no-break space: the line never starts with "/"
     whatYoullDo: 'Help the robot spot and track marine animals in video',
     skills: 'Python, PyTorch, OpenCV',
   },

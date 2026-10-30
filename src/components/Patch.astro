@@ -365,6 +365,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .stack-front {
     aspect-ratio: 3 / 2;
     box-shadow: 0 1.5rem 3rem rgb(0 0 0 / 0.3);
+    outline: 1px solid var(--color-accent); /* a thin cyan hairline a little way out from the photo */
+    outline-offset: 5px;
   }
 
   .patch .stack-back {

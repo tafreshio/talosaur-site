@@ -79,7 +79,7 @@ export const team: TeamMember[] = [
 // on the Who we are page, after the first row of people. Words between ** and ** get a coloured box.
 export const teamStatement = {
   tag: 'What we share',
-  headline: 'Many disciplines, **one vehicle**, one question: **what lives down there?**',
+  headline: 'Many disciplines, **one vehicle**, one\u00a0question: **what lives down\u00a0there?**', // no-break spaces keep "question:" and "there?" off lines of their own
   text: "None of us could build Turtle alone. Every part depends on another, and nothing counts until it all works together in the water. So we design, build and test as one team, a step at a time on the way from the pool to the reef. That's how a group of students gets to see a part of the ocean that is barely watched.",
   signoff: 'The Talosaur team',
 };

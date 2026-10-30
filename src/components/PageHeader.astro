@@ -9,7 +9,7 @@
 import { mainNav } from '../data/site';
 import { imageExists, imageUrl } from '../lib/images';
 import { url } from '../lib/url';
-import { keepDots } from '../lib/text';
+import { keepDots, keepUnits } from '../lib/text';
 
 interface Props {
   title: string;          // the page name, shown in the small label ("02 · The Problem")
@@ -37,15 +37,15 @@ const photoUrl = imageUrl(`pages/${image}`);
 
   <div class="container page-header-inner" data-reveal-group>
     {number && <p class="label page-num">{number} · {title}</p>}
-    <h1 class="page-title">{heading}</h1>
+    <h1 class:list={['page-title', { 'page-title--long': heading.length > 24 }]}>{keepUnits(heading)}</h1>
     <!-- Caption line: a hairline with a hatched stripe on the left and the caption in brackets on the right -->
     {caption && (
       <div class="page-meta">
         <span class="page-hatch slashes" aria-hidden="true"></span>
-        <p class="label page-caption">[ {keepDots(caption)} ]</p>
+        <p class="label page-caption">[ {keepDots(keepUnits(caption))} ]</p>
       </div>
     )}
-    {intro && <p class="page-intro">{intro}</p>}
+    {intro && <p class="page-intro">{keepUnits(intro)}</p>}
     <!-- Anything placed inside <PageHeader>...</PageHeader> (e.g. a button) shows here -->
     {Astro.slots.has('default') && <div class="page-actions"><slot /></div>}
   </div>
@@ -79,7 +79,7 @@ const photoUrl = imageUrl(`pages/${image}`);
   .page-header--image {
     display: flex;
     align-items: flex-end;
-    min-height: clamp(32rem, 82svh, 54rem);
+    min-height: clamp(34rem, 88svh, 56rem);
     /* The menu floats on top, so pull the photo up underneath it (same as the Home hero) */
     margin-top: calc(-1 * var(--header-height));
     overflow: hidden;
@@ -111,7 +111,7 @@ const photoUrl = imageUrl(`pages/${image}`);
     inset: 0;
     background:
       linear-gradient(90deg, rgb(6 18 31 / 0.72) 0%, rgb(6 18 31 / 0.5) 42%, rgb(6 18 31 / 0.16) 72%, transparent 90%),
-      linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 72%, transparent) 0%, transparent 28%);
+      linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 82%, transparent) 0%, color-mix(in srgb, var(--color-bg) 40%, transparent) 16%, transparent 30%);
   }
 
   /* Phones: the text runs the full width, so shade the whole photo evenly instead */
@@ -158,6 +158,13 @@ const photoUrl = imageUrl(`pages/${image}`);
   .page-title {
     max-width: 16ch;
     font-size: var(--text-hero);
+  }
+
+  /* a long headline (Positions) a size down, so it takes two lines like the others, not three,
+     and every page's header keeps about the same shape */
+  .page-title--long {
+    max-width: 20ch;
+    font-size: clamp(2.6rem, 1rem + 6.4vw, 6.75rem);
   }
 
   .page-actions {

@@ -142,7 +142,7 @@ export const reasons = [
   },
   {
     depth: 136,
-    title: 'Too expensive to visit often.',
+    title: 'Too expensive to visit\u00a0often.', // no-break space: "often." never sits alone
     text: 'Remotely operated vehicles need pilots and boats, commercial underwater robots cost $50,000 to over $1 million, and ship time costs tens of thousands of dollars a day.',
     fact: '',
     sources: [sources.robots, sources.ship],

@@ -49,17 +49,15 @@ const audiences = [
         </div>
       </dl>
 
-      <!-- Collage beside the contact details, in the style of Colossal's species pages: a big edited
+      <!-- Picture beside the contact details, in the style of Colossal's species pages: a big edited
            photo (jellyfish in a magenta and orange map), a lime colour block behind it with a notch
-           cut out, an orange dot on one corner and a small edited photo (a sand tiger shark in lime on
-           violet) over another.
-           Pictures: public/images/accents/jelly.jpg and sections/contact-inset.jpg. -->
+           cut out, and an orange dot on one corner. (No small inset photo here: insets never sit
+           right under a page header.) Picture: public/images/accents/jelly.jpg. -->
       <figure class="collage" aria-hidden="true" data-drift="50">
         <span class="collage-block"></span>
         <img class="collage-main" src={imageUrl('accents/jelly.jpg')} alt="" width="1280" height="960" loading="lazy" decoding="async" />
         <span class="collage-dot"></span>
         <span class="label collage-tag">[ Jellyfish ]</span>
-        <img class="collage-inset" src={imageUrl('sections/contact-inset.jpg')} alt="" width="900" height="600" loading="lazy" decoding="async" />
       </figure>
     </section>
   </div>
@@ -156,21 +154,6 @@ const audiences = [
     background: rgb(6 18 31 / 0.6);
   }
 
-  /* Small natural photo over the bottom left corner */
-  .collage-inset {
-    position: absolute;
-    left: calc(-1 * var(--space-md));
-    bottom: calc(-1 * var(--space-xl));
-    width: 42%;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-    /* a thin cyan hairline with a gap, like a viewfinder frame, instead of a thick white border */
-    padding: 4px;
-    border: 1px solid var(--color-accent);
-    background: var(--light-bg);
-    box-shadow: 0 1rem 2rem rgb(0 0 0 / 0.2);
-  }
-
   .contact-list {
     margin: 0;
     border-bottom: 1px solid var(--color-line);
@@ -239,11 +222,6 @@ const audiences = [
     .collage-block {
       top: calc(-1 * var(--space-sm));
       left: calc(-1 * var(--space-md));
-    }
-
-    .collage-inset {
-      left: calc(-1 * var(--space-sm));
-      bottom: calc(-1 * var(--space-lg));
     }
   }
 </style>

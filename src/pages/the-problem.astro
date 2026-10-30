@@ -1,4 +1,5 @@
 ---
+import { keepUnits } from '../lib/text';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import SectionHeader from '../components/SectionHeader.astro';
@@ -158,7 +159,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <div class="habitat-grid">
         <div class="habitat-copy">
           <h3 class="habitat-title">{habitat.title}</h3>
-          {habitat.paragraphs.map((text, i) => <p class:list={['habitat-text', { 'habitat-text--first': i === 0 }]}>{text}</p>)}
+          {habitat.paragraphs.map((text, i) => <p class:list={['habitat-text', { 'habitat-text--first': i === 0 }]}>{keepUnits(text)}</p>)}
         </div>
         <div class="habitat-side">
           <!-- Map of the coast: Flower Garden Banks in magenta, College Station as a dot.
@@ -173,7 +174,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
               <div class="habitat-fact">
                 <dt class="label">{fact.label}</dt>
                 <dd>
-                  {fact.value}{fact.source && ' '}
+                  {keepUnits(fact.value)}{fact.source && ' '}
                   {fact.source && <a class="label habitat-src" href={fact.source.href} target="_blank" rel="noopener">[ {fact.source.label} ]</a>}
                 </dd>
               </div>
@@ -192,7 +193,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     image="story-fgb.jpg"
     position="50% 60%"
     tag="Flower Garden Banks"
-    title="Most of it lies in the twilight zone"
+    title={"Most of it lies in the twilight\u00a0zone"}
     items={fgbStats}
     art={{
       image: 'sections/fgb-poster-art.jpg',

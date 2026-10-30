@@ -118,7 +118,7 @@ Swap any of these for real team photos whenever you have them.
 |---|---|---|
 | `radiolarian.webp` | Home, Section 04, running off the right edge behind the cards | A radiolarian (plankton) from the 1887 HMS Challenger plates: neon lime lines on a violet shell, magenta inside. Transparent background. Placed with `src/components/Specimen.astro` |
 | `sonar.jpg` | Home, Section 06, behind Latest news | NOAA sonar data of the seafloor, recoloured violet, teal and magenta and kept dark so the news reads on top |
-| `jelly.jpg` (and `sections/contact-inset.jpg`) | Work with us, beside the contact details | Collage: a jellyfish in magenta and orange, a lime block with a notch behind it, an orange dot and a small sand tiger shark in lime on violet (Pexels), edited like the jellyfish so the two match |
+| `jelly.jpg` | Work with us, beside the contact details | A jellyfish in magenta and orange, with a lime block with a notch behind it and an orange dot on its corner |
 
 The three ways to help on Donate sit on plain colour blocks (orange, lime, violet) with their number in big thin type, not photos: a picture of an unrelated animal would suggest the wrong thing. The accent colours used in these edits (lime, orange, violet, magenta) are CSS variables in `src/styles/global.css` (`--color-lime` and so on), so the colour blocks and dots on the page match the pictures. To replace one, keep the same file name and size (and the transparent background for the `.webp`).
 
