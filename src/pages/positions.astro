@@ -58,15 +58,16 @@ const life = {
     </section>
   </div>
 
-  <!-- Story band like "Bringing back the woolly mammoth" on Colossal's mammoth page: big type across a
-       school of fish (violet with lime), with the Apply button under it. The roles themselves are listed
-       just above, so the band only gives the count (from src/data/positions.ts). -->
+  <!-- Story band, split in two like "Bringing back the woolly mammoth" on Colossal's mammoth page:
+       a school of fish (violet with lime) on the left, a magenta and orange blur on the right, big type
+       across both, and the open roles listed on the right (from src/data/positions.ts). -->
   <StoryBand
     variant="split"
     image="story-join.jpg"
-    position="50% 50%"
+    position="30% 50%"
     tag="Now recruiting"
     title={`${String(positions.length).padStart(2, '0')} open roles`}
+    items={positions.map((role) => ({ title: role.title }))}
   >
     <a class="button" href={applicationFormUrl} target="_blank" rel="noopener noreferrer">
       Apply now <span aria-hidden="true">→</span>

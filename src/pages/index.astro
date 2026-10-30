@@ -458,6 +458,10 @@ const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
       aspect-ratio: 1 / 1 !important;
     }
 
+    .card-grid--pending :global(.card-body) {
+      margin-top: 0; /* its rule lines up with the top of the square */
+    }
+
     .card-grid--pending :global(.ph) {
       padding: 0.5rem;
     }

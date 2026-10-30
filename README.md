@@ -142,7 +142,7 @@ The three ways to help on Donate sit on plain colour blocks (orange, lime, viole
 |---|---|---|
 | `echo`: a few big words stacked down the middle, each with a small caption (Colossal's "Lost but not gone forever") | Home, FIND / FOLLOW / FILM | `story-find.jpg` (spiral coral, NOAA, magenta and green) |
 | `stats`: a title and big numbers on dots (Colossal's "5.5 million square miles") | Who we are, the team in numbers | `story-team.jpg` (sun rays under the surface, Pexels, orange to violet) |
-| `split`: very big type across the picture, with an optional list and the button (Colossal's "Bringing back the woolly mammoth") | Positions, "06 open roles" | `story-join.jpg` (a school of fish, Pexels, lime on violet) |
+| `split`: big type across a picture in two halves, with a list and the button on the right (Colossal's "Bringing back the woolly mammoth") | Positions, "06 open roles" | `story-join.jpg` (a school of fish, Pexels, lime on violet; a magenta and orange blur) |
 | `statement`: a big line and two short columns (Colossal's "Mission / Goal") | Donate, "Affordable ocean exploration"; Work with us, "20 minutes" | `story-donate.jpg` (a ray, NOAA, orange to violet), `story-talk.jpg` (a feather star, NOAA, teal and pink) |
 | `art`: a title and numbers on the left, a piece of artwork shown whole on the right in a thin lime frame (no type over it, no colour edits) | The Problem, "Most of it lies in the twilight zone" | `story-fgb.jpg` (the bank's seafloor relief from NOAA's poster, violet and lime), with the poster drawing `sections/fgb-poster-art.jpg` on top |
 

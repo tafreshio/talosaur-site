@@ -149,16 +149,20 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
           </span>
           <figcaption class="label art-credit">[ {art.credit} ]</figcaption>
         </figure>
-        {items.length > 0 && (
-          <dl class="art-stats" data-reveal-group>
-            {items.map((item) => (
-              <div class="art-stat">
-                <dt class="story-word art-num">{item.title}</dt>
-                <dd class="art-text">{keepUnits(item.text)}</dd>
-              </div>
-            ))}
-          </dl>
-        )}
+        <div class="art-side">
+          {items.length > 0 && (
+            <dl class="art-stats" data-reveal-group>
+              {items.map((item) => (
+                <div class="art-stat">
+                  <dt class="story-word art-num">{item.title}</dt>
+                  <dd class="art-text">{keepUnits(item.text)}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          <!-- the source sits right under the numbers it backs up -->
+          {source && variant !== 'art' && <a class="label story-src" href={source.href} target="_blank" rel="noopener">[ Source: {source.label} ]</a>}
+        </div>
       </div>
     )}
 
@@ -182,7 +186,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     )}
 
     {hasSlot && variant !== 'split' && <div class="story-slot"><slot /></div>}
-    {source && <a class="label story-src" href={source.href} target="_blank" rel="noopener">[ Source: {source.label} ]</a>}
+    {source && variant !== 'art' && <a class="label story-src" href={source.href} target="_blank" rel="noopener">[ Source: {source.label} ]</a>}
   </div>
 </section>
 
@@ -512,10 +516,17 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
     font-size: clamp(2rem, 0.9rem + 2.6vw, 3.6rem);
   }
 
-  .art-stats {
+  .art-side {
     grid-area: stats;
     align-self: start;
+  }
+
+  .art-stats {
     margin: 0;
+  }
+
+  .art-side .story-src {
+    margin-top: var(--space-md);
   }
 
   .art-stat {
