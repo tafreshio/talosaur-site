@@ -101,8 +101,19 @@ const photoUrl = imageUrl(`pages/${image}`);
     animation: photo-in 1.4s var(--ease) both;
   }
 
-  /* No dark shading over the photo: it shows at full brightness. The title and intro carry a soft
-     dark glow of their own (below), so they still read on a bright picture. */
+  /* Design system: every photo header gets a navy shade at the top, so the menu reads, and one at the
+     bottom left, where the title sits, so the title reads, whatever the photo. The middle of the
+     photo stays at full brightness. */
+  .page-header-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(to bottom, rgb(6 18 31 / 0.72) 0, rgb(6 18 31 / 0.32) 9rem, transparent 14rem),
+      linear-gradient(to top, rgb(6 18 31 / 0.7) 0%, rgb(6 18 31 / 0.25) 34%, transparent 58%),
+      linear-gradient(to right, rgb(6 18 31 / 0.35) 0%, transparent 55%);
+  }
 
   .page-header--image .page-header-inner {
     padding-block: calc(var(--header-height) + var(--space-xl)) var(--space-xl);
