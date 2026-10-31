@@ -117,11 +117,11 @@ const growthNext = ['A bigger team, from more majors and universities', 'More ve
        (src/components/CrewCollage.astro) -->
   <CrewCollage members={rest} disciplines={disciplines} statement={teamStatement} />
 
-  <!-- Where we're headed: royal blue band with a wide technical title (Martian Mono), like the
+  <!-- Where we're headed: the page's one violet band (was royal blue) with a band title in the readout voice, like the
        Form Bio band on Colossal's company page. Photos (public/images/sections/): the reef seen from
        the air breaking up into squares at its sides (regions-reef.webp, see README), a glacier front
        and two dolphins, at different depths so they drift at different speeds while scrolling. -->
-  <section class="band theme-royal regions">
+  <section class="band theme-violet regions">
     <div class="container">
       <p class="label regions-tag">[ Where we're headed ]</p>
       <h2 class="tech-title regions-title">Every ocean has a twilight zone</h2>
@@ -164,12 +164,11 @@ const growthNext = ['A bigger team, from more majors and universities', 'More ve
     </div>
   </section>
 
-  <!-- A small crew, for now: the team today and once Turtle works, on a warm band (an edited photo:
-       the lily pads from the egrets photo, blurred and recoloured coral, peach, pink and yellow,
-       sections/growth-texture.jpg), so the end of the page isn't blue after blue. The headline mixes
-       two typefaces, wide black Archivo and thin Martian Mono, with the egrets photo set into it as a
-       pill. Beside the comparison, the whale in natural colour. -->
-  <section class="band growth" style={`--growth-texture: url(${imageUrl('sections/growth-texture.jpg')})`}>
+  <!-- A small crew, for now: the team today and once Turtle works, on a light reading band between the
+       violet band above and the closing photo (design system: the warm coral and peach texture is retired).
+       The headline pairs the two display voices: condensed headline capitals, then the thin wide readout,
+       with the egrets photo set into it as a pill. Beside the comparison, the whale in natural colour. -->
+  <section class="band theme-light growth">
     <div class="container">
       <p class="label growth-tag">[ Growing with Turtle ]</p>
       <h2 class="growth-title">
@@ -444,7 +443,7 @@ const growthNext = ['A bigger team, from more majors and universities', 'More ve
     }
   }
 
-  /* ---------- Where we're headed (royal blue) ---------- */
+  /* ---------- Where we're headed (the violet band) ---------- */
 
   .regions {
     padding-top: var(--space-2xl);
@@ -624,12 +623,7 @@ const growthNext = ['A bigger team, from more majors and universities', 'More ve
   /* ---------- A small crew, for now (warm edited photo background) ---------- */
 
   .growth {
-    --color-text: var(--color-sun-ink);
-    --color-muted: rgb(26 15 8 / 0.8);
-    --color-line: rgb(26 15 8 / 0.3);
     padding-top: var(--space-2xl);
-    color: var(--color-text);
-    background: var(--color-sun) var(--growth-texture) center / cover no-repeat;
   }
 
   .growth-tag {
@@ -652,8 +646,9 @@ const growthNext = ['A bigger team, from more majors and universities', 'More ve
 
   .growth-line--big {
     font-family: var(--font-display);
-    font-stretch: 125%;
-    font-weight: 900;
+    font-stretch: var(--display-width);
+    word-spacing: 0.1em;
+    font-weight: 800;
     letter-spacing: -0.01em;
   }
 
@@ -663,8 +658,8 @@ const growthNext = ['A bigger team, from more majors and universities', 'More ve
     gap: 0.35em;
     margin-top: 0.12em;
     font-family: var(--font-tech);
-    font-stretch: 112.5%;
-    font-weight: 300;
+    font-stretch: var(--wide-width);
+    font-weight: 200;
     letter-spacing: 0.01em;
   }
 

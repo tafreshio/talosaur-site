@@ -52,16 +52,17 @@ const motifOf = (role: string) => {
   return 'stripes';
 };
 
-// One colour per discipline, used on that person's strip and role tag, and on the ring after the
-// discipline in the strip at the top. The ink is the text colour that reads on it.
+// Design system: the rainbow of role colours is retired, so every discipline shares one style, the violet
+// highlight with white text. (The keys stay, so a discipline can be given its own colour again here.)
+const violet = { color: 'var(--color-violet)', ink: 'var(--color-white)' };
 const palette: Record<string, { color: string; ink: string }> = {
-  mechanical: { color: 'var(--color-orange)', ink: 'var(--light-text)' },
-  hydraulics: { color: 'var(--color-accent)', ink: 'var(--light-text)' },
-  electrical: { color: 'var(--color-lime)', ink: 'var(--light-text)' },
-  software: { color: 'var(--color-violet)', ink: 'var(--color-white)' },
-  ocean: { color: 'var(--color-magenta)', ink: 'var(--light-text)' },
+  mechanical: violet,
+  hydraulics: violet,
+  electrical: violet,
+  software: violet,
+  ocean: violet,
 };
-const fallback = { color: 'var(--color-orange)', ink: 'var(--light-text)' };
+const fallback = violet;
 const colourOf = (role: string) => palette[Object.keys(palette).find((k) => role.toLowerCase().includes(k.slice(0, 8))) ?? ''] ?? fallback;
 
 // Where each card sits, repeating every six people. Sizes and heights are chosen so that cards side
@@ -500,7 +501,7 @@ const statementAfter = Math.min(3, members.length);
 
   /* ---------- The statement, cut into the collage ---------- */
 
-  /* The lime band runs the full row from the content's left edge off the right edge of the screen,
+  /* The orange strip (was lime) runs the full row from the content's left edge off the right edge of the screen,
      with a fine dot screen. The box sits four columns in. */
   .crew-statement {
     position: relative;
@@ -518,9 +519,11 @@ const statementAfter = Math.min(3, members.length);
     bottom: 0;
     left: 0;
     right: calc(50% - 50vw);
+    /* orange: the page's one orange strip (design system: lime is a highlight, never a whole band, and the
+       page's violet band is "Every ocean has a twilight zone" further down) */
     background:
-      radial-gradient(circle, rgb(6 18 31 / 0.13) 1.1px, transparent 1.5px) 0 0 / 9px 9px,
-      var(--color-lime);
+      radial-gradient(circle, rgb(6 18 31 / 0.14) 1.1px, transparent 1.5px) 0 0 / 9px 9px,
+      var(--color-orange);
   }
 
   /* the box starts four columns in, and stops short of the right margin by the frame's offset, so

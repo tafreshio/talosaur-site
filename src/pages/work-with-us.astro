@@ -128,10 +128,11 @@ const steps = [
     </div>
   </section>
 
-  <!-- How a project works: four steps on a violet to deep blue gradient. On laptops each step sits a
-       little lower than the one before, like a dive going down, joined by a stepped line from ring to
-       ring; on tablets and phones they become a timeline down the left. No pictures: the type carries it. -->
-  <section class="band theme-violet steps">
+  <!-- How a project works: four steps on navy (not violet: it sits right under the orange band, and
+       colour bands never touch). On laptops each step sits a little lower than the one before, joined by
+       a stepped line from ring to ring; on tablets and phones they become a timeline down the left.
+       No pictures: the type carries it. -->
+  <section class="band steps">
     <div class="container">
       <p class="label steps-tag">[ From first call to footage ]</p>
       <h2 class="tech-title steps-title">How a project works</h2>
@@ -240,7 +241,7 @@ const steps = [
     font-stretch: var(--display-width);
     word-spacing: 0.1em; /* the condensed face squeezes the spaces too */
     font-weight: 800;
-    font-size: clamp(1.5rem, 0.9rem + 2vw, 2.8rem); /* sized so the longest address and its arrow fit on one line */
+    font-size: clamp(1.25rem, 0.75rem + 1.5vw, 2.1rem); /* sized so the longest address and its arrow fit on one line beside the photo */
     line-height: 1;
     text-transform: uppercase;
     overflow-wrap: anywhere; /* long email addresses wrap instead of overflowing */
@@ -415,8 +416,8 @@ const steps = [
     display: block;
     margin-top: var(--space-lg);
     font-family: var(--font-tech);
-    font-stretch: 112.5%;
-    font-weight: 300;
+    font-stretch: var(--wide-width);
+    font-weight: 200;
     font-size: clamp(2.6rem, 1.6rem + 2.4vw, 4.4rem);
     line-height: 1;
     color: var(--color-lime);
