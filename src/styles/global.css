@@ -35,10 +35,19 @@
   --color-violet: #5b2be0;
   --color-magenta: #e14bff;
 
+  /* Bright band colours for the "plans" sections (Who we are, Work with us), so not every stretch
+     of the page is dark navy */
+  --color-royal: #3442d6;       /* Royal blue: "Where we're headed" */
+  --color-royal-deep: #2421a8;  /* Its darker partner, for the gradient behind "Growing with Turtle" */
+  --color-sun: #ff7a2f;         /* Orange: "What we bring back" (the same orange as the dots) */
+  --color-sun-ink: #1a0f08;     /* Text on the orange band */
+
   /* Fonts (loaded from Google Fonts in BaseLayout.astro) */
   --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --font-tech: "Martian Mono", "IBM Plex Mono", ui-monospace, monospace; /* wide technical titles */
+  --wide-width: 125%;           /* Archivo stretched wide, for subheads in the plans sections */
   --display-width: 75%;         /* How condensed the big headlines are (62% to 125%) */
 
   /* Font sizes. clamp(min, preferred, max) scales smoothly with screen width */
@@ -341,6 +350,66 @@ h3 {
   --color-line: var(--light-line);
   background: var(--color-bg);
   color: var(--color-text);
+}
+
+/* Bright bands for the "plans" sections: royal blue, orange and violet. Like .theme-light, each one
+   redefines the colour variables inside it, so labels, lines and buttons follow along. */
+.theme-royal,
+.theme-violet {
+  --color-text: #ffffff;
+  --color-muted: rgb(255 255 255 / 0.82);
+  --color-line: rgb(255 255 255 / 0.32);
+  --color-accent: var(--color-lime);
+  --color-accent-ink: #0b1620;
+  color: var(--color-text);
+}
+
+.theme-royal {
+  --color-bg: var(--color-royal);
+  background: var(--color-bg);
+}
+
+.theme-violet {
+  --color-bg: var(--color-royal-deep);
+  background: linear-gradient(160deg, var(--color-violet) 0%, var(--color-royal-deep) 70%);
+}
+
+.theme-sun {
+  --color-bg: var(--color-sun);
+  --color-text: var(--color-sun-ink);
+  --color-muted: rgb(26 15 8 / 0.8);
+  --color-line: rgb(26 15 8 / 0.28);
+  --color-accent: var(--color-sun-ink);
+  --color-accent-ink: var(--color-sun);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* Wide technical titles (Martian Mono), for the plans sections: thin, wide and spaced, centred
+   unless a page says otherwise. Overrides the condensed Archivo that other h2s use. */
+.tech-title {
+  font-family: var(--font-tech);
+  font-stretch: 112.5%;
+  font-weight: 300;
+  font-size: clamp(1.9rem, 0.6rem + 4.4vw, 5.2rem);
+  line-height: 1.08;
+  letter-spacing: 0.01em;
+  word-spacing: 0;
+  text-transform: uppercase;
+}
+
+/* Wide subheads: Archivo stretched wide, regular weight (like the "The future is biodiverse"
+   subheads on Colossal's company page) */
+.wide-head {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: var(--wide-width);
+  font-weight: 400;
+  font-size: clamp(1.25rem, 0.95rem + 1vw, 1.9rem);
+  line-height: 1.12;
+  letter-spacing: 0;
+  word-spacing: 0;
+  text-transform: uppercase;
 }
 
 /* Hidden visually but still read by screen readers */
