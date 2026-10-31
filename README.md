@@ -210,13 +210,13 @@ The News page (`src/pages/news.astro`) lists every post, and the Home page autom
 
 ## Swap the Home page video
 
-The full-screen video at the top of the Home page is the same video saved in two sizes, plus a still image. Each visitor downloads only one of the videos: big screens get a sharp 1080p file, phones get a lighter 720p one. Replace the files and keep the exact same names:
+The full-screen video at the top of the Home page is the same video saved in two sizes, plus a still image. Each visitor downloads only one of the videos: big screens get a sharp 1080p file, phones get a lighter 720p one. So the video never slows the page down, nothing of it downloads until the rest of the page has loaded (the still image shows until then), and it pauses whenever it is scrolled out of view. Replace the files and keep the exact same names:
 
 | File | What it is | Who gets it |
 |---|---|---|
-| `public/videos/hero-1080.mp4` | 1920 × 1080 MP4 (H.264), about 25 MB | Screens 900 px wide or more |
-| `public/videos/hero.mp4` | 1280 × 720 MP4 (H.264), about 13 MB | Phones, small windows, and everything else |
-| `public/images/hero-poster.jpg` | 1920 × 1080 still frame from the video | Shows while the video loads, and instead of the video for visitors who have "reduce motion" turned on |
+| `public/videos/hero-1080.mp4` | 1920 × 1080 MP4 (H.264), about 2.5 Mbit/s: 15 MB for the current 51-second loop | Screens 900 px wide or more |
+| `public/videos/hero.mp4` | 1280 × 720 MP4 (H.264), about 1.3 Mbit/s: 8 MB for the current loop | Phones, small windows, and everything else |
+| `public/images/hero-poster.jpg` | 1920 × 1080 still frame from the video | Shows while the page loads, and instead of the video for visitors who have "reduce motion" or data saver turned on |
 
 The list of files lives at the top of `src/components/HeroVideo.astro`. If a file is missing it is skipped, and if both videos are missing the site shows the still image instead.
 
@@ -226,8 +226,10 @@ The list of files lives at the top of `src/components/HeroVideo.astro`. If a fil
 - **Size on screen:** 1920 × 1080 (landscape, 16:9), and 1280 × 720 for `hero.mp4`.
 - **Length:** 10 to 20 seconds. It loops, so pick a clip where the end flows back into the start.
 - **No sound.** Browsers only autoplay muted video, and the site never plays audio. Remove the audio track to save space.
-- **File size:** phones get `hero.mp4`, so keep that one as small as you can (the current 51-second loop is 13 MB). `hero-1080.mp4` can be bigger (around 25 MB) because only wide screens download it.
-- **Framing:** on phones the left and right sides get cropped, so keep the subject near the center. The big TALOSAUR wordmark sits across the bottom and shows the video inverted through its letters, so it stays readable over light or dark shots. Very busy textures right under it make it harder to read.
+- **File size:** it's the heaviest thing on the site, so keep it small: about 2.5 Mbit/s for `hero-1080.mp4` and 1.3 Mbit/s for `hero.mp4` (a background loop doesn't need more; the current files are 15 MB and 8 MB). A shorter loop is the easiest way to make it lighter still: 20 seconds would be about 6 MB and 3 MB. With ffmpeg installed:
+  `ffmpeg -i clip.mp4 -an -c:v libx264 -b:v 2500k -maxrate 5000k -bufsize 5000k -pix_fmt yuv420p -movflags +faststart hero-1080.mp4`
+  `ffmpeg -i clip.mp4 -an -vf scale=1280:720 -c:v libx264 -b:v 1300k -maxrate 2600k -bufsize 2600k -pix_fmt yuv420p -movflags +faststart hero.mp4`
+- **Framing:** on phones the left and right sides get cropped, so keep the subject near the center. The big TALOSAUR wordmark sits across the bottom in white over a dark fade, so it stays readable over light or dark shots. Very busy textures right under it make it harder to read.
 
 **Poster image checklist:** JPG, 1920 × 1080, under 300 KB, ideally the first frame of the video.
 

@@ -30,6 +30,19 @@ const t2 = { x: MX + MR * Math.cos(base - spread), y: MY + MR * Math.sin(base - 
 // inside it, 10 x 10 = 100 smaller dots, one lit
 const grid = Array.from({ length: 100 }, (_, i) => ({ x: MX - 67.5 + (i % 10) * 15, y: MY - 67.5 + Math.floor(i / 10) * 15, lit: i === 63 }));
 const f = (n: number) => n.toFixed(1);
+// Each set of dots is drawn as one shape (a path of many small circles) rather than one shape per dot:
+// it looks the same and stays sharp at any size, but the page has a dozen shapes to handle instead of
+// 1,100, which keeps it quick to load and scroll, on phones especially.
+// (the radius is rounded first and the two half circles span exactly twice it, so each dot stays round)
+const dotsPath = (pts: { x: number; y: number; r: number }[]) =>
+  pts
+    .map(({ x, y, r }) => {
+      const rr = Math.round(r * 10) / 10;
+      return `M${f(x - rr)} ${f(y)}a${rr} ${rr} 0 1 0 ${f(2 * rr)} 0a${rr} ${rr} 0 1 0 ${f(-2 * rr)} 0`;
+    })
+    .join('');
+const fieldPath = dotsPath(dots.filter((_, i) => i !== pick).map((p) => ({ x: p.x, y: p.y, r: 4.2 * p.k })));
+const smallPath = dotsPath(grid.filter((g) => !g.lit).map((g) => ({ x: g.x, y: g.y, r: 3 })));
 ---
 
 <svg class="porthole" viewBox="0 0 780 600" role="img" aria-label="A round field of 1,000 dots with one circled, and a magnifier showing that dot holds 100 smaller ones, of which a single one is lit">
@@ -41,9 +54,7 @@ const f = (n: number) => n.toFixed(1);
   </defs>
 
   <circle cx={CX} cy={CY} r={R} fill="url(#pt-glass)" />
-  <g class="pt-dots">
-    {dots.map((p, i) => i !== pick && <circle cx={f(p.x)} cy={f(p.y)} r={f(4.2 * p.k)} />)}
-  </g>
+  <path class="pt-dots" d={fieldPath} />
   <circle cx={CX} cy={CY} r={R} class="pt-rim" />
 
   <!-- the circled dot and the zoom cone out to the magnifier -->
@@ -53,9 +64,7 @@ const f = (n: number) => n.toFixed(1);
   <line x1={f(S.x)} y1={f(S.y)} x2={f(t2.x)} y2={f(t2.y)} class="pt-cone" />
 
   <circle cx={MX} cy={MY} r={MR} class="pt-lens" />
-  <g class="pt-small">
-    {grid.map((g) => !g.lit && <circle cx={f(g.x)} cy={f(g.y)} r="3" />)}
-  </g>
+  <path class="pt-small" d={smallPath} />
   {grid.filter((g) => g.lit).map((g) => (
     <>
       <circle cx={f(g.x)} cy={f(g.y)} r="3.4" class="pt-lit" />
@@ -72,7 +81,7 @@ const f = (n: number) => n.toFixed(1);
     height: auto;
   }
 
-  .pt-dots circle {
+  .pt-dots {
     fill: rgb(232 241 245 / 0.32);
   }
 
@@ -105,7 +114,7 @@ const f = (n: number) => n.toFixed(1);
     stroke-width: 1.5;
   }
 
-  .pt-small circle {
+  .pt-small {
     fill: rgb(232 241 245 / 0.3);
   }
 
