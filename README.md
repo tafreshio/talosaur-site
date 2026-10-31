@@ -76,7 +76,7 @@ Open `src/data/positions.ts`. Each role is one `{ ... }` block with a title, "Wh
 
 All photos live in `public/images/`. To swap one, overwrite the file and keep the same name. Save JPGs about 1600 px wide and under 300 KB.
 
-**Home page cards.** Every card shows a photo; the filename is the `photo` line in `src/data/home.ts`. Section 03 is a feature layout: the first card (Turtle) is big and square (1200 × 1200), and the other two stack beside it at 16:9 (1600 × 900). Section 04 is a stepped row (each card a little lower than the last) and Section 07 a plain row, both 16:9 (1600 × 900). The layouts are the `card-grid--feature` and `card-grid--stepped` rules in `src/pages/index.astro`. If a file is missing, the card shows a plain dark panel of the same shape.
+**Home page cards.** Every card shows a photo; the filename is the `photo` line in `src/data/home.ts`. Section 04 ("In the works") is a feature layout: the first card (Turtle) is big and square (1200 × 1200), and the other two stack beside it at 16:9 (1600 × 900). Section 05 (Featured content) is a staggered collage: the Who we are photo at 3:2 (1800 × 1200), Open positions at 4:3 (1600 × 1200) and the build log at 16:9 (1600 × 900); while a photo is missing its panel is a little shorter. Section 08 is a short list with 16:9 thumbnails. The layouts are the `card-grid--feature`, `.collage` and `.more-list` rules in `src/pages/index.astro`. If a file is missing, the card shows a plain dark panel.
 
 **Home, Section 01.** The headline and intro (Content doc), and under the button two figures from The Problem as still pictures: the dotted Earth with the mapped share of the seafloor lit (`public/images/figures/globe-mapped.svg`), and how little of the deep seafloor anyone has seen, with a link to The Problem (numbers: `explored` in `src/data/problem.ts`).
 
@@ -112,14 +112,14 @@ Swap any of these for real team photos whenever you have them.
 
 **Inset photos across section edges ("patches"): not used right now.** Smaller photos used to sit across the edge between two sections. They were taken out (October 2026) because they looked stuck on, especially on top of the closing photo bands, which link somewhere unrelated. If you bring one back, only do it where the small photo clearly belongs to the section it overlaps, and never on a closing band or right under a page header. The component is still there: `src/components/Patch.astro` (the top of the file lists the shapes), with its photos in `public/images/patches/`. Example: `<Patch variant="lens" image="fish-eye-lens.jpg" caption="Fish eye" side="center" straddle />` between two sections.
 
-**Plans sections in bright colours (Who we are, Work with us).** Four sections about where Talosaur is going, each on its own bright background so the pages aren't navy all the way down, and with a wide "technical" title font, Martian Mono (`--font-tech`), like the Form Bio and "Just the beginning" bands on Colossal's company page. Subheads use Archivo stretched wide (`.wide-head`). The colours are CSS variables in `src/styles/global.css` (`--color-royal`, `--color-royal-deep`, `--color-sun`, `--color-sun-ink`) and the band styles are `.theme-royal`, `.theme-violet` and `.theme-sun` there (they work like `.theme-light`). The copy is new (not from the Content doc) and sits at the top of each page file, so it's easy to edit.
+**Plans sections (Who we are, Work with us).** Four sections about where Talosaur is going, on their own backgrounds so the pages aren't navy all the way down. They follow the colour rules in "Colour, type and marks" below: each page has at most one violet band and one orange band, never side by side. Band titles use the readout voice (`.tech-title`, which used to be Martian Mono) and subheads the headline voice (`.wide-head`). The band styles are `.theme-violet` (old name `.theme-royal`) and `.theme-sun` (orange) in `src/styles/global.css` (they work like `.theme-light`). The copy is new (not from the Content doc) and sits at the top of each page file, so it's easy to edit.
 
 | Section | Page | Pictures (`public/images/sections/`) |
 |---|---|---|
-| "Every ocean has a twilight zone" (where we're headed): royal blue, the route First / Next / Later, and three photos at different depths that drift at different speeds while scrolling | Who we are (`route`, `regionsText`) | `regions-reef.webp` and, for phones, `regions-reef-small.webp` with bigger squares (a reef from the air that breaks up into squares at its sides; transparent, so the band colour shows through), `regions-ice.jpg`, `regions-dolphins.jpg` |
-| "A small crew, for now" (growing with Turtle): a warm band (so the end of the page isn't blue after blue) with a headline in two typefaces, wide black Archivo and thin Martian Mono, and the egrets photo set into it as a pill; then the team today and once Turtle works, side by side, beside a whale | Who we are (`growthText`, `growthToday`, `growthNext`) | `growth-egrets.jpg`, `growth-whale.jpg`, and the background `growth-texture.jpg` (the same lily pads, blurred and recoloured coral, peach, pink and yellow) |
+| "Every ocean has a twilight zone" (where we're headed): the page's violet band, the route First / Next / Later, and three photos at different depths that drift at different speeds while scrolling | Who we are (`route`, `regionsText`) | `regions-reef.webp` and, for phones, `regions-reef-small.webp` with bigger squares (a reef from the air that breaks up into squares at its sides; transparent, so the band colour shows through), `regions-ice.jpg`, `regions-dolphins.jpg` |
+| "A small crew, for now" (growing with Turtle): a light band, with a headline in two voices (condensed headline capitals, then the thin wide readout) and the egrets photo set into it as a pill; then the team today and once Turtle works, side by side, beside a whale | Who we are (`growthText`, `growthToday`, `growthNext`) | `growth-egrets.jpg`, `growth-whale.jpg` (`growth-texture.jpg`, the old warm background, is no longer used) |
 | "What we bring back": orange, four deliverables two by two beside a reef wall with a notched corner | Work with us (`deliverIntro`, `deliverables`) | `work-coral.jpg` |
-| "How a project works": violet to deep blue; on laptops the four steps sit lower and lower like a dive, joined by a stepped line from ring to ring (a timeline down the left on tablets and phones), with a button back up to the email addresses | Work with us (`steps`) | none (type only) |
+| "How a project works": navy (so it doesn't sit right against the orange band above); on laptops the four steps sit lower and lower, joined by a stepped line from ring to ring (a timeline down the left on tablets and phones), with a button back up to the email addresses | Work with us (`steps`) | none (type only) |
 
 All these photos are natural colour except the two edits named above, which are made by `stills_site/make_new_sections.py` from the originals the team sent (see "Image rights"). To swap a natural one, save a new photo under the same name; to redo an edit, change the original and run the script.
 
@@ -163,7 +163,7 @@ These sections sit inside the light bands (or, for At a glance, in the dark wate
 
 **Page headers meet the page with a clean edge.** There is no dark fade at the bottom of a header photo: the photo runs to its bottom edge and meets the light section below with a clean line, like Colossal. Readability comes from shading on the left side only (where the title sits; even shading on phones), and the caption sits in a boxed tag. When making a new header photo, keep the bottom edge in the photo's own colours (don't darken it to navy).
 
-**Light and dark bands.** Like Colossal's pages, the site switches between light and dark stretches. Home: dark video, then light (Sections 01 and 02), dark (03), photo band (04), dark (05), light (06), dark footer. Inner pages: dark photo header, then a light band for the content. Who we are and Work with us also have bright bands (royal blue, violet, orange: see "Plans sections" above). A band is a `<div class="band theme-light">` (light) or `<div class="band">` (dark) around sections; the light colors are the `--light-...` variables in `src/styles/global.css`.
+**Light and dark bands.** Like Colossal's pages, the site switches between light and dark stretches. Home: dark video, then light (Sections 01 and 02), the FIND / FOLLOW / FILM photo band, light (03), dark with the reef panorama (04, "Why it matters"), light (05), photo band (06), dark (07), light (08), dark (09, founding partners), dark footer. Inner pages: dark photo header, then a light band for the content. Who we are and Work with us also have colour bands (violet and orange: see "Plans sections" above). A band is a `<div class="band theme-light">` (light) or `<div class="band">` (dark) around sections; the light colors are the `--light-...` variables in `src/styles/global.css`.
 
 **Page-header captions.** Each page header has a thin line under the title with a hatched `//////` stripe and a short caption in [ brackets ], for example `[ 50–300 M · THE TWILIGHT ZONE ]`. Change or remove it with the `caption` text where the page uses `<PageHeader>`.
 
@@ -185,6 +185,31 @@ These sections sit inside the light bands (or, for At a glance, in the dark wate
 **News posts:** add `image: name.jpg` to the post and save the file in `public/images/news/`.
 
 Other files in `public/images/`: `hero-poster.jpg` (the still behind the Home video) and `og-image.jpg` (the preview image when a link to the site is shared: the logo over a jellyfish, 1200 × 630).
+
+## Colour, type and marks (October 2026)
+
+The rules for anything new are in `claude/talosaur-site-design-system.md` in the team's media project. In short:
+
+**Colour: one job each** (`src/styles/global.css`, top of the file). Cyan means "you can click this" and nothing else. Violet is the brand band and the first highlight. Lime is the second highlight, on dark or violet only, never a whole band (on a light band the second highlight is a navy block with lime letters). Orange is for markers and data: rings, list numbers, status dots, "now".
+
+**Type: three voices.** Headline (condensed Archivo, the default for h1 to h3), readout (wide thin Archivo, the `.readout` class, for big numbers and statements) and label (IBM Plex Mono, `.label`). Body text is Inter. Martian Mono is gone. Big sizes come from one scale: `--display-1` to `--display-5` and `--readout-1`, `--readout-2`.
+
+**Marks** (global.css): `.tag` for a [ bracket tag ] (`.tag--glass` on photos), `.dot` for the orange status dot, `.plus` for "+" marks in band margins, `.hl` and `.hl--lime` for highlight blocks in a statement.
+
+**Photo headers** (`src/components/PageHeader.astro`) get a navy shade at the top, so the menu reads, and at the bottom left, so the title reads, whatever the photo.
+
+**The index** (`src/components/Header.astro`). "Index +" at the right of the top bar drops a panel down under it: every page with one line about it (the `blurb` lines in `mainNav`, `src/data/site.ts`), plus the emails, the live stream and the location. The page behind is dimmed; click it, press Escape or press Close to shut it. On phones and tablets the same panel is the menu (one line per page, no emails).
+
+**New sections**
+
+| Page | Section | Component | Text lives in |
+|---|---|---|---|
+| Home | 04 Why it matters: the reef panorama with a statement, then a dial (98% of Flower Garden Banks is deep habitat), a lanternfish photo and three sourced rows, on navy | `src/components/WhyItMatters.astro` | `whyItMatters` in `src/data/home.ts` (photos: `sections/why-reef-pano.jpg`, `sections/why-lanternfish.jpg`) |
+| Home | 05 Featured content, now a staggered collage with the crew in numbers | `.collage` rules in `src/pages/index.astro` | `featuredCards` in `src/data/home.ts`; the numbers come from `src/data/team.ts` |
+| Home | 08 You may also be interested in, now a short numbered list | `.more-list` rules in `src/pages/index.astro` | `interestedCards` in `src/data/home.ts` |
+| Home | 09 Founding partners: four open slots | `src/components/Partners.astro` | `partners` in `src/data/home.ts`. To fill a slot, add `name` and `logo` (a file in `public/images/partners/`) |
+| News | 01 Where we are: our overall phase as one arrow (Build, Test, Field, Twilight zone), pointing at a photo of deep-sea life | `src/components/PhaseArrow.astro` | `currentPhase`, `phases` and `goal` at the top of `src/pages/news.astro`. When the next phase starts, change `currentPhase` |
+| Positions | 01 How joining works: four steps | `src/components/Steps.astro` (reusable) | `joinSteps` at the top of `src/pages/positions.astro` |
 
 ## Logo and icons
 
