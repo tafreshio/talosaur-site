@@ -48,19 +48,21 @@ const stats = [
 
 // "Where we're headed": the route from home waters outwards. The first two steps are the test route
 // on the News page; "Later" matches the three photos in the section.
-// Copy for this section and "Growing with Turtle" is new (not from the Content doc): edit freely.
+// Copy for this section and "A small crew, for now" is new (not from the Content doc): edit freely.
 const route = [
-  { when: 'Now', where: 'Pool · Lake Bryan · Lake Travis' },
+  { when: 'First', where: 'Pool · Lake Bryan · Lake Travis' },
   { when: 'Next', where: 'The Gulf · Flower Garden Banks' },
   { when: 'Later', where: 'Reefs · Polar seas · Open ocean' },
 ];
 const regionsText =
-  'We are starting close to home: the pool first, then Texas lakes, then the Gulf of Mexico, where most of Flower Garden Banks lies in the twilight zone. But that zone runs under every ocean, from coral reefs to polar seas. Once Turtle is proven in the Gulf, we plan to take it to other coasts and other oceans, and to the people who study them.';
+  'We are starting close to home: the pool first, then Texas lakes, then the Gulf of Mexico, where the deep reefs of Flower Garden Banks reach into the twilight zone. But that zone runs under every ocean, from coral reefs to polar seas. Once Turtle is proven in the Gulf, we plan to take it further, working with the people who study those waters.';
 
+// "A small crew, for now": the team today and once Turtle works. The student count comes from
+// src/data/team.ts, so it stays right as people join.
 const growthText =
-  'Today we are a small group of students building one vehicle. Once Turtle is working in the water, we plan to grow: more students, from more majors and more universities, so we can build more vehicles, test more often and go to more places.';
-const growthStatement =
-  'The people who join now will shape how Talosaur grows: what we build next, where we go first and who we go with. If that sounds like you, there is room for you on the team.';
+  'Right now we are a small group of students, all working on Turtle. Once it works in the water, we plan to grow.';
+const growthToday = [`${team.length} students`, 'Turtle, our first vehicle', 'First tests close to home'];
+const growthNext = ['More students, from more majors and universities', 'More vehicles', 'More places, starting with the Gulf'];
 ---
 
 <BaseLayout title="Who we are" description={teamIntro} headerOverlay>
@@ -127,7 +129,11 @@ const growthStatement =
 
       <div class="regions-grid">
         <figure class="regions-photo regions-reef" data-drift="30">
-          <img src={imageUrl('sections/regions-reef.webp')} alt="A coral reef seen from the air, breaking up into squares at its edges" width="1800" height="837" loading="lazy" decoding="async" />
+          <!-- phones get a smaller version with bigger squares (regions-reef-small.webp) -->
+          <picture>
+            <source media="(max-width: 700px)" srcset={imageUrl('sections/regions-reef-small.webp')} width="1000" height="465" />
+            <img src={imageUrl('sections/regions-reef.webp')} alt="A coral reef seen from the air, breaking up into squares at its edges" width="1800" height="837" loading="lazy" decoding="async" />
+          </picture>
           <figcaption class="label">[ Coral reef from the air ]</figcaption>
         </figure>
 
@@ -159,29 +165,40 @@ const growthStatement =
     </div>
   </section>
 
-  <!-- Growing with Turtle: an edited photo as the background (the lily pads from the egrets photo,
-       blurred and recoloured violet, blue and lime: sections/growth-texture.jpg), a pill-shaped
-       window with the egrets in it, then two columns split by a line, like the "Just the beginning"
-       band on Colossal's company page. -->
+  <!-- A small crew, for now: the team today and once Turtle works, on a warm band (an edited photo:
+       the lily pads from the egrets photo, blurred and recoloured coral, peach, pink and yellow,
+       sections/growth-texture.jpg), so the end of the page isn't blue after blue. The headline mixes
+       two typefaces, wide black Archivo and thin Martian Mono, with the egrets photo set into it as a
+       pill. Beside the comparison, the whale in natural colour. -->
   <section class="band growth" style={`--growth-texture: url(${imageUrl('sections/growth-texture.jpg')})`}>
     <div class="container">
-      <div class="growth-pill">
-        <img src={imageUrl('sections/growth-egrets.jpg')} alt="A flock of egrets flying over lily pads, seen from above" width="2400" height="1167" loading="lazy" decoding="async" />
-        <h2 class="tech-title growth-title"><span>A small crew,</span> <span>for now</span></h2>
-      </div>
+      <p class="label growth-tag">[ Growing with Turtle ]</p>
+      <h2 class="growth-title">
+        <span class="growth-line growth-line--big">A small crew,</span>
+        <span class="growth-line growth-line--mono">
+          <span class="growth-pill"><img src={imageUrl('sections/growth-egrets.jpg')} alt="" width="2400" height="1167" loading="lazy" decoding="async" /></span>
+          <span class="growth-for">for now</span>
+        </span>
+      </h2>
 
-      <div class="growth-cols">
-        <div class="growth-left">
-          <h3 class="wide-head">Growing with Turtle</h3>
-          <p>{growthText}</p>
-          <figure class="growth-photo" data-drift="60">
-            <img src={imageUrl('sections/growth-whale.jpg')} alt="A whale rising head first through sea ice" width="1000" height="901" loading="lazy" decoding="async" />
-            <span class="growth-dot" aria-hidden="true"></span>
-            <figcaption class="label">[ Whale in sea ice ]</figcaption>
-          </figure>
+      <div class="growth-grid">
+        <div class="growth-body">
+          <p class="growth-lead">{growthText}</p>
+          <dl class="growth-compare">
+            <div>
+              <dt class="label">Today</dt>
+              {growthToday.map((item) => <dd>{item}</dd>)}
+            </div>
+            <div>
+              <dt class="label">Once Turtle works <span aria-hidden="true">→</span></dt>
+              {growthNext.map((item) => <dd>{item}</dd>)}
+            </div>
+          </dl>
         </div>
-        <div class="growth-rule" aria-hidden="true"><span class="growth-marker"></span></div>
-        <p class="growth-statement">{growthStatement}</p>
+        <figure class="growth-photo" data-drift="70">
+          <img src={imageUrl('sections/growth-whale.jpg')} alt="A whale rising head first through sea ice" width="1000" height="901" loading="lazy" decoding="async" />
+          <figcaption class="label">[ Whale in sea ice ]</figcaption>
+        </figure>
       </div>
     </div>
   </section>
@@ -564,7 +581,7 @@ const growthStatement =
     }
 
     .regions-ice {
-      grid-column: 1 / span 4;
+      grid-column: 1 / span 5;
       grid-row: auto;
       margin-top: var(--space-xl);
     }
@@ -576,9 +593,20 @@ const growthStatement =
     }
   }
 
+  /* Tablet: the glacier and the dolphins share a row, bottoms level */
   @media (min-width: 600px) and (max-width: 999px) {
+    .regions-ice,
     .regions-dolphins {
-      grid-column: 4 / span 3;
+      grid-row: 4;
+      align-self: end;
+    }
+
+    .regions-ice {
+      grid-column: 1 / span 4;
+    }
+
+    .regions-dolphins {
+      grid-column: 5 / span 2;
     }
   }
 
@@ -590,120 +618,112 @@ const growthStatement =
     }
   }
 
-  /* ---------- Growing with Turtle (edited photo background) ---------- */
+  /* ---------- A small crew, for now (warm edited photo background) ---------- */
 
   .growth {
-    --color-muted: rgb(255 255 255 / 0.8);
-    --color-line: rgb(255 255 255 / 0.42);
+    --color-text: var(--color-sun-ink);
+    --color-muted: rgb(26 15 8 / 0.8);
+    --color-line: rgb(26 15 8 / 0.3);
     padding-top: var(--space-2xl);
-    color: #ffffff;
-    background: var(--color-royal-deep) var(--growth-texture) center / cover no-repeat;
+    color: var(--color-text);
+    background: var(--color-sun) var(--growth-texture) center / cover no-repeat;
   }
 
-  /* Pill-shaped window onto the egrets, with the title across it */
+  .growth-tag {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  /* Headline in two typefaces: wide black capitals, then thin wide mono, with the egrets photo set
+     into the second line as a pill that takes up the space before "for now" */
+  .growth-title {
+    margin: var(--space-md) 0 0;
+    font-size: clamp(1.9rem, 0.8rem + 5.4vw, 6.6rem);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .growth-line {
+    display: block;
+  }
+
+  .growth-line--big {
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+
+  .growth-line--mono {
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+    margin-top: 0.12em;
+    font-family: var(--font-tech);
+    font-stretch: 112.5%;
+    font-weight: 300;
+    letter-spacing: 0.01em;
+  }
+
   .growth-pill {
-    position: relative;
-    display: grid;
-    place-items: center;
-    min-height: clamp(11rem, 21vw, 19rem);
-    padding: var(--space-lg) 8%;
+    display: block;
+    flex: 1 1 auto;
+    min-width: 3em;
+    height: 1.5em;
     border-radius: 999px;
     overflow: hidden;
-    isolation: isolate;
   }
 
   .growth-pill img {
-    position: absolute;
-    inset: 0;
-    z-index: -2;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 50% 80%;
+    object-position: 50% 70%;
   }
 
-  /* a soft shade in the middle so the white title reads over the white birds */
-  .growth-pill::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: radial-gradient(ellipse 55% 75% at 50% 50%, rgb(8 10 40 / 0.5), rgb(8 10 40 / 0));
+  .growth-for {
+    flex: 0 0 auto;
   }
 
-  .growth-title {
-    margin: 0;
-    text-align: center;
-    color: #ffffff;
-    text-shadow: 0 0 2rem rgb(8 10 40 / 0.7);
-  }
-
-  .growth-title span {
-    display: inline-block; /* one line each where there is room: "A small crew," / "for now" */
-  }
-
-  /* Two columns split by a line with a ring and a lime dot at its top */
-  .growth-cols {
+  /* Under the headline: the lead and the comparison on the left, the whale on the right */
+  .growth-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    gap: clamp(2rem, 4vw, 4.5rem);
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(2.5rem, 6vw, 6rem);
+    align-items: start;
     margin-top: var(--space-2xl);
   }
 
-  .growth-left p {
-    max-width: 32rem;
-    margin: var(--space-md) 0 0;
-    color: var(--color-muted);
-    font-size: 1.05rem;
-  }
-
-  .growth-rule {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    width: 2.6rem;
-  }
-
-  .growth-rule::before {
-    content: '';
-    position: absolute;
-    top: 3.4rem;
-    bottom: 0;
-    left: 50%;
-    width: 1px;
-    background: var(--color-line);
-  }
-
-  .growth-marker {
-    display: grid;
-    place-items: center;
-    width: 2.6rem;
-    height: 2.6rem;
-    border: 1px solid var(--color-line);
-    border-radius: 50%;
-  }
-
-  .growth-marker::after {
-    content: '';
-    width: 0.4rem;
-    height: 0.4rem;
-    border-radius: 50%;
-    background: var(--color-lime);
-  }
-
-  .growth-statement {
+  .growth-lead {
+    max-width: 34rem;
     margin: 0;
     font-family: var(--font-display);
     font-stretch: 112%;
-    font-weight: 400;
-    font-size: clamp(1.45rem, 0.9rem + 1.9vw, 2.6rem);
-    line-height: 1.2;
+    font-size: clamp(1.3rem, 1rem + 1vw, 1.9rem);
+    line-height: 1.25;
+  }
+
+  .growth-compare {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-lg);
+    margin: var(--space-xl) 0 0;
+  }
+
+  .growth-compare dt {
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--color-text);
+    color: var(--color-text);
+  }
+
+  .growth-compare dd {
+    margin: 0;
+    padding-block: 0.7rem;
+    border-bottom: 1px solid var(--color-line);
   }
 
   .growth-photo {
-    position: relative;
-    max-width: 26rem;
-    margin: var(--space-xl) 0 0;
+    margin: var(--space-sm) 0 0;
   }
 
   .growth-photo img {
@@ -715,44 +735,32 @@ const growthStatement =
     color: var(--color-muted);
   }
 
-  /* orange dot on the photo's corner, like the dots on Colossal's photos */
-  .growth-dot {
-    position: absolute;
-    top: -0.55rem;
-    right: -0.55rem;
-    width: 1.1rem;
-    height: 1.1rem;
-    border-radius: 50%;
-    background: var(--color-orange);
-  }
-
   @media (max-width: 899px) {
-    .growth-cols {
+    .growth-grid {
       grid-template-columns: 1fr;
-      gap: var(--space-xl);
       margin-top: var(--space-xl);
     }
 
-    .growth-rule {
-      display: none;
-    }
-
-    .growth-statement {
-      max-width: 34rem;
-    }
-
     .growth-photo {
-      width: min(30rem, 88%);
+      width: min(28rem, 80%);
+      margin-left: auto;
+    }
+  }
+
+  /* Phone: the pill gets a line of its own, so the birds are big enough to see */
+  @media (max-width: 600px) {
+    .growth-line--mono {
+      flex-wrap: wrap;
+      margin-top: 0.25em;
     }
 
     .growth-pill {
-      min-height: 10rem;
-      padding: var(--space-md) var(--space-lg);
-      border-radius: 6rem;
+      flex-basis: 100%;
+      height: 6.5rem;
     }
 
-    .growth-title {
-      font-size: clamp(1.5rem, 0.8rem + 2.6vw, 2.4rem);
+    .growth-compare {
+      grid-template-columns: 1fr;
     }
   }
 </style>
