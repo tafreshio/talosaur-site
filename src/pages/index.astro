@@ -5,7 +5,6 @@ import SectionHeader from '../components/SectionHeader.astro';
 import Plan from '../components/Plan.astro';
 import StoryBand from '../components/StoryBand.astro';
 import PhotoBand from '../components/PhotoBand.astro';
-import Patch from '../components/Patch.astro';
 import Card from '../components/Card.astro';
 import Specimen from '../components/Specimen.astro';
 import { imageUrl, imageExists } from '../lib/images';
@@ -139,8 +138,6 @@ const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
     </ol>
   </PhotoBand>
 
-  <!-- A fish eye in a lens, sitting on the edge between the photo and Latest news -->
-  <Patch variant="lens" image="fish-eye-lens.jpg" caption="Fish eye" side="center" straddle />
 
   <!-- Dark band: Section 06 (like Colossal's black "In the news", which has a faint shimmering
        texture behind it). Ours is NOAA sonar data of the seafloor, recoloured and kept dark. -->

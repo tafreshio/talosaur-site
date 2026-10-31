@@ -3,7 +3,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import PhotoBand from '../components/PhotoBand.astro';
-import Patch from '../components/Patch.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import StoryBand from '../components/StoryBand.astro';
 import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
@@ -111,8 +110,6 @@ const life = {
     </section>
   </div>
 
-  <!-- Inset photo sitting across the edge between the light band and the photo below -->
-  <Patch variant="pano" image="mill-pano.jpg" caption="Machining a part" side="right" straddle />
 
   <!-- One big photo (bubble anemone, false colour) leading on to News. Copy: Content doc, "Our build log" card. -->
   <PhotoBand image="positions.jpg" position="50% 50%" heading="Our build log" tag="Updates, photos and videos from every stage">

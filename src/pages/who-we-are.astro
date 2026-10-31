@@ -12,14 +12,13 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import PhotoBand from '../components/PhotoBand.astro';
-import Patch from '../components/Patch.astro';
 import StoryBand from '../components/StoryBand.astro';
 import { url } from '../lib/url';
 import Photo from '../components/Photo.astro';
 import CrewCollage from '../components/CrewCollage.astro';
 import { team, teamIntro, teamStatement } from '../data/team';
 import { isPlaceholder } from '../data/site';
-import { imageExists } from '../lib/images';
+import { imageExists, imageUrl } from '../lib/images';
 
 // Big faded text on a panel: "Fernando Guzman" -> "FG". A [Name] placeholder shows the role instead.
 const panelText = (name: string, role: string) =>
@@ -46,6 +45,23 @@ const stats = [
   { title: '02', text: 'Universities: Texas A&M and UT Austin' },
   { title: '01', text: 'Vehicle in the build: Turtle' },
 ];
+
+// "Where we're headed": the route from home waters outwards. The first two steps are the test route
+// on the News page; "Later" matches the three photos in the section.
+// Copy for this section and "A small crew, for now" is new (not from the Content doc): edit freely.
+const route = [
+  { when: 'First', where: 'Pool · Lake Bryan · Lake Travis' },
+  { when: 'Next', where: 'The Gulf · Flower Garden Banks' },
+  { when: 'Later', where: 'Reefs · Polar seas · Open ocean' },
+];
+const regionsText =
+  'We are starting close to home: the pool first, then Texas lakes, then the Gulf of Mexico, where the deep reefs of Flower Garden Banks reach into the twilight zone. But that zone runs under every ocean, from coral reefs to polar seas. Once Turtle is proven in the Gulf, we plan to take it further, working with the people who study those waters.';
+
+// "A small crew, for now": what the team does today, and what changes once Turtle works
+const growthText =
+  'Right now we are a small group of students, all working on Turtle. Once it works in the water, we plan to grow.';
+const growthToday = ['Building and testing Turtle', 'Streaming build days on Twitch', 'Recruiting for open roles'];
+const growthNext = ['A bigger team, from more majors and universities', 'More vehicles, built on what Turtle teaches us', 'Dives with research and conservation partners'];
 ---
 
 <BaseLayout title="Who we are" description={teamIntro} headerOverlay>
@@ -101,8 +117,90 @@ const stats = [
        (src/components/CrewCollage.astro) -->
   <CrewCollage members={rest} disciplines={disciplines} statement={teamStatement} />
 
-  <!-- One photo with an offset frame across the edge into the photo below (natural NOAA footage) -->
-  <Patch variant="frame" image="feather-star-wide.jpg" caption="Feather star · NOAA" side="right" straddle />
+  <!-- Where we're headed: royal blue band with a wide technical title (Martian Mono), like the
+       Form Bio band on Colossal's company page. Photos (public/images/sections/): the reef seen from
+       the air breaking up into squares at its sides (regions-reef.webp, see README), a glacier front
+       and two dolphins, at different depths so they drift at different speeds while scrolling. -->
+  <section class="band theme-royal regions">
+    <div class="container">
+      <p class="label regions-tag">[ Where we're headed ]</p>
+      <h2 class="tech-title regions-title">Every ocean has a twilight zone</h2>
+
+      <div class="regions-grid">
+        <figure class="regions-photo regions-reef" data-drift="30">
+          <!-- phones get a smaller version with bigger squares (regions-reef-small.webp) -->
+          <picture>
+            <source media="(max-width: 700px)" srcset={imageUrl('sections/regions-reef-small.webp')} width="1000" height="465" />
+            <img src={imageUrl('sections/regions-reef.webp')} alt="A coral reef seen from the air, breaking up into squares at its edges" width="1800" height="837" loading="lazy" decoding="async" />
+          </picture>
+          <figcaption class="label">[ Coral reef from the air ]</figcaption>
+        </figure>
+
+        <div class="regions-text">
+          <h3 class="wide-head">Texas first. Then further.</h3>
+          <p>{regionsText}</p>
+        </div>
+
+        <ol class="regions-route">
+          {route.map((step) => (
+            <li>
+              <span class="slashes" aria-hidden="true"></span>
+              <span class="route-when">{step.when}</span>
+              <span class="route-where">{step.where}</span>
+            </li>
+          ))}
+        </ol>
+
+        <figure class="regions-photo regions-ice" data-drift="80">
+          <img src={imageUrl('sections/regions-ice.jpg')} alt="A glacier front with meltwater falling into the sea" width="1000" height="614" loading="lazy" decoding="async" />
+          <figcaption class="label">[ Polar seas · Glacier front ]</figcaption>
+        </figure>
+
+        <figure class="regions-photo regions-dolphins" data-drift="130">
+          <img src={imageUrl('sections/regions-dolphins.jpg')} alt="Two dolphins swimming down through open blue water" width="800" height="1008" loading="lazy" decoding="async" />
+          <figcaption class="label">[ Open ocean · Dolphins ]</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- A small crew, for now: the team today and once Turtle works, on a warm band (an edited photo:
+       the lily pads from the egrets photo, blurred and recoloured coral, peach, pink and yellow,
+       sections/growth-texture.jpg), so the end of the page isn't blue after blue. The headline mixes
+       two typefaces, wide black Archivo and thin Martian Mono, with the egrets photo set into it as a
+       pill. Beside the comparison, the whale in natural colour. -->
+  <section class="band growth" style={`--growth-texture: url(${imageUrl('sections/growth-texture.jpg')})`}>
+    <div class="container">
+      <p class="label growth-tag">[ Growing with Turtle ]</p>
+      <h2 class="growth-title">
+        <span class="growth-line growth-line--big">A small crew<span class="growth-comma">,</span></span>
+        <span class="growth-line growth-line--mono">
+          <span class="growth-pill"><img src={imageUrl('sections/growth-egrets.jpg')} alt="" width="2400" height="1167" loading="lazy" decoding="async" /></span>
+          <span class="growth-for">for now</span>
+        </span>
+      </h2>
+
+      <div class="growth-grid">
+        <div class="growth-body">
+          <p class="growth-lead">{growthText}</p>
+          <dl class="growth-compare">
+            <div>
+              <dt class="label">Today</dt>
+              {growthToday.map((item) => <dd>{item}</dd>)}
+            </div>
+            <div>
+              <dt class="label">Once Turtle works <span aria-hidden="true">→</span></dt>
+              {growthNext.map((item) => <dd>{item}</dd>)}
+            </div>
+          </dl>
+        </div>
+        <figure class="growth-photo" data-drift="70">
+          <img src={imageUrl('sections/growth-whale.jpg')} alt="A whale rising head first through sea ice" width="1000" height="901" loading="lazy" decoding="async" />
+          <figcaption class="label">[ Whale in sea ice ]</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
 
   <!-- One big photo (ocean sunfish, false colour) leading on to Positions. Copy: Content doc, "Open positions" card. -->
   <PhotoBand image="who-we-are.jpg" position="45% 40%" heading="We're recruiting." tag="Open positions">
@@ -343,6 +441,347 @@ const stats = [
 
     .member-panel {
       padding: var(--space-sm);
+    }
+  }
+
+  /* ---------- Where we're headed (royal blue) ---------- */
+
+  .regions {
+    padding-top: var(--space-2xl);
+  }
+
+  .regions-tag {
+    margin: 0 0 var(--space-md);
+    text-align: center;
+    color: var(--color-muted);
+  }
+
+  .regions-title {
+    max-width: 17ch;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  /* Desktop: the reef and the text side by side; under them the route, then the glacier and the
+     dolphins at different heights, so the row is loose rather than lined up */
+  .regions-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-md);
+    margin-top: var(--space-xl);
+  }
+
+  .regions-photo {
+    margin: 0;
+  }
+
+  .regions-photo img {
+    width: 100%;
+  }
+
+  .regions-photo figcaption {
+    margin-top: 0.6rem;
+    color: var(--color-muted);
+  }
+
+  /* the reef reaches out to the left edge of the screen; its caption sits under the solid middle */
+  .regions-reef {
+    grid-column: 1 / span 8;
+    grid-row: 1;
+    margin-left: calc(-1 * var(--gutter));
+  }
+
+  .regions-reef figcaption {
+    padding-left: 22%;
+  }
+
+  .regions-text {
+    grid-column: 9 / span 4;
+    grid-row: 1;
+    align-self: center;
+  }
+
+  .regions-text p {
+    margin: var(--space-md) 0 0;
+    color: var(--color-muted);
+    font-size: 1.05rem;
+  }
+
+  .regions-route {
+    grid-column: 1 / span 5;
+    grid-row: 2;
+    align-self: center;
+    margin: var(--space-xl) 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .regions-route li {
+    display: grid;
+    grid-template-columns: 4.5rem 4rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.9rem;
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--color-line);
+    font-family: var(--font-tech);
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .regions-route .slashes {
+    height: 0.9rem;
+    background-color: var(--color-muted);
+  }
+
+  .route-when {
+    color: var(--color-lime);
+  }
+
+  .regions-ice {
+    grid-column: 6 / span 4;
+    grid-row: 2;
+    margin-top: var(--space-2xl);
+  }
+
+  .regions-dolphins {
+    grid-column: 10 / span 3;
+    grid-row: 2;
+    margin-top: calc(-1 * var(--space-md));
+  }
+
+  /* Tablet and phone: one column for the reef, text and route, then the two photos in a zigzag */
+  @media (max-width: 999px) {
+    .regions-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      margin-top: var(--space-xl);
+    }
+
+    .regions-reef {
+      grid-column: 1 / -1;
+      margin-inline: calc(-1 * var(--gutter));
+    }
+
+    .regions-text,
+    .regions-route {
+      grid-column: 1 / -1;
+      grid-row: auto;
+    }
+
+    .regions-text {
+      max-width: 40rem;
+      margin-top: var(--space-lg);
+    }
+
+    .regions-route {
+      align-self: start;
+      margin-top: var(--space-xl);
+    }
+
+    .regions-ice {
+      grid-column: 1 / span 5;
+      grid-row: auto;
+      margin-top: var(--space-xl);
+    }
+
+    .regions-dolphins {
+      grid-column: 3 / span 4;
+      grid-row: auto;
+      margin-top: var(--space-lg);
+    }
+  }
+
+  /* Tablet: the glacier and the dolphins share a row, the dolphins a step lower */
+  @media (min-width: 600px) and (max-width: 999px) {
+    .regions-ice,
+    .regions-dolphins {
+      grid-row: 4;
+      align-self: start;
+    }
+
+    .regions-dolphins {
+      margin-top: calc(var(--space-xl) + var(--space-xl)); /* a clear step down from the glacier */
+    }
+
+    .regions-ice {
+      grid-column: 1 / span 4;
+    }
+
+    .regions-dolphins {
+      grid-column: 5 / span 2;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .regions-route li {
+      grid-template-columns: 1.6rem 3.2rem minmax(0, 1fr);
+      gap: 0.6rem;
+      font-size: 0.7rem;
+    }
+  }
+
+  /* ---------- A small crew, for now (warm edited photo background) ---------- */
+
+  .growth {
+    --color-text: var(--color-sun-ink);
+    --color-muted: rgb(26 15 8 / 0.8);
+    --color-line: rgb(26 15 8 / 0.3);
+    padding-top: var(--space-2xl);
+    color: var(--color-text);
+    background: var(--color-sun) var(--growth-texture) center / cover no-repeat;
+  }
+
+  .growth-tag {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  /* Headline in two typefaces: wide black capitals, then thin wide mono, with the egrets photo set
+     into the second line as a pill that takes up the space before "for now" */
+  .growth-title {
+    margin: var(--space-md) 0 0;
+    font-size: clamp(1.9rem, 0.8rem + 5.4vw, 6.6rem);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .growth-line {
+    display: block;
+  }
+
+  .growth-line--big {
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+
+  .growth-line--mono {
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+    margin-top: 0.12em;
+    font-family: var(--font-tech);
+    font-stretch: 112.5%;
+    font-weight: 300;
+    letter-spacing: 0.01em;
+  }
+
+  .growth-pill {
+    display: block;
+    flex: 1 1 auto;
+    min-width: 3em;
+    height: 1.5em;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .growth-pill img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 70%;
+  }
+
+  .growth-for {
+    flex: 0 0 auto;
+  }
+
+  /* the heavy wide W and the comma would touch */
+  .growth-comma {
+    margin-left: 0.07em;
+  }
+
+  /* Under the headline: the lead and the comparison on the left, the whale on the right */
+  .growth-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(2.5rem, 6vw, 6rem);
+    align-items: start;
+    margin-top: var(--space-2xl);
+  }
+
+  .growth-lead {
+    max-width: 34rem;
+    margin: 0;
+    font-family: var(--font-display);
+    font-stretch: 112%;
+    font-size: clamp(1.3rem, 1rem + 1vw, 1.9rem);
+    line-height: 1.25;
+  }
+
+  .growth-compare {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-lg);
+    margin: var(--space-xl) 0 0;
+  }
+
+  .growth-compare dt {
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--color-text);
+    color: var(--color-text);
+  }
+
+  .growth-compare dd {
+    margin: 0;
+    padding-block: 0.7rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .growth-photo {
+    margin: var(--space-sm) 0 0;
+  }
+
+  .growth-photo img {
+    width: 100%;
+  }
+
+  .growth-photo figcaption {
+    margin-top: 0.6rem;
+    color: var(--color-muted);
+  }
+
+  /* Tablet: still two columns, with the two lists stacked */
+  @media (min-width: 700px) and (max-width: 899px) {
+    .growth-grid {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: var(--space-lg);
+      margin-top: var(--space-xl);
+    }
+
+    .growth-compare {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 699px) {
+    .growth-grid {
+      grid-template-columns: 1fr;
+      margin-top: var(--space-xl);
+    }
+
+    .growth-photo {
+      width: min(28rem, 80%);
+      margin-left: auto;
+    }
+  }
+
+  /* Phone: the pill gets a line of its own, so the birds are big enough to see */
+  @media (max-width: 600px) {
+    .growth-line--mono {
+      flex-wrap: wrap;
+      margin-top: 0.25em;
+    }
+
+    .growth-pill {
+      flex-basis: 100%;
+      height: 6.5rem;
+    }
+
+    .growth-compare {
+      grid-template-columns: 1fr;
     }
   }
 </style>
