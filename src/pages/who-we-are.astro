@@ -57,12 +57,11 @@ const route = [
 const regionsText =
   'We are starting close to home: the pool first, then Texas lakes, then the Gulf of Mexico, where the deep reefs of Flower Garden Banks reach into the twilight zone. But that zone runs under every ocean, from coral reefs to polar seas. Once Turtle is proven in the Gulf, we plan to take it further, working with the people who study those waters.';
 
-// "A small crew, for now": the team today and once Turtle works. The student count comes from
-// src/data/team.ts, so it stays right as people join.
+// "A small crew, for now": what the team does today, and what changes once Turtle works
 const growthText =
   'Right now we are a small group of students, all working on Turtle. Once it works in the water, we plan to grow.';
-const growthToday = [`${team.length} students`, 'Turtle, our first vehicle', 'First tests close to home'];
-const growthNext = ['More students, from more majors and universities', 'More vehicles', 'More places, starting with the Gulf'];
+const growthToday = ['Building and testing Turtle', 'Streaming build days on Twitch', 'Recruiting for open roles'];
+const growthNext = ['A bigger team, from more majors and universities', 'More vehicles, built on what Turtle teaches us', 'Dives with research and conservation partners'];
 ---
 
 <BaseLayout title="Who we are" description={teamIntro} headerOverlay>
@@ -174,7 +173,7 @@ const growthNext = ['More students, from more majors and universities', 'More ve
     <div class="container">
       <p class="label growth-tag">[ Growing with Turtle ]</p>
       <h2 class="growth-title">
-        <span class="growth-line growth-line--big">A small crew,</span>
+        <span class="growth-line growth-line--big">A small crew<span class="growth-comma">,</span></span>
         <span class="growth-line growth-line--mono">
           <span class="growth-pill"><img src={imageUrl('sections/growth-egrets.jpg')} alt="" width="2400" height="1167" loading="lazy" decoding="async" /></span>
           <span class="growth-for">for now</span>
@@ -593,12 +592,16 @@ const growthNext = ['More students, from more majors and universities', 'More ve
     }
   }
 
-  /* Tablet: the glacier and the dolphins share a row, bottoms level */
+  /* Tablet: the glacier and the dolphins share a row, the dolphins a step lower */
   @media (min-width: 600px) and (max-width: 999px) {
     .regions-ice,
     .regions-dolphins {
       grid-row: 4;
-      align-self: end;
+      align-self: start;
+    }
+
+    .regions-dolphins {
+      margin-top: calc(var(--space-xl) + var(--space-xl)); /* a clear step down from the glacier */
     }
 
     .regions-ice {
@@ -685,6 +688,11 @@ const growthNext = ['More students, from more majors and universities', 'More ve
     flex: 0 0 auto;
   }
 
+  /* the heavy wide W and the comma would touch */
+  .growth-comma {
+    margin-left: 0.07em;
+  }
+
   /* Under the headline: the lead and the comparison on the left, the whale on the right */
   .growth-grid {
     display: grid;
@@ -735,7 +743,20 @@ const growthNext = ['More students, from more majors and universities', 'More ve
     color: var(--color-muted);
   }
 
-  @media (max-width: 899px) {
+  /* Tablet: still two columns, with the two lists stacked */
+  @media (min-width: 700px) and (max-width: 899px) {
+    .growth-grid {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: var(--space-lg);
+      margin-top: var(--space-xl);
+    }
+
+    .growth-compare {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 699px) {
     .growth-grid {
       grid-template-columns: 1fr;
       margin-top: var(--space-xl);
