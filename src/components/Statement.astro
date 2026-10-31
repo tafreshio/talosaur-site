@@ -92,9 +92,11 @@ const lastBox = parts.length - 2;
     box-decoration-break: clone;
   }
 
+  /* the second box: lime on dark (design system: lime only sits on dark or violet), so on a light band
+     it is a navy block with lime letters */
   .statement-box--lime {
-    color: var(--light-text);
-    background: var(--color-lime);
+    color: var(--color-lime);
+    background: var(--light-text);
   }
 
   /* on wider screens a boxed phrase stays on one line (on phones it may wrap, box and all) */

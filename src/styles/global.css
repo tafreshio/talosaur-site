@@ -5,6 +5,17 @@
   below as a CSS variable (a "custom property"). Change a value
   here and it updates everywhere on the site.
   Palette: "Twilight" (dark navy with a bioluminescent cyan accent).
+
+  The site design system (claude/talosaur-site-design-system.md in the media project):
+  every colour has ONE job, there are three type voices, and four marks with one meaning each.
+    Colour   navy/deep water = dark sections and text · foam = light reading
+             cyan  = anything you can click (and nothing else)
+             violet = the brand band colour and the first highlight block
+             lime  = the second highlight, on dark or violet only (never a whole band)
+             orange = markers and data: roadmap rings, list numbers, status dots, "you are here"
+             Solid bands: violet or orange only, at most one of each per page, never side by side.
+    Type     Headline (Archivo condensed 800) · Readout (Archivo wide 200, .readout)
+             Label (IBM Plex Mono, .label) · Body (Inter)
 */
 
 :root {
@@ -27,27 +38,28 @@
   --light-line: #c3d0d1;        /* Dividers on light */
   --color-live: #e5484d;        /* The red "live" dot on the Talosaur Live card */
 
-  /* Accent colours from the false-colour photo edits (Colossal-style colour blocks and dots).
-     Used sparingly: the lime block in the Work with us collage, small dots and tags on edited photos.
+  /* The three colours from the false-colour photo edits, each with one job (see the top of this file).
      The images in public/images/accents/ were made with these same colours. */
-  --color-lime: #c6f04a;
-  --color-orange: #ff7a2f;
-  --color-violet: #5b2be0;
-  --color-magenta: #e14bff;
+  --color-violet: #5b2be0;      /* Twilight violet: the brand band, the first highlight block */
+  --color-violet-deep: #2421a8; /* Its deep partner, for the violet band's gradient */
+  --color-lime: #c6f04a;        /* Lime: the second highlight, tags on photos, the corner square on dark panels */
+  --color-orange: #ff7a2f;      /* Signal orange: markers, data, status dots, "you are here" */
+  --color-orange-ink: #1a0f08;  /* Text on the orange band */
 
-  /* Bright band colours for the "plans" sections (Who we are, Work with us), so not every stretch
-     of the page is dark navy */
-  --color-royal: #3442d6;       /* Royal blue: "Where we're headed" */
-  --color-royal-deep: #2421a8;  /* Its darker partner, for the gradient behind "Growing with Turtle" */
-  --color-sun: #ff7a2f;         /* Orange: "What we bring back" (the same orange as the dots) */
-  --color-sun-ink: #1a0f08;     /* Text on the orange band */
+  /* Retired names, kept pointing at the new roles so older markup still works:
+     royal blue became violet, "sun" is the orange band, magenta is no longer a UI colour */
+  --color-royal: var(--color-violet);
+  --color-royal-deep: var(--color-violet-deep);
+  --color-sun: var(--color-orange);
+  --color-sun-ink: var(--color-orange-ink);
+  --color-magenta: var(--color-violet);
 
   /* Fonts (loaded from Google Fonts in BaseLayout.astro) */
   --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
-  --font-tech: "Martian Mono", "IBM Plex Mono", ui-monospace, monospace; /* wide technical titles */
-  --wide-width: 125%;           /* Archivo stretched wide, for subheads in the plans sections */
+  --font-tech: var(--font-display); /* retired (was Martian Mono): wide titles now use the readout voice */
+  --wide-width: 125%;           /* Archivo stretched wide: the readout voice */
   --display-width: 75%;         /* How condensed the big headlines are (62% to 125%) */
 
   /* Font sizes. clamp(min, preferred, max) scales smoothly with screen width */
@@ -57,6 +69,15 @@
   --text-xl: clamp(1.75rem, 1.2rem + 2.4vw, 2.75rem);
   --text-2xl: clamp(2.5rem, 1.5rem + 5vw, 5rem);
   --text-hero: clamp(3rem, 1rem + 9vw, 9rem);
+
+  /* Display scale: every big title on the site uses one of these (phone sizes are built in) */
+  --display-1: clamp(3rem, 1rem + 9vw, 9rem);        /* page titles */
+  --display-2: clamp(2.5rem, 1.5rem + 5vw, 5rem);    /* section and band titles */
+  --display-3: clamp(1.6rem, 0.9rem + 2.6vw, 3.1rem);/* statements (readout voice) */
+  --display-4: clamp(1.6rem, 1.1rem + 1.8vw, 2.5rem);/* feature card titles */
+  --display-5: clamp(1.2rem, 1rem + 0.7vw, 1.6rem);  /* card and list titles */
+  --readout-1: clamp(3.2rem, 1.4rem + 7vw, 8rem);    /* the biggest numbers */
+  --readout-2: clamp(2.2rem, 1.2rem + 3.2vw, 4rem);  /* numbers in rows */
 
   /* Spacing scale */
   --space-xs: 0.5rem;
@@ -352,8 +373,10 @@ h3 {
   color: var(--color-text);
 }
 
-/* Bright bands for the "plans" sections: royal blue, orange and violet. Like .theme-light, each one
-   redefines the colour variables inside it, so labels, lines and buttons follow along. */
+/* Solid colour bands: violet (.theme-violet, and its old name .theme-royal) and orange (.theme-sun).
+   At most one of each per page, never next to each other. Like .theme-light, each one redefines the
+   colour variables inside it, so labels, lines and buttons follow along. On violet, lime takes the
+   "clickable" job (cyan would vanish on violet). */
 .theme-royal,
 .theme-violet {
   --color-text: #ffffff;
@@ -364,14 +387,10 @@ h3 {
   color: var(--color-text);
 }
 
-.theme-royal {
-  --color-bg: var(--color-royal);
-  background: var(--color-bg);
-}
-
+.theme-royal,
 .theme-violet {
-  --color-bg: var(--color-royal-deep);
-  background: linear-gradient(160deg, var(--color-violet) 0%, var(--color-royal-deep) 70%);
+  --color-bg: var(--color-violet-deep);
+  background: linear-gradient(160deg, var(--color-violet) 0%, var(--color-violet-deep) 78%);
 }
 
 .theme-sun {
@@ -385,31 +404,114 @@ h3 {
   color: var(--color-text);
 }
 
-/* Wide technical titles (Martian Mono), for the plans sections: thin, wide and spaced, centred
-   unless a page says otherwise. Overrides the condensed Archivo that other h2s use. */
+/* The READOUT voice: Archivo stretched wide and thin, like the read-out on an instrument.
+   For every big number, statements and story-band lines. */
+.readout,
 .tech-title {
-  font-family: var(--font-tech);
-  font-stretch: 112.5%;
-  font-weight: 300;
-  font-size: clamp(1.9rem, 0.6rem + 4.4vw, 5.2rem);
-  line-height: 1.08;
-  letter-spacing: 0.01em;
+  font-family: var(--font-display);
+  font-stretch: var(--wide-width);
+  font-weight: 200;
+  line-height: 1.04;
+  letter-spacing: -0.01em;
   word-spacing: 0;
   text-transform: uppercase;
 }
 
-/* Wide subheads: Archivo stretched wide, regular weight (like the "The future is biodiverse"
-   subheads on Colossal's company page) */
+/* .tech-title (the old Martian Mono titles on the plans bands) is now a readout-voice band title */
+.tech-title {
+  font-size: var(--display-2);
+}
+
+/* .wide-head (the old wide subheads) is now the HEADLINE voice at card-title size */
 .wide-head {
   margin: 0;
   font-family: var(--font-display);
-  font-stretch: var(--wide-width);
-  font-weight: 400;
-  font-size: clamp(1.25rem, 0.95rem + 1vw, 1.9rem);
-  line-height: 1.12;
-  letter-spacing: 0;
-  word-spacing: 0;
+  font-stretch: var(--display-width);
+  font-weight: 800;
+  font-size: var(--display-5);
+  line-height: 1;
+  letter-spacing: -0.005em;
+  word-spacing: 0.1em;
   text-transform: uppercase;
+}
+
+/* ---------- Marks: four, each with one meaning ---------- */
+
+/* [ Bracket tag ] = metadata. Outlined on plain backgrounds; .tag--glass is the filled chip for photos.
+   Put a <span class="slashes tag-slashes"></span> after it for the "//////" strip. */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.35em 0.6em;
+  border: 1px solid var(--color-line);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+.tag::before { content: '['; }
+.tag::after { content: ']'; }
+
+.tag--glass {
+  border-color: rgb(255 255 255 / 0.25);
+  background: rgb(6 18 31 / 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: var(--color-lime);
+}
+
+.tag-slashes {
+  display: inline-block;
+  width: 7rem;
+  height: 0.85rem;
+  background-color: var(--color-muted);
+  opacity: 0.6;
+}
+
+/* The orange dot = status, or "you are here" */
+.dot {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--color-orange);
+  flex: none;
+}
+
+/* "+" marks for band margins */
+.plus {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  pointer-events: none;
+  background:
+    linear-gradient(currentColor, currentColor) center / 100% 1px no-repeat,
+    linear-gradient(currentColor, currentColor) center / 1px 100% no-repeat;
+  color: var(--color-line);
+}
+
+/* Highlight blocks inside a statement: violet first, lime second */
+.hl {
+  padding: 0 0.12em;
+  background: var(--color-violet);
+  color: #fff;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.hl--lime {
+  background: var(--color-lime);
+  color: #0b1620;
+}
+
+/* on a light band, the second highlight is a navy block with lime letters */
+.theme-light .hl--lime {
+  background: var(--light-text);
+  color: var(--color-lime);
 }
 
 /* Hidden visually but still read by screen readers */
