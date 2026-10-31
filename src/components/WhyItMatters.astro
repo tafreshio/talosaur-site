@@ -1,0 +1,448 @@
+---
+// Home, "Why it matters": the reason 50–300 m deserves watching. The one dark break in the middle of
+// Home's long light stretch. All the text is `whyItMatters` in src/data/home.ts.
+//
+//   1. Top: the reef panorama (natural colour, shaded navy so the white type reads) with the section
+//      title and a statement in the readout voice over the open water.
+//   2. Below, on navy: a dial (like the big ring figure on Colossal's Home page) and three numbered
+//      rows with sources. A lanternfish photo (natural, on its black background) sits across the
+//      bottom edge of the panorama, like Colossal's insets that cross a section edge.
+//
+// The dial: 100 ticks around a ring, one per 1% of Flower Garden Banks National Marine Sanctuary.
+// 98 violet ticks are the deep habitat, the 2 orange ticks are the shallow coral reef divers know
+// (orange = a marker). The ticks grow in one after another when the dial scrolls into view.
+import SectionHeader from './SectionHeader.astro';
+import { whyItMatters } from '../data/home';
+import { imageUrl, imageExists } from '../lib/images';
+
+interface Props {
+  number: number;
+}
+
+const { number } = Astro.props;
+const { statement, intro, panorama, fish, dial, rows } = whyItMatters;
+const hasPano = imageExists(panorama.image);
+const hasFish = imageExists(fish.image);
+
+// "**...**" in the statement marks the highlighted phrase: odd pieces are highlighted
+const parts = statement.split(/\*\*(.+?)\*\*/);
+const pad = (n: number) => String(n).padStart(2, '0');
+
+// The dial's ticks. Deep ticks vary in length like a sonar return (a fixed pattern, not random, so
+// the page looks the same every time it is built); every 10th is a little longer, like a scale.
+const ticks = Array.from({ length: 100 }, (_, i) => {
+  const angle = ((-90 + i * 3.6) * Math.PI) / 180;
+  const shallow = i < 2;
+  const len = shallow ? 34 : 9 + ((i * 37) % 13) + (i % 10 === 0 ? 8 : 0);
+  const r1 = 154;
+  const r2 = r1 + len;
+  return {
+    x1: (200 + r1 * Math.cos(angle)).toFixed(2),
+    y1: (200 + r1 * Math.sin(angle)).toFixed(2),
+    x2: (200 + r2 * Math.cos(angle)).toFixed(2),
+    y2: (200 + r2 * Math.sin(angle)).toFixed(2),
+    shallow,
+    i,
+  };
+});
+---
+
+<section class="band why" id="why">
+  <div class="why-top">
+    {hasPano && (
+      <div class="why-pano" aria-hidden="true">
+        <img src={imageUrl(panorama.image)} alt="" width="2400" height="1200" loading="lazy" decoding="async" />
+      </div>
+    )}
+    <div class="container why-top-inner">
+      <SectionHeader number={number} title="Why it matters" />
+      <p class="readout why-statement" data-reveal>
+        {parts.map((part, i) => (i % 2 ? <span class="hl">{part}</span> : part))}
+      </p>
+      <p class="why-intro" data-reveal>{intro}</p>
+    </div>
+    {hasPano && <p class="label why-credit"><span class="tag tag--glass">{panorama.credit}</span></p>}
+  </div>
+
+  <div class="container why-grid">
+    <figure class="why-dial" data-reveal>
+      <div class="dial">
+        <svg viewBox="0 0 400 400" aria-hidden="true">
+          <circle class="dial-ring" cx="200" cy="200" r="148" />
+          <circle class="dial-inner" cx="200" cy="200" r="118" />
+          {ticks.map((t) => (
+            <line
+              class:list={['dial-tick', { 'dial-tick--shallow': t.shallow }]}
+              x1={t.x1}
+              y1={t.y1}
+              x2={t.x2}
+              y2={t.y2}
+              style={`--i: ${t.i}`}
+            />
+          ))}
+        </svg>
+        <div class="dial-center" aria-hidden="true">
+          <span class="readout dial-value">{dial.value}</span>
+          <span class="label dial-unit">Deep habitat</span>
+        </div>
+        <span class="label dial-flag" aria-hidden="true"><span class="dot"></span>2% · Shallow reef</span>
+      </div>
+      <figcaption class="dial-caption">
+        {dial.caption}{' '}
+        <a class="label why-src" href={dial.source.href} target="_blank" rel="noopener noreferrer">[ Source: {dial.source.label} ]</a>
+      </figcaption>
+    </figure>
+
+    <div class="why-side">
+      {hasFish && (
+        <figure class="why-fish" data-reveal>
+          <div class="why-fish-frame">
+            <img src={imageUrl(fish.image)} alt={fish.tag} width="1278" height="720" loading="lazy" decoding="async" />
+            <span class="why-corner why-corner--tl"></span>
+            <span class="why-corner why-corner--br"></span>
+          </div>
+          <figcaption class="why-fish-caption"><span class="tag">{fish.tag}</span> {fish.caption}</figcaption>
+        </figure>
+      )}
+      <ol class="why-rows" data-reveal-group>
+        {rows.map((row, i) => (
+          <li class="why-row">
+            <span class="readout why-num" aria-hidden="true">{pad(i + 1)}</span>
+            <div class="why-row-body">
+              <h3 class="why-title">{row.title}</h3>
+              <p class="why-text">{row.text}</p>
+              <a class="label why-src" href={row.source.href} target="_blank" rel="noopener noreferrer">[ Source: {row.source.label} ]</a>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .why {
+    color: var(--color-text);
+  }
+
+  /* ---------- The panorama with the statement ---------- */
+
+  .why-top {
+    --top-h: clamp(36rem, 78vh, 52rem);
+    position: relative;
+    min-height: var(--top-h);
+    padding-bottom: clamp(6rem, 10vw, 9rem); /* room for the lanternfish to cross the edge */
+    overflow: hidden;
+  }
+
+  /* The photo covers the band, anchored at its bottom edge, and the frame it fills runs 20% below
+     the band (cut off by overflow: hidden). So the reef shows low in the band and the credit stamp
+     along the photo's bottom edge stays out of view (the credit is in text, bottom right). */
+  .why-pano {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: -20%;
+    z-index: 0;
+  }
+
+  .why-pano img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 100%;
+  }
+
+  /* navy shading: strong at the top where the title and statement sit (the photo's bright surface),
+     lighter over the reef, then back to solid navy at the bottom so it runs into the section below */
+  .why-pano::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        to bottom,
+        rgb(6 18 31 / 0.9) 0%,
+        rgb(6 18 31 / 0.72) 30%,
+        rgb(6 18 31 / 0.35) 58%,
+        rgb(6 18 31 / 0.25) 72%,
+        rgb(6 18 31 / 0.85) 92%,
+        var(--color-bg) 100%
+      ),
+      linear-gradient(to right, rgb(6 18 31 / 0.55) 0%, transparent 60%);
+  }
+
+  .why-top-inner {
+    position: relative;
+    z-index: 1;
+    padding-top: var(--space-2xl);
+  }
+
+  .why-statement {
+    max-width: 30ch;
+    margin: var(--space-lg) 0 var(--space-md);
+    font-size: var(--display-3);
+    font-weight: 300; /* a touch heavier than the usual readout, so it holds on the photo */
+    line-height: 1.12;
+    color: #fff;
+    text-shadow: 0 2px 24px rgb(6 18 31 / 0.5);
+  }
+
+  .why-intro {
+    max-width: 38rem;
+    margin: 0;
+    font-size: var(--text-lg);
+    line-height: 1.5;
+    color: rgb(232 241 245 / 0.88);
+    text-shadow: 0 1px 14px rgb(6 18 31 / 0.6);
+  }
+
+  .why-credit {
+    position: absolute;
+    right: var(--gutter);
+    bottom: calc(clamp(6rem, 10vw, 9rem) - 1rem);
+    z-index: 1;
+    margin: 0;
+  }
+
+  .why-credit .tag {
+    color: rgb(232 241 245 / 0.8);
+    font-size: 0.62rem;
+    white-space: normal;
+  }
+
+  /* ---------- Below the panorama ---------- */
+
+  .why-grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: var(--space-xl) clamp(2rem, 5vw, 6rem);
+    align-items: start;
+    margin-top: calc(clamp(6rem, 10vw, 9rem) * -1 + var(--space-md));
+  }
+
+  /* ---------- The dial ---------- */
+
+  .why-dial {
+    margin: 0;
+    padding-top: clamp(6rem, 10vw, 9rem);
+  }
+
+  .dial {
+    position: relative;
+    width: min(100%, 28rem);
+    aspect-ratio: 1;
+    margin-inline: auto;
+  }
+
+  .dial svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .dial-ring,
+  .dial-inner {
+    fill: none;
+    stroke: var(--color-line);
+    stroke-width: 1;
+  }
+
+  .dial-inner {
+    stroke-dasharray: 1 5;
+  }
+
+  /* deep habitat: violet, lifted a little so it reads on navy */
+  .dial-tick {
+    stroke: color-mix(in srgb, var(--color-violet) 72%, #fff);
+    stroke-width: 2;
+  }
+
+  .dial-tick--shallow {
+    stroke: var(--color-orange);
+    stroke-width: 4;
+  }
+
+  :global(.js) .why-dial .dial-tick {
+    opacity: 0;
+    transition: opacity 300ms var(--ease);
+    transition-delay: calc(var(--i) * 9ms);
+  }
+
+  :global(.js) .why-dial:global(.is-visible) .dial-tick {
+    opacity: 1;
+  }
+
+  .dial-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    pointer-events: none;
+  }
+
+  .dial-value {
+    font-size: clamp(3.4rem, 2rem + 4.5vw, 6.5rem);
+    line-height: 0.9;
+  }
+
+  .dial-flag {
+    position: absolute;
+    top: -0.4rem;
+    left: calc(50% + 1.4rem);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--color-text);
+    white-space: nowrap;
+  }
+
+  .dial-caption {
+    max-width: 28rem;
+    margin: var(--space-md) auto 0;
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+  }
+
+  /* ---------- The lanternfish ---------- */
+
+  .why-fish {
+    margin: 0 0 var(--space-lg);
+  }
+
+  .why-fish-frame {
+    position: relative;
+    aspect-ratio: 1278 / 720;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: #000;
+    box-shadow: 0 30px 60px rgb(0 0 0 / 0.45);
+  }
+
+  .why-fish-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* viewfinder corner ticks: "this is a picture" */
+  .why-corner {
+    position: absolute;
+    width: 0.9rem;
+    height: 0.9rem;
+    border: 0 solid rgb(255 255 255 / 0.75);
+  }
+
+  .why-corner--tl { top: 0.6rem; left: 0.6rem; border-top-width: 1px; border-left-width: 1px; }
+  .why-corner--br { right: 0.6rem; bottom: 0.6rem; border-right-width: 1px; border-bottom-width: 1px; }
+
+  .why-fish-caption {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.6rem;
+    margin-top: 0.75rem;
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+  }
+
+  /* ---------- The rows ---------- */
+
+  .why-rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .why-row {
+    display: grid;
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    gap: var(--space-md);
+    padding: var(--space-md) 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .why-num {
+    font-size: var(--readout-2);
+    line-height: 0.9;
+    color: var(--color-orange);
+  }
+
+  .why-title {
+    margin-bottom: 0.4rem;
+    font-size: var(--display-5);
+  }
+
+  .why-text {
+    margin: 0 0 0.25rem;
+    color: var(--color-muted);
+  }
+
+  .why-src {
+    display: inline-block;
+    padding-block: 0.35rem;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .why-src:hover {
+    text-decoration: underline;
+  }
+
+  /* ---------- Tablets and phones ---------- */
+
+  @media (max-width: 900px) {
+    /* the credit drops under the text instead of floating over it */
+    .why-credit {
+      position: relative;
+      right: auto;
+      bottom: auto;
+      margin-top: var(--space-md);
+      padding-inline: var(--gutter);
+      text-align: right;
+    }
+
+    .why-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .why-dial {
+      order: 2;
+      padding-top: 0;
+    }
+
+    .dial {
+      width: min(100%, 22rem);
+    }
+
+    .why-side {
+      order: 1;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .why-top {
+      --top-h: 34rem;
+    }
+
+
+    .why-row {
+      grid-template-columns: 3.4rem minmax(0, 1fr);
+      gap: var(--space-sm);
+    }
+
+    .dial-flag {
+      top: -1.4rem;
+      left: 50%;
+      transform: translateX(-0.3rem);
+    }
+  }
+</style>

@@ -169,3 +169,68 @@ export const echoFigures = [
     sources: [problemSources.bell],
   },
 ];
+
+// ---------------------------------------------------------------- Section 03: Why it matters
+// New copy (not from the Content doc): edit freely. Every fact links to its source.
+// The statement puts **double stars** around the phrase that gets the violet highlight block.
+// Careful with depths: WHOI's "twilight zone" is 200–1,000 m, ours is 50–300 m, so the rows only
+// claim things that are true of the water Talosaur works in (the migration passes through it).
+export const whyItMatters = {
+  statement: 'Every night, **the largest migration on Earth** rises through this water.',
+  intro:
+    'Fish, squid, shrimp and plankton spend the day in the dark and swim up to feed at night, passing through 50–300 m on the way. What happens down here feeds the ocean and helps keep carbon out of the air, yet it is one of the least watched places on the planet.',
+  // The reef panorama behind the statement: the shallow reef divers know, with the water column above it.
+  // © The Ocean Agency (photo: Christophe Bailhache, XL Catlin Seaview Survey / 50 Reefs). The file is only
+  // resized, not edited; the page crops its credit stamp out of view and credits it in text instead.
+  // PERMISSION TO CHECK: The Ocean Agency's licence is non-commercial, with credit and no edits.
+  panorama: {
+    image: 'sections/why-reef-pano.jpg',
+    credit: 'Reef panorama · Christophe Bailhache / The Ocean Agency',
+  },
+  // A natural inset across the bottom edge of the panorama. SOURCE TO CONFIRM (added by the team).
+  fish: {
+    image: 'sections/why-lanternfish.jpg',
+    tag: 'Lanternfish',
+    caption: 'One of the animals that rise toward the surface every night.',
+  },
+  dial: {
+    value: '98%',
+    caption: 'Over 98% of Flower Garden Banks National Marine Sanctuary, off Texas, is deep habitat below the coral reefs divers know. That is where Talosaur is headed.',
+    source: { label: 'NOAA', href: 'https://sanctuaries.noaa.gov/science/condition/fgbnms/history.html' },
+  },
+  rows: [
+    {
+      title: 'The largest migration on Earth',
+      text: 'At dusk, animals from the deep swim up to feed near the surface, and sink back before dawn. It happens every night, in every ocean.',
+      source: { label: 'WHOI', href: 'https://divediscover.whoi.edu/interactives/otz-migration.html' },
+    },
+    {
+      title: 'Carbon, carried down',
+      text: 'Animals that feed at the surface and return to the deep take carbon with them. Some of it stays down for hundreds, even thousands, of years.',
+      source: { label: 'WHOI', href: 'https://divediscover.whoi.edu/interactives/otz-migration.html' },
+    },
+    {
+      title: 'Dinner for the giants',
+      text: 'Whales, tuna, swordfish and sharks dive hundreds of feet down to feed on the animals that live there.',
+      source: { label: 'WHOI', href: 'https://www.whoi.edu/know-your-ocean/ocean-topics/ocean-life/ocean-twilight-zone/' },
+    },
+  ],
+};
+
+// ---------------------------------------------------------------- Section 08: Founding partners
+// New copy (not from the Content doc). Like the "Conservation partners" band on Colossal's Home page,
+// but honest for a new team: open slots, drawn as frames. When a partner signs on, add `logo:` with a
+// file in public/images/partners/ (a one-colour SVG works best) and `name:` to that slot.
+export const partners = {
+  title: 'Founding partners',
+  lead: 'Build it with us.',
+  text: "Talosaur is new, so this wall is empty on purpose. We're looking for the first labs, sanctuaries, companies and makers to help build an affordable way into the twilight zone.",
+  cta: { label: 'Become a partner', href: '/work-with-us' },
+  secondary: { label: 'Or support the build', href: '/donate' },
+  slots: [
+    { kind: 'Research lab', text: 'Bring a question we can film.', href: '/work-with-us', name: '', logo: '' },
+    { kind: 'Sanctuary', text: 'Help us choose where to look.', href: '/work-with-us', name: '', logo: '' },
+    { kind: 'Industry', text: 'Offshore teams and engineering firms.', href: '/work-with-us', name: '', logo: '' },
+    { kind: 'In kind', text: 'Parts, tools, pool time or a boat.', href: '/donate', name: '', logo: '' },
+  ],
+};

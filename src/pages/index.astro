@@ -7,6 +7,10 @@ import StoryBand from '../components/StoryBand.astro';
 import PhotoBand from '../components/PhotoBand.astro';
 import Card from '../components/Card.astro';
 import Specimen from '../components/Specimen.astro';
+import WhyItMatters from '../components/WhyItMatters.astro';
+import Partners from '../components/Partners.astro';
+import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
+import { team } from '../data/team';
 import { imageUrl, imageExists } from '../lib/images';
 import { heroCards, featuredHeading, featuredCards, helpButtons, interestedCards, echoFigures } from '../data/home';
 import { explored } from '../data/problem';
@@ -17,9 +21,16 @@ import { url } from '../lib/url';
 const latestNews = (await getSortedNews()).slice(0, 4);
 const pad = (n: number) => String(n).padStart(2, '0');
 
-// While none of the featured photos exist yet, the row sits level with shorter panels (a staircase of
-// three empty panels looks half-loaded). The steps come back as soon as one photo is added.
-const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
+// Section 05's collage: a card whose photo is still to come gets a shorter panel, so the collage
+// doesn't read as a wall of empty frames. The full shape comes back as soon as the photo is added.
+const ratioFor = (card: { photo?: string }, full: string, pending: string) => (card.photo && imageExists(card.photo) ? full : pending);
+
+// Section 05's crew panel: the same three numbers as the Who we are page
+const crewStats = [
+  { value: pad(team.length), text: 'Students on the team' },
+  { value: '02', text: 'Universities: Texas A&M and UT Austin' },
+  { value: '01', text: 'Vehicle in the build: Turtle' },
+];
 ---
 
 <BaseLayout headerOverlay>
@@ -108,23 +119,43 @@ const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
     </section>
   </div>
 
-  <!-- Light band: Section 04 (light, so the page doesn't run dark from here to the news). A radiolarian
+  <!-- Section 04: why it matters (new). The one dark break in Home's long light stretch: the reef
+       panorama with a statement, then a dial and three sourced rows on navy, with a lanternfish photo
+       across the edge (src/components/WhyItMatters.astro, text in src/data/home.ts). -->
+  <WhyItMatters number={4} />
+
+  <!-- Light band: Section 05 (light, so the page doesn't run dark from here to the news). A radiolarian
        from the 1887 HMS Challenger plates (false colour) runs off the right edge across the join with
-       Section 03, like Colossal's cut-out animals. -->
+       Section 04 above, like Colossal's cut-out animals. -->
   <div class="band theme-light band--specimen">
     <Specimen image="radiolarian.webp" label="Radiolarian · HMS Challenger, 1887" top="clamp(-6rem, -6vw, -3rem)" size="clamp(11rem, 16vw, 15rem)" drift={20} />
-    <!-- Section 04: featured content -->
+    <!-- Section 05: featured content, as a staggered collage (Colossal's asymmetric photo grids): the
+         Who we are card big, the crew in numbers beside it, then the other two cards offset below.
+         The layout is the .collage rules below. -->
     <section class="container section">
-      <SectionHeader number={4} title={featuredHeading} />
-      <!-- Stepped layout: each card sits a little lower than the one before -->
-      <div class:list={['card-grid', 'card-grid--stepped', { 'card-grid--pending': featuredPending }]} data-reveal-group data-drift="140">
-        {featuredCards.map((card, i) => <Card {...card} index={i + 1} ratio="16 / 9" />)}
+      <SectionHeader number={5} title={featuredHeading} />
+      <div class="collage" data-reveal-group>
+        <div class="collage-a"><Card {...featuredCards[0]} index={1} ratio={ratioFor(featuredCards[0], '3 / 2', '2 / 1')} feature /></div>
+        <aside class="collage-crew crew-panel" aria-label="The crew in numbers">
+          <p class="crew-tag"><span class="tag tag--glass">The crew</span></p>
+          <ul class="crew-stats">
+            {crewStats.map((stat) => (
+              <li>
+                <span class="readout crew-value">{stat.value}</span>
+                <span class="crew-text">{stat.text}</span>
+              </li>
+            ))}
+          </ul>
+          <a class="text-link label crew-link" href={url('/who-we-are')}>Meet the crew <span aria-hidden="true">→</span></a>
+        </aside>
+        <div class="collage-b"><Card {...featuredCards[1]} index={2} ratio={ratioFor(featuredCards[1], '4 / 3', '16 / 10')} /></div>
+        <div class="collage-c"><Card {...featuredCards[2]} index={3} ratio={ratioFor(featuredCards[2], '16 / 9', '2 / 1')} /></div>
       </div>
     </section>
   </div>
 
-  <!-- Section 05: one big photo (sand tiger shark, false colour) with the help buttons over it -->
-  <PhotoBand image="home.jpg" position="38% 50%" label="Section 05" heading="How can we help?" tag="Researchers · Sanctuaries · Offshore teams" split>
+  <!-- Section 06: one big photo (sand tiger shark, false colour) with the help buttons over it -->
+  <PhotoBand image="home.jpg" position="38% 50%" label="Section 06" heading="How can we help?" tag="Researchers · Sanctuaries · Offshore teams" split>
     <ol class="help-list" data-reveal-group>
       {helpButtons.map((button, i) => (
         <li>
@@ -139,13 +170,13 @@ const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
   </PhotoBand>
 
 
-  <!-- Dark band: Section 06 (like Colossal's black "In the news", which has a faint shimmering
+  <!-- Dark band: Section 07 (like Colossal's black "In the news", which has a faint shimmering
        texture behind it). Ours is NOAA sonar data of the seafloor, recoloured and kept dark. -->
   <div class="band band--sonar">
     <img class="band-texture" src={imageUrl('accents/sonar.jpg')} alt="" width="2400" height="1000" loading="lazy" decoding="async" aria-hidden="true" />
-    <!-- Section 06: latest news -->
+    <!-- Section 07: latest news -->
     <section class="container section">
-      <SectionHeader number={6} title="Latest news">
+      <SectionHeader number={7} title="Latest news">
         <a class="text-link label" href={url('/news')}>All news <span aria-hidden="true">→</span></a>
       </SectionHeader>
       <ol class="news-grid" data-reveal-group>
@@ -166,16 +197,39 @@ const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
     </section>
   </div>
 
-  <!-- Light band: Section 07 -->
+  <!-- Light band: Section 08 -->
   <div class="band theme-light">
-    <!-- Section 07: You may also be interested in -->
+    <!-- Section 08: You may also be interested in, as a short numbered index (thumbnail, title, line,
+         arrow), so the page ends quickly instead of on a third row of big cards -->
     <section class="container section">
-      <SectionHeader number={7} title="You may also be interested in" />
-      <div class="card-grid" data-reveal-group data-drift="100">
-        {interestedCards.map((card, i) => <Card {...card} index={i + 1} ratio="16 / 9" />)}
-      </div>
+      <SectionHeader number={8} title="You may also be interested in" />
+      <ol class="more-list" data-reveal-group>
+        {interestedCards.map((card, i) => (
+          <li>
+            <a class="more-row" href={url(card.href)}>
+              <span class="more-thumb">
+                {imageExists(card.photo)
+                  ? <img src={imageUrl(card.photo)} alt="" width="320" height="180" loading="lazy" decoding="async" />
+                  : <PhotoPlaceholder label={card.standIn ?? card.title} compact />}
+                <span class="more-corner more-corner--tl"></span>
+                <span class="more-corner more-corner--br"></span>
+              </span>
+              <span class="label more-num">{pad(i + 1)}</span>
+              <span class="more-title">{card.title}</span>
+              <span class="more-text">{card.text}</span>
+              <span class="more-arrow" aria-hidden="true">→</span>
+            </a>
+          </li>
+        ))}
+      </ol>
     </section>
   </div>
+
+  <!-- Section 09: founding partners (new), last before the footer, as on Colossal's Home page (white,
+       then the black partners band running into the black footer). Like Colossal's black "Conservation partners" band, with
+       open slots until the first partners sign on (src/components/Partners.astro, text in src/data/home.ts). -->
+  <Partners number={9} />
+
 </BaseLayout>
 
 <style>
@@ -312,14 +366,15 @@ const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
     margin: 0;
   }
 
+  /* big numbers: the readout voice, in the text colour (cyan is only for things you can click) */
   .intro-fig-value {
     font-family: var(--font-display);
-    font-stretch: var(--display-width);
-    word-spacing: 0.1em; /* the condensed face squeezes the spaces too */
-    font-weight: 800;
+    font-stretch: var(--wide-width);
+    font-weight: 200;
     font-size: clamp(2.25rem, 1.4rem + 1.6vw, 3rem);
     line-height: 0.9;
-    color: var(--color-accent);
+    letter-spacing: -0.01em;
+    color: var(--color-text);
   }
 
   .intro-fig-text {
@@ -361,7 +416,7 @@ const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
     text-decoration: none;
   }
 
-  /* ---------- Card grids (sections 03, 04, 07) ---------- */
+  /* ---------- Card grids (Section 03) ---------- */
 
   .card-grid {
     display: grid;
@@ -383,23 +438,186 @@ const featuredPending = featuredCards.every((card) => !imageExists(card.photo));
     grid-row: span 2;
   }
 
-  /* Section 03: the 2nd and 3rd cards are pushed down a step each, so the row
-     reads as a staircase instead of a flat line */
-  .card-grid--stepped > :global(:nth-child(2)) {
-    margin-top: var(--space-xl);
+  /* ---------- Section 05: the staggered collage ----------
+     Colossal's asymmetric photo grids: nothing lines up with its neighbour. On a 12-column grid,
+     the Who we are card takes 7 columns, the crew panel sits in the last 4, a step lower; then the
+     positions card (columns 2 to 6) and the build log (7 to 12) are offset again on the next row. */
+  .collage {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--space-lg) var(--space-md);
+    align-items: start;
   }
 
-  .card-grid--stepped > :global(:nth-child(3)) {
-    margin-top: calc(var(--space-xl) * 2);
+  .collage-a { grid-column: 1 / 8; }
+  .collage-crew { grid-column: 9 / 13; margin-top: var(--space-2xl); }
+  .collage-b { grid-column: 2 / 6; margin-top: var(--space-lg); }
+  .collage-c { grid-column: 7 / 13; margin-top: calc(var(--space-2xl) * 0.9); }
+
+  /* The crew in numbers: a dark inset panel on the light band (the lime corner square marks it) */
+  .crew-panel {
+    position: relative;
+    padding: var(--space-md) var(--space-md) var(--space-sm);
+    background: #0b1620;
+    color: #e8f1f5;
+    --color-line: #1c3a52;
+    --color-muted: #8fa8b8;
+    --color-accent: #3de0d0;
   }
 
-  /* every featured photo still to come: no steps, and shorter panels */
-  .card-grid--pending > :global(*) {
-    margin-top: 0 !important;
+  .crew-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    background: var(--color-lime);
   }
 
-  .card-grid--pending :global(.card-media) {
-    aspect-ratio: 2 / 1 !important;
+  .crew-tag {
+    margin: 0 0 var(--space-sm);
+  }
+
+  .crew-stats {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .crew-stats li {
+    display: grid;
+    grid-template-columns: 5.2rem minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .crew-value {
+    font-size: var(--readout-2);
+    line-height: 0.9;
+  }
+
+  .crew-text {
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+    line-height: 1.4;
+  }
+
+  .crew-link {
+    margin-top: var(--space-xs);
+  }
+
+  @media (max-width: 1023px) {
+    .collage-a { grid-column: 1 / 13; }
+    .collage-crew { grid-column: 1 / 7; margin-top: 0; }
+    .collage-b { grid-column: 7 / 13; margin-top: 0; }
+    .collage-c { grid-column: 3 / 13; margin-top: 0; }
+  }
+
+  @media (max-width: 760px) {
+    .collage { grid-template-columns: minmax(0, 1fr); gap: var(--space-lg); }
+    .collage-a,
+    .collage-crew,
+    .collage-b,
+    .collage-c { grid-column: 1 / -1; }
+  }
+
+  /* ---------- Section 08: the short index ---------- */
+
+  .more-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .more-row {
+    display: grid;
+    grid-template-columns: 9.5rem 3rem minmax(0, 1.1fr) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--color-line);
+    text-decoration: none;
+  }
+
+  .more-thumb {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: #0b1620;
+  }
+
+  .more-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 600ms var(--ease);
+  }
+
+  .more-row:hover .more-thumb img {
+    transform: scale(1.06);
+  }
+
+  /* viewfinder corner ticks: "this is a picture" */
+  .more-corner {
+    position: absolute;
+    width: 0.6rem;
+    height: 0.6rem;
+    border: 0 solid rgb(255 255 255 / 0.85);
+  }
+
+  .more-corner--tl { top: 0.35rem; left: 0.35rem; border-top-width: 1px; border-left-width: 1px; }
+  .more-corner--br { right: 0.35rem; bottom: 0.35rem; border-right-width: 1px; border-bottom-width: 1px; }
+
+  .more-num {
+    color: var(--color-accent);
+  }
+
+  .more-title {
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    word-spacing: 0.1em;
+    font-weight: 800;
+    font-size: var(--display-4);
+    line-height: 0.95;
+    text-transform: uppercase;
+    transition: color var(--duration) var(--ease);
+  }
+
+  .more-text {
+    color: var(--color-muted);
+  }
+
+  .more-arrow {
+    color: var(--color-accent);
+    font-size: 1.25rem;
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .more-row:hover .more-title {
+    color: var(--color-accent);
+  }
+
+  .more-row:hover .more-arrow {
+    transform: translateX(6px);
+  }
+
+  @media (max-width: 760px) {
+    .more-row {
+      grid-template-columns: 6.5rem minmax(0, 1fr) auto;
+      gap: 0.2rem var(--space-sm);
+    }
+
+    .more-thumb { grid-row: 1 / span 3; }
+    .more-num { grid-column: 2; grid-row: 1; }
+    .more-title { grid-column: 2; grid-row: 2; font-size: var(--display-5); }
+    .more-text { grid-column: 2; grid-row: 3; font-size: var(--text-sm); }
+    .more-arrow { grid-column: 3; grid-row: 1 / span 3; }
   }
 
   /* Section 03: the cards sit in front of the radiolarian (Specimen.astro) */
