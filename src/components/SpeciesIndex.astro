@@ -20,11 +20,12 @@ interface Group {
   species: { name: string; photo?: Photo }[];
 }
 interface Props {
+  count?: { value: string; text: string; source: { label: string; href: string } };
   groups: Group[];
   more: { label: string; href: string };
 }
 
-const { groups, more } = Astro.props;
+const { count, groups, more } = Astro.props;
 
 // every species with a photo, in list order, so each gets a slide in the viewer
 const withPhotos = groups
@@ -34,6 +35,17 @@ const slideOf = (name: string) => withPhotos.findIndex((s) => s.name === name);
 ---
 
 <div class="life" data-life>
+  <!-- The big number: how many there are (above the list on laptops, above the photo on phones) -->
+  {count && (
+    <div class="life-count">
+      <p class="readout life-count-value">{count.value}</p>
+      <p class="life-count-text">
+      {count.text}{' '}
+        <a class="label life-source" href={count.source.href} target="_blank" rel="noopener noreferrer">[ Source: {count.source.label} ]</a>
+      </p>
+    </div>
+  )}
+
   <!-- The viewer: one slide per photo, the first one showing until another name is chosen -->
   <div class="life-viewer">
     {withPhotos.map((s, i) => (
@@ -52,7 +64,7 @@ const slideOf = (name: string) => withPhotos.findIndex((s) => s.name === name);
     ))}
   </div>
 
-  <!-- The index -->
+  <!-- The index: a few of them, by where they live -->
   <div class="life-index">
     {groups.map((group) => (
       <section class="life-group">
@@ -115,18 +127,26 @@ const slideOf = (name: string) => withPhotos.findIndex((s) => s.name === name);
 </script>
 
 <style>
+  /* laptops: the number and the list on the left, the viewer on the right beside both */
   .life {
     display: grid;
     grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-    gap: clamp(2rem, 5vw, 5rem);
+    grid-template-areas:
+      'count viewer'
+      'index viewer';
+    grid-template-rows: auto 1fr;
+    column-gap: clamp(2rem, 5vw, 5rem);
     align-items: start;
+  }
+
+  .life-count {
+    grid-area: count;
   }
 
   /* ---------- The viewer (right on laptops, staying in view while the list scrolls) ---------- */
 
   .life-viewer {
-    grid-column: 2;
-    grid-row: 1;
+    grid-area: viewer;
     position: sticky;
     top: calc(var(--header-height) + var(--space-md));
     display: grid;
@@ -203,12 +223,37 @@ const slideOf = (name: string) => withPhotos.findIndex((s) => s.name === name);
   /* ---------- The index (left) ---------- */
 
   .life-index {
-    grid-column: 1;
-    grid-row: 1;
+    grid-area: index;
   }
 
   .life-group + .life-group {
     margin-top: var(--space-lg);
+  }
+
+  /* ---------- The big number ---------- */
+
+  .life-count {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-sm) var(--space-md);
+    margin-bottom: var(--space-lg);
+  }
+
+  .life-count-value {
+    margin: 0;
+    font-size: var(--readout-1);
+    line-height: 0.9;
+  }
+
+  .life-count-text {
+    max-width: 24rem;
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  .life-count-text .life-source {
+    margin-top: 0.2rem;
   }
 
   .life-group-head {
@@ -323,13 +368,16 @@ const slideOf = (name: string) => withPhotos.findIndex((s) => s.name === name);
   @media (max-width: 899px) {
     .life {
       grid-template-columns: 1fr;
-      gap: var(--space-lg);
+      grid-template-areas:
+        'count'
+        'viewer'
+        'index';
+      grid-template-rows: auto;
+      row-gap: var(--space-lg);
     }
 
-    .life-viewer,
-    .life-index {
-      grid-column: 1;
-      grid-row: auto;
+    .life-count {
+      margin-bottom: 0;
     }
 
     .life-viewer {
@@ -363,6 +411,10 @@ const slideOf = (name: string) => withPhotos.findIndex((s) => s.name === name);
 
   @media (max-width: 600px) {
     .life-slide figcaption {
+      grid-template-columns: 1fr;
+    }
+
+    .life-count {
       grid-template-columns: 1fr;
     }
 

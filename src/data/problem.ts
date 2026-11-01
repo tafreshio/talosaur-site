@@ -10,6 +10,9 @@ export const sources = {
   // NOAA's list of bony fishes "found within the coral cap region of the sanctuary (0-130 ft, 0-40m
   // deep)", in three pages (this is the first; the sanctuary's species lists link to the rest)
   fgbFish: { label: 'NOAA', href: 'https://flowergarden.noaa.gov/about/fishlist.html' },
+  // NOAA's 2008 condition report for the sanctuary: "At least 280 species of fish have been documented
+  // within the sanctuary" and "Approximately 20 species of sharks and rays have been documented"
+  fgbCount: { label: 'NOAA', href: 'https://sanctuaries.noaa.gov/science/condition/fgbnms/2008/history.html' },
   light: { label: 'NOAA', href: 'https://oceanservice.noaa.gov/facts/light_travel.html' },
   pressure: { label: 'NOAA', href: 'https://oceanservice.noaa.gov/facts/pressure.html' },
   // NOAA's 2023 Flower Garden Banks National Marine Sanctuary poster (also the source of its photos)
@@ -232,6 +235,12 @@ export const fgbStats = [
 //   Deeper reefs: NOAA's page on the sanctuary's deeper habitats (40-221 m), including the marbled grouper,
 //   which the poster says prefers the deeper reefs
 export const fgbLife = {
+  // the big number at the top of the list
+  count: {
+    value: '280+',
+    text: 'species of fish documented in the sanctuary, about 20 of them sharks and rays, before you count the corals, sponges and other animals. Here are a few, by where they live.',
+    source: sources.fgbCount,
+  },
   groups: [
     {
       title: 'Open water',
