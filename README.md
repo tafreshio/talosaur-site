@@ -211,7 +211,7 @@ The rules for anything new are in `claude/talosaur-site-design-system.md` in the
 | Home | 05 Featured content, now a staggered collage with the crew in numbers | `.collage` rules in `src/pages/index.astro` | `featuredCards` in `src/data/home.ts`; the numbers come from `src/data/team.ts` |
 | Home | 08 You may also be interested in, now a short numbered list | `.more-list` rules in `src/pages/index.astro` | `interestedCards` in `src/data/home.ts` |
 | Home | 09 Founding partners: four open slots | `src/components/Partners.astro` | `partners` in `src/data/home.ts`. To fill a slot, add `name` and `logo` (a file in `public/images/partners/`) |
-| News | 01 Where we are: our overall phase as one arrow (Build, Test, Field, Twilight zone), pointing at a photo of deep-sea life | `src/components/PhaseArrow.astro` | `currentPhase`, `phases` and `goal` at the top of `src/pages/news.astro`. When the next phase starts, change `currentPhase` |
+| News | 01 Where we are: our overall phase as one pill split into four photo slices (Build, Test, Field, Twilight zone). The current phase is lit up with an orange dot and "Now"; the others are dimmed until you point at them. On phones the pill stands upright with the text beside it | `src/components/PhasePill.astro` | `currentPhase` and `phases` (title, text, photo) at the top of `src/pages/news.astro`. When the next phase starts, change `currentPhase`. Photos: `public/images/sections/phase-build.jpg`, `phase-test.jpg`, `phase-field.jpg` (stand-ins made by `stills_site/make_phases.py`) and `phase-fish.jpg` |
 | Positions | 01 How joining works: four steps | `src/components/Steps.astro` (reusable) | `joinSteps` at the top of `src/pages/positions.astro` |
 
 ## Logo and icons

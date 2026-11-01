@@ -33,6 +33,7 @@ section explains sizes.
 | The team at a build day | Positions, "Life on the team" | `sections/team-build.jpg` | 16:10 |
 | Hands on a part (optional: adds the small framed photo) | Positions, "Life on the team" | `sections/team-lab.jpg` | 1:1 |
 | Turtle in the pool | Donate, "Where it goes" Testing card | `sections/support-testing.jpg` | 4:3 |
+| Turtle on the bench, Turtle in the pool or a lake, and the Galveston trip (each replaces a stock stand-in: a mill, sunlit water, a boat wake) | News, "Where we are" pill | `sections/phase-build.jpg`, `phase-test.jpg`, `phase-field.jpg` | 4:3, subject in the middle |
 
 ## To confirm
 
