@@ -8,13 +8,13 @@ import DepthBands from '../components/DepthBands.astro';
 import PhotoBand from '../components/PhotoBand.astro';
 import SpecList from '../components/SpecList.astro';
 import StoryBand from '../components/StoryBand.astro';
-import PictureCards from '../components/PictureCards.astro';
+import SpeciesIndex from '../components/SpeciesIndex.astro';
 import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
 import SeenPorthole from '../components/SeenPorthole.astro';
 import SpeciesSchool from '../components/SpeciesSchool.astro';
 import { url } from '../lib/url';
 import { imageExists, imageUrl } from '../lib/images';
-import { problemIntro, stats, habitat, glance, fgbStats, fgbSpecies, sources, explored, naming } from '../data/problem';
+import { problemIntro, stats, habitat, glance, fgbStats, fgbLife, sources, explored, naming } from '../data/problem';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
@@ -206,11 +206,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
     source={sources.poster}
   />
 
-  <!-- Section 06: who lives here, four animals from the poster with NOAA photos (natural colour) -->
+  <!-- Section 06: who lives here. A sample of the animals at Flower Garden Banks, sorted by where they
+       live, with NOAA photos (natural colour) in a viewer beside the list (src/components/SpeciesIndex.astro) -->
   <div class="band band--top theme-light">
     <section class="container species">
       <SectionHeader number={6} title="Who lives here" />
-      <PictureCards items={fgbSpecies} columns={4} ratio="4 / 3" />
+      <SpeciesIndex groups={fgbLife.groups} more={fgbLife.more} />
     </section>
   </div>
 

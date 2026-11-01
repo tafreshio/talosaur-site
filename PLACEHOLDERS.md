@@ -37,6 +37,8 @@ section explains sizes.
 
 ## To confirm
 
+- **Who lives here (The Problem).** The names come from NOAA's sanctuary pages (the 2023 poster, the coral cap fish list and the page on the deeper reefs) and are only a sample; add or swap any in `fgbLife` in `src/data/problem.ts`. The whale shark line ("One sometimes passes over the banks") is new: check it reads right to the team. The whale shark photo is from the same NOAA poster, but the poster doesn't name its photographer.
+
 - **Sustainable Building Initiative logo** (Home, Partners, `public/images/partners/sbi.png`). Made white on a transparent background from the logo the team sent, so it reads on the black band. Check SBI is happy with that version on the site, and add their website as `href` in `src/data/home.ts` (`partners.members`) if the tile should link to it.
 
 - **Text written to fill placeholders (October 2026).** These were written from the Content doc, the rest of the site and the sources linked on it, so change anything that doesn't match how the team works or talks: The Problem's second Habitat paragraph and two At a glance rows (Temperature, Deep-reef surveys, both sourced); the four Work with us cards and the "20 minutes" band; the three Donate "Where it goes" cards and the "Affordable ocean exploration" band; Positions "Life on the team"; the five test stops on News (in the order of the team's test ladder, with no dates); the "Project kicks off" line; and the homepage video credits. Nothing in them promises dates, prices or results.
