@@ -1,0 +1,211 @@
+---
+// Home, "Founding partners": like the black "Conservation partners" band on Colossal's Home page,
+// but honest for a new team. Four open slots drawn as lab-notebook frames ("+" in the middle,
+// viewfinder corners). When a partner signs on, give its slot a `name` and a `logo` in
+// src/data/home.ts (`partners`), with the logo file in public/images/partners/, and the frame
+// shows the logo instead of the "+".
+import SectionHeader from './SectionHeader.astro';
+import { partners } from '../data/home';
+import { url } from '../lib/url';
+
+interface Props {
+  number: number;
+}
+
+const { number } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<div class="band partners-band">
+  <span class="plus" style="top: 3rem; left: 2%"></span>
+  <span class="plus" style="top: 46%; right: 1.5%"></span>
+  <span class="plus" style="bottom: 4rem; left: 38%"></span>
+  <section class="container section partners">
+    <SectionHeader number={number} title={partners.title} />
+    <div class="partners-grid">
+      <div class="partners-copy" data-reveal>
+        <p class="readout partners-lead">{partners.lead}</p>
+        <p class="partners-text">{partners.text}</p>
+        <div class="partners-actions">
+          <a class="button" href={url(partners.cta.href)}>{partners.cta.label} <span aria-hidden="true">→</span></a>
+          <a class="text-link label" href={url(partners.secondary.href)}>{partners.secondary.label} <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+
+      <ul class="slots" data-reveal-group>
+        {partners.slots.map((slot, i) => (
+          <li>
+            <a class:list={['slot', { 'slot--filled': slot.logo }]} href={url(slot.href)}>
+              <span class="slot-corner slot-corner--tl"></span>
+              <span class="slot-corner slot-corner--br"></span>
+              <span class="label slot-num">Slot {pad(i + 1)} · {slot.logo ? 'Partner' : 'Open'}</span>
+              {slot.logo
+                ? <img class="slot-logo" src={url(`/images/partners/${slot.logo}`)} alt={slot.name} loading="lazy" />
+                : <span class="slot-plus" aria-hidden="true"></span>}
+              <span class="slot-kind">{slot.name || slot.kind}</span>
+              <span class="slot-text">{slot.text}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</div>
+
+<style>
+  .partners-band {
+    color: var(--color-text);
+    background:
+      radial-gradient(60rem 30rem at 85% 110%, rgb(91 43 224 / 0.18), transparent 70%),
+      var(--color-bg);
+  }
+
+  .section {
+    padding-top: var(--space-2xl);
+  }
+
+  .partners-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--space-xl) clamp(2rem, 5vw, 6rem);
+    align-items: start;
+  }
+
+  .partners-lead {
+    margin: 0 0 var(--space-md);
+    font-size: var(--display-3);
+  }
+
+  .partners-text {
+    max-width: 34rem;
+    margin: 0 0 var(--space-lg);
+    color: var(--color-muted);
+  }
+
+  .partners-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm) var(--space-lg);
+  }
+
+  /* ---------- The slots ---------- */
+
+  .slots {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-sm);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .slot {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    justify-items: start;
+    gap: 0.35rem;
+    min-height: 15rem;
+    height: 100%;
+    padding: var(--space-md);
+    border: 1px dashed color-mix(in srgb, var(--color-muted) 45%, transparent);
+    text-decoration: none;
+    transition:
+      border-color var(--duration) var(--ease),
+      background var(--duration) var(--ease);
+  }
+
+  .slot:hover {
+    border-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-surface) 55%, transparent);
+  }
+
+  /* viewfinder corners: "a picture (a logo) goes here" */
+  .slot-corner {
+    position: absolute;
+    width: 0.9rem;
+    height: 0.9rem;
+    border: 0 solid var(--color-text);
+  }
+
+  .slot-corner--tl {
+    top: -1px;
+    left: -1px;
+    border-top-width: 1px;
+    border-left-width: 1px;
+  }
+
+  .slot-corner--br {
+    right: -1px;
+    bottom: -1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+  }
+
+  .slot-num {
+    color: var(--color-muted);
+  }
+
+  .slot-plus {
+    position: relative;
+    align-self: center;
+    justify-self: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    transition: transform 400ms var(--ease);
+  }
+
+  .slot-plus::before,
+  .slot-plus::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 1px;
+    background: var(--color-accent);
+  }
+
+  .slot-plus::after {
+    transform: rotate(90deg);
+  }
+
+  .slot:hover .slot-plus {
+    transform: rotate(90deg);
+  }
+
+  .slot-logo {
+    align-self: center;
+    justify-self: center;
+    max-width: 70%;
+    max-height: 4rem;
+    filter: brightness(0) invert(1);
+  }
+
+  .slot-kind {
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    word-spacing: 0.1em;
+    font-weight: 800;
+    font-size: var(--display-5);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .slot-text {
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+  }
+
+  @media (max-width: 900px) {
+    .partners-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .slot {
+      min-height: 12rem;
+      padding: var(--space-sm);
+    }
+  }
+</style>

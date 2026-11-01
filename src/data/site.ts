@@ -17,13 +17,14 @@ export const location = 'College Station, Texas';
 export const twitchUrl = 'https://www.twitch.tv/nand0guz'; // live build stream (footer and the Home "Talosaur Live" card)
 
 // Top navigation, in order. Numbers ("01", "02"...) are added automatically.
+// blurb: the one line under each page in the full-page INDEX (the "Index +" button, and the phone menu).
 export const mainNav = [
-  { label: 'Who we are', href: '/who-we-are' },
-  { label: 'The Problem', href: '/the-problem' },
-  { label: 'News', href: '/news' },
-  { label: 'Work with us', href: '/work-with-us' },
-  { label: 'Positions', href: '/positions' },
-  { label: 'Donate', href: '/donate' },
+  { label: 'Who we are', href: '/who-we-are', blurb: 'The students building Turtle, and where we are headed.' },
+  { label: 'The Problem', href: '/the-problem', blurb: 'Why life at 50–300 m is so hard to see, in numbers.' },
+  { label: 'News', href: '/news', blurb: 'The build log, milestone by milestone.' },
+  { label: 'Work with us', href: '/work-with-us', blurb: 'Researchers, sanctuaries and offshore teams: bring us a question.' },
+  { label: 'Positions', href: '/positions', blurb: 'Open roles on the team, and how joining works.' },
+  { label: 'Donate', href: '/donate', blurb: 'Fund parts, testing and field trips.' },
 ];
 
 // Footer columns

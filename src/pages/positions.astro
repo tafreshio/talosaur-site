@@ -6,6 +6,7 @@ import PhotoBand from '../components/PhotoBand.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import StoryBand from '../components/StoryBand.astro';
 import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
+import Steps from '../components/Steps.astro';
 import { url } from '../lib/url';
 import { imageExists, imageUrl } from '../lib/images';
 import { positions, positionsHeadline, positionsIntro, applicationFormUrl } from '../data/positions';
@@ -15,6 +16,15 @@ import { positions, positionsHeadline, positionsIntro, applicationFormUrl } from
 // Photos: public/images/sections/team-build.jpg (the team at a build day) and team-lab.jpg (hands on a
 // part, the small photo in the orange frame). Until team-build.jpg exists, a "photo to come" panel shows
 // what it should be; the small photo only appears once team-lab.jpg is added.
+// How joining works (Section 01). New copy (not from the Content doc): check it matches how the team
+// really recruits, and edit freely.
+const joinSteps = [
+  { title: 'Apply', text: 'Fill in the short application form. No ocean experience needed.' },
+  { title: 'Hear back', text: 'We read every application and reply by email to set up a quick chat.' },
+  { title: 'Meet the crew', text: 'Talk about what you would like to build, and see where Turtle is up to.' },
+  { title: 'Start building', text: 'Pick up a first task with the people in your area and join the next build day.' },
+];
+
 const life = {
   lead: 'Most of us build in College Station. A build day is hands-on: designing parts, making them and putting the vehicle together, and you can watch some of it live on our Twitch stream. Testing starts in the pool, then moves to Lake Bryan, Lake Travis and the Gulf coast.',
   text: 'Questions before you apply? Email info@talosaur.com and we will get back to you.',
@@ -74,12 +84,24 @@ const life = {
     </a>
   </StoryBand>
 
-  <!-- Light band: life on the team -->
+  <!-- Light band: how joining works, then life on the team -->
   <div class="band band--top theme-light">
-    <!-- Section 01: life on the team. Like the "Decoding life" collage on Colossal's mammoth page:
+    <!-- Section 01: how joining works (new). The stepped line from the Home roadmap (src/components/Steps.astro). -->
+    <section class="container join">
+      <SectionHeader number={1} title="How joining works" />
+      <Steps steps={joinSteps} />
+      <p class="join-cta">
+        <a class="button" href={applicationFormUrl} target="_blank" rel="noopener noreferrer">
+          Start with step 01 <span aria-hidden="true">→</span>
+          <span class="visually-hidden">(opens the application form in a new tab)</span>
+        </a>
+      </p>
+    </section>
+
+    <!-- Section 02: life on the team. Like the "Decoding life" collage on Colossal's mammoth page:
          a big photo with a smaller one over its corner in an offset orange frame. -->
     <section class="container life">
-      <SectionHeader number={1} title="Life on the team" />
+      <SectionHeader number={2} title="Life on the team" />
       <div class="life-grid">
         <div class="life-copy" data-reveal>
           <p class="life-lead">{life.lead}</p>
@@ -118,6 +140,14 @@ const life = {
 </BaseLayout>
 
 <style>
+  .join {
+    padding-bottom: var(--space-2xl);
+  }
+
+  .join-cta {
+    margin: var(--space-lg) 0 0;
+  }
+
   /* Phones: the role names in the band get a size that fits the narrow column */
   @media (max-width: 760px) {
     :global(.story--split .split-list li) {
@@ -217,7 +247,7 @@ const life = {
   /* Each role is a row: number | title | details | Apply, with the button at the right end */
   .role {
     display: grid;
-    grid-template-columns: 3rem minmax(0, 1.6fr) minmax(0, 2fr) auto;
+    grid-template-columns: 3rem minmax(0, 1.5fr) minmax(0, 2fr) auto;
     align-items: start;
     gap: var(--space-md) var(--space-lg);
     padding-block: var(--space-lg);
@@ -230,7 +260,8 @@ const life = {
   }
 
   .role-title {
-    font-size: var(--text-xl);
+    font-size: clamp(1.4rem, 0.7rem + 1.6vw, 2.5rem);
+    overflow-wrap: anywhere; /* "VISION / ML" breaks inside its own column, never into the next */
   }
 
   .role-apply {

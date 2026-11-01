@@ -7,6 +7,8 @@ import PageHeader from '../components/PageHeader.astro';
 import Photo from '../components/Photo.astro';
 import PhotoBand from '../components/PhotoBand.astro';
 import TestRoute from '../components/TestRoute.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import PhaseArrow from '../components/PhaseArrow.astro';
 import { twitchUrl } from '../data/site';
 import { getSortedNews, formatNewsDate } from '../lib/news';
 import { imageExists } from '../lib/images';
@@ -26,6 +28,18 @@ const stops = [
   { name: 'Offshore', place: 'Flower Garden Banks', x: 81.7, y: 81.2, image: 'test-offshore.jpg', needs: 'Flower Garden Banks', text: 'The goal: filming the deep reefs of Flower Garden Banks, where most of the sanctuary lies in the twilight zone.' },
 ];
 
+// Where we are (Section 01): our overall phase as one arrow. When the next phase starts, change
+// `currentPhase`. The phases follow the test stops below. New copy (not from the Content doc).
+const currentPhase = 1;
+const phases = [
+  { title: 'Build', text: 'Turtle on the bench in College Station.' },
+  { title: 'Test', text: 'The pool, Lake Bryan and Lake Travis.' },
+  { title: 'Field', text: 'Galveston and the Gulf coast.' },
+  { title: 'Twilight zone', text: 'Flower Garden Banks, 50–300 m down.' },
+];
+// The photo the arrow points at (public/images/sections/phase-fish.jpg). SOURCE TO CONFIRM (added by the team).
+const goal = { image: 'sections/phase-fish.jpg', tag: 'The goal', caption: 'Filming deep-sea life where it lives.' };
+
 // Turn each entry's Markdown body into HTML we can place on the page
 const items = await Promise.all(
   entries.map(async (entry) => ({
@@ -42,6 +56,9 @@ const items = await Promise.all(
   <!-- Light band: everything below the photo header -->
   <div class="band band--top theme-light">
     <section class="container news-layout">
+      <!-- Section 01: where we are (new). Our overall phase as one arrow, then the posts themselves -->
+      <SectionHeader number={1} title="Where we are" />
+      <PhaseArrow current={currentPhase} phases={phases} goal={goal} />
       <ol class="news-list" data-reveal-group>
         {items.map(({ entry, Content, hasPhoto }) => (
           <li id={entry.id} class:list={['news-item', { 'news-item--has-photo': hasPhoto }]}>
@@ -67,8 +84,8 @@ const items = await Promise.all(
 
   </div>
 
-  <!-- Section 01: where we test. An orange band with a map of the test stops (Colossal's locations map) -->
-  <TestRoute number={1} title="Where we test" tag="From the pool to the reef" stops={stops} />
+  <!-- Section 02: where we test. An orange band with a map of the test stops (Colossal's locations map) -->
+  <TestRoute number={2} title="Where we test" tag="From the pool to the reef" stops={stops} />
 
   <!-- Closing photo (moray eel, thermal false colour). Copy: Content doc, "Talosaur Live" card. -->
   <PhotoBand image="news.jpg" position="40% 50%" heading="Talosaur Live" tag="Join the live build stream and see our engineers at work">

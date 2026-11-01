@@ -8,11 +8,11 @@
 // Every placeholder on the site is listed in PLACEHOLDERS.md with the file name to save.
 interface Props {
   label: string;      // what the photo should show, e.g. 'the whole team'
-  file?: string;      // the file name it goes in, shown small (optional)
+  file?: string;      // the file name it goes in (listed in PLACEHOLDERS.md; no longer printed on the page)
   compact?: boolean;  // for small thumbnails: a small frame mark and the words, nothing else
 }
 
-const { label, file, compact = false } = Astro.props;
+const { label, compact = false } = Astro.props;
 ---
 
 <div class:list={['ph', { 'ph--compact': compact }]} aria-hidden="true">
@@ -21,7 +21,7 @@ const { label, file, compact = false } = Astro.props;
   {compact && <span class="ph-frame"></span>}
   <p class="label ph-tag">{compact ? 'Photo to come' : '[ Photo to come ]'}</p>
   <p class="ph-what">{label}</p>
-  {file && !compact && <p class="label ph-file">{file}</p>}
+  {/* The file name is kept in PLACEHOLDERS.md, not printed on the page (design system: placeholders look intentional) */}
 </div>
 
 <style>

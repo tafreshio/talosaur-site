@@ -1,6 +1,6 @@
 ---
 // Shared top navigation. Used on every page through BaseLayout.astro.
-import { mainNav } from '../data/site';
+import { mainNav, contactEmails, twitchUrl, location } from '../data/site';
 import { url, withoutBase } from '../lib/url';
 
 interface Props {
@@ -24,17 +24,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <img src={url('/brand/talosaur-lockup-reverse.svg')} alt="Talosaur" width="164" height="28" />
     </a>
 
-    <button
-      class="menu-toggle"
-      type="button"
-      aria-expanded="false"
-      aria-controls="site-nav"
-    >
-      <span class="menu-toggle-text">Menu</span>
-      <span class="menu-toggle-icon" aria-hidden="true"></span>
-    </button>
-
-    <nav id="site-nav" class="site-nav" aria-label="Main">
+    <!-- Desktop: the numbered links in a row. On phones and tablets they live in the INDEX below. -->
+    <nav class="site-nav" aria-label="Main">
       <ol>
         {mainNav.map((item, i) => (
           <li>
@@ -50,29 +41,83 @@ const pad = (n: number) => String(n).padStart(2, '0');
         ))}
       </ol>
     </nav>
+
+    <!-- "Index +": opens the full-page index (like Colossal's INDEX). On phones it is the menu button. -->
+    <button class="index-toggle" type="button" aria-expanded="false" aria-controls="site-index">
+      <span class="index-toggle-text"><span class="when-closed">Index</span><span class="when-open">Close</span></span>
+      <span class="index-toggle-icon" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <!-- The INDEX: a panel that drops down under the top bar (it doesn't cover the whole screen). Every
+       page as a numbered line with one sentence about it (the blurbs are in src/data/site.ts), plus
+       the contact emails and the live stream. The page behind is dimmed; click it to close. -->
+  <div class="index-backdrop" aria-hidden="true"></div>
+  <div id="site-index" class="site-index" aria-label="Site index">
+    <div class="container index-grid">
+      <ol class="index-list">
+        <li>
+          <a class="index-link" href={url('/')} aria-current={currentPath === '/' ? 'page' : undefined}>
+            <span class="index-num">000</span>
+            <span class="index-title">Home</span>
+            <span class="index-blurb">Life at 50–300 m is barely watched.</span>
+          </a>
+        </li>
+        {mainNav.map((item, i) => (
+          <li>
+            <a class="index-link" href={url(item.href)} aria-current={currentPath === item.href ? 'page' : undefined}>
+              <span class="index-num">{String(i + 1).padStart(3, '0')}</span>
+              <span class="index-title">{item.label}</span>
+              <span class="index-blurb">{item.blurb}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+
+      <aside class="index-side">
+        <div class="index-block">
+          <p class="label">[ Contact ]</p>
+          <ul>
+            {contactEmails.map((contact) => (
+              <li><a href={`mailto:${contact.email}`}><span class="index-mail-label">{contact.label}</span>{contact.email}</a></li>
+            ))}
+          </ul>
+        </div>
+        <div class="index-block index-block--row">
+          <a class="index-live" href={twitchUrl} target="_blank" rel="noopener noreferrer"><span class="live-dot"></span>Talosaur Live <span aria-hidden="true">↗</span></a>
+          <p class="label index-place">{location}</p>
+        </div>
+      </aside>
+    </div>
   </div>
 </header>
 
 <script>
-  // Opens and closes the phone menu.
+  // Opens and closes the full-page index (the "Index +" button, "Menu" on phones).
   const header = document.querySelector('.site-header');
-  const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+  const toggle = document.querySelector<HTMLButtonElement>('.index-toggle');
+  const panel = document.querySelector<HTMLElement>('#site-index');
 
   const setOpen = (open: boolean) => {
     toggle?.setAttribute('aria-expanded', String(open));
     header?.classList.toggle('is-open', open);
     document.body.style.overflow = open ? 'hidden' : '';
+    if (open) panel?.querySelector<HTMLElement>('.index-link')?.focus({ preventScroll: true });
   };
 
   toggle?.addEventListener('click', () => {
     setOpen(toggle.getAttribute('aria-expanded') !== 'true');
   });
 
-  // Close with the Escape key, or when the screen gets wide again.
+  // Close with the Escape key (focus goes back to the button), or after following a link.
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') setOpen(false);
+    if (e.key === 'Escape' && header?.classList.contains('is-open')) {
+      setOpen(false);
+      toggle?.focus();
+    }
   });
-  window.matchMedia('(min-width: 1024px)').addEventListener('change', () => setOpen(false));
+  panel?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+  document.querySelector('.index-backdrop')?.addEventListener('click', () => setOpen(false));
 
   // Overlay header: becomes frosted once the page is scrolled.
   if (header?.classList.contains('site-header--overlay')) {
@@ -124,12 +169,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
   /* over a bright header photo (before scrolling), a soft dark glow keeps the menu readable,
      since the photo itself has no dark shading */
   .site-header--overlay:not(.is-scrolled) .nav-link,
-  .site-header--overlay:not(.is-scrolled) .menu-toggle {
+  .site-header--overlay:not(.is-scrolled) .index-toggle {
     text-shadow: 0 1px 8px rgb(6 18 31 / 0.65);
   }
 
   .site-header--overlay:not(.is-scrolled) .logo img,
-  .site-header--overlay:not(.is-scrolled) .menu-toggle-icon {
+  .site-header--overlay:not(.is-scrolled) .index-toggle-icon {
     filter: drop-shadow(0 1px 5px rgb(6 18 31 / 0.55));
   }
 
@@ -221,123 +266,308 @@ const pad = (n: number) => String(n).padStart(2, '0');
     text-decoration: none;
   }
 
-  .menu-toggle {
+  /* ---------- The Index button ---------- */
+
+  .index-toggle {
+    position: relative;
+    z-index: 2; /* stays above the open index */
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-left: var(--space-md);
+    padding: 0.5rem 0;
+    background: none;
+    border: 0;
+    color: var(--color-text);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .index-toggle:hover {
+    color: var(--color-accent);
+  }
+
+  .when-open,
+  .is-open .when-closed {
     display: none;
   }
 
-  /* ---------- Phone and tablet nav ---------- */
+  .is-open .when-open {
+    display: inline;
+  }
+
+  /* A "+" that turns into an "x" */
+  .index-toggle-icon {
+    position: relative;
+    width: 12px;
+    height: 12px;
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .index-toggle-icon::before,
+  .index-toggle-icon::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 1.5px;
+    margin-top: -0.75px;
+    background: currentColor;
+  }
+
+  .index-toggle-icon::after {
+    transform: rotate(90deg);
+  }
+
+  .is-open .index-toggle-icon {
+    transform: rotate(45deg);
+  }
+
+  /* ---------- The index panel ----------
+     Drops down under the top bar, as tall as its content. The page behind is dimmed. */
+
+  /* while the index is open the top bar is always frosted, even over the Home video */
+  .site-header.is-open::before {
+    opacity: 1;
+  }
+
+  .index-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: rgb(6 18 31 / 0.55);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 300ms var(--ease),
+      visibility 300ms;
+  }
+
+  .is-open .index-backdrop {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .site-index {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    z-index: 1;
+    max-height: calc(100dvh - var(--header-height) - 3rem);
+    padding: var(--space-lg) 0;
+    overflow-y: auto;
+    border-top: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+    background: var(--color-bg);
+    box-shadow: 0 24px 48px rgb(0 0 0 / 0.35);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-0.75rem);
+    transition:
+      opacity 300ms var(--ease),
+      transform 300ms var(--ease),
+      visibility 300ms;
+  }
+
+  .is-open .site-index {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .index-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem);
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  /* the pages in two columns, numbered down each column */
+  .index-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(4, auto);
+    grid-auto-flow: column;
+    gap: 0 var(--space-lg);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .index-list li {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .index-link {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    gap: 0.15rem var(--space-sm);
+    padding: 0.8rem 0;
+    text-decoration: none;
+  }
+
+  .index-num {
+    position: relative;
+    grid-row: 1 / span 2;
+    justify-self: start;
+    padding-top: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+  }
+
+  /* the page you are on gets the orange dot */
+  .index-link[aria-current='page'] .index-num::after {
+    content: '';
+    position: absolute;
+    top: 0.55rem;
+    left: calc(100% + 0.35rem);
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--color-orange);
+  }
+
+  .index-title {
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    word-spacing: 0.1em;
+    font-weight: 800;
+    font-size: clamp(1.4rem, 1rem + 1vw, 2rem);
+    line-height: 1;
+    text-transform: uppercase;
+    transition: color var(--duration) var(--ease);
+  }
+
+  .index-blurb {
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+    line-height: 1.4;
+  }
+
+  .index-link:hover .index-title,
+  .index-link:focus-visible .index-title {
+    color: var(--color-accent);
+  }
+
+  .index-side {
+    display: grid;
+    gap: var(--space-md);
+    padding-top: 0.8rem;
+  }
+
+  .index-block .label {
+    margin: 0 0 0.6rem;
+  }
+
+  .index-block ul {
+    display: grid;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .index-block a {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .index-block a:hover {
+    color: var(--color-accent);
+  }
+
+  .index-mail-label {
+    display: block;
+    color: var(--color-muted);
+    font-size: 0.75rem;
+  }
+
+  .index-block--row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem var(--space-md);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .index-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+  }
+
+  .live-dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--color-live);
+    box-shadow: 0 0 0 3px rgb(229 72 77 / 0.25);
+  }
+
+  .index-place {
+    margin: 0;
+  }
+
+  /* ---------- Tablets and phones: the index is the menu ---------- */
 
   @media (max-width: 1023px) {
-    .menu-toggle {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.5rem 0;
-      background: none;
-      border: 0;
-      color: var(--color-text);
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      cursor: pointer;
-    }
-
-    /* Two-line "hamburger" that turns into an X */
-    .menu-toggle-icon,
-    .menu-toggle-icon::after {
-      display: block;
-      width: 22px;
-      height: 2px;
-      background: currentColor;
-      transition: transform var(--duration) var(--ease);
-    }
-
-    .menu-toggle-icon {
-      position: relative;
-      transform: translateY(-4px);
-    }
-
-    .menu-toggle-icon::after {
-      content: '';
-      position: absolute;
-      top: 8px;
-    }
-
-    .is-open .menu-toggle-icon {
-      transform: translateY(0) rotate(45deg);
-    }
-
-    .is-open .menu-toggle-icon::after {
-      top: 0;
-      transform: rotate(-90deg);
-    }
-
-    /* Full-screen panel with big numbered links */
     .site-nav {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      height: 100dvh;
-      padding: calc(var(--header-height) + var(--space-lg)) var(--gutter) var(--space-lg);
-      background: var(--color-bg);
-      overflow-y: auto;
-      opacity: 0;
-      visibility: hidden;
-      transition:
-        opacity var(--duration) var(--ease),
-        visibility var(--duration);
+      display: none;
     }
 
-    .is-open .site-nav {
-      opacity: 1;
-      visibility: visible;
+    .index-toggle .when-closed {
+      font-size: 0; /* the word "Index" becomes "Menu" on phones */
     }
 
-    .site-nav ol {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 0;
+    .index-toggle .when-closed::after {
+      content: 'Menu';
+      font-size: 0.72rem;
     }
 
-    .site-nav li {
-      border-bottom: 1px solid var(--color-line);
+    .index-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-md);
     }
 
-    .nav-link,
-    .nav-link--cta {
-      gap: var(--space-sm);
-      padding: var(--space-sm) 0;
-      border: 0;
-      border-radius: 0;
-      font-family: var(--font-display);
-      font-stretch: var(--display-width);
-      word-spacing: 0.1em; /* the condensed face squeezes the spaces too */
-      font-size: clamp(2rem, 1rem + 6vw, 3.5rem);
-      font-weight: 800;
-      line-height: 1;
-      text-transform: uppercase;
+    .index-side .index-block:first-child {
+      display: none; /* the emails stay in the footer; the menu stays short */
     }
 
-    .nav-num {
-      font-size: 0.8rem;
+    .index-side {
+      padding-top: 0;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .site-index {
+      padding: var(--space-sm) 0 var(--space-md);
     }
 
-    .nav-link--cta {
-      color: var(--color-accent);
+    .index-list {
+      grid-template-columns: 1fr;
+      grid-template-rows: none;
+      grid-auto-flow: row;
     }
 
-    .nav-link--cta:hover,
-    .nav-link--cta[aria-current='page'] {
-      background: none;
-      color: var(--color-accent);
+    .index-link {
+      padding: 0.6rem 0;
     }
 
-    .nav-link--cta:hover .nav-num,
-    .nav-link--cta[aria-current='page'] .nav-num {
-      color: var(--color-accent);
+    .index-blurb {
+      display: none; /* one line per page on a phone */
+    }
+
+    .index-num {
+      grid-row: auto;
+      padding-top: 0.3rem;
     }
   }
 </style>
