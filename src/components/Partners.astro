@@ -1,9 +1,8 @@
 ---
-// Home, "Founding partners": a black band, like the "Conservation partners" band on Colossal's Home
-// page. The title is set in two voices ("FOUNDING" in the bold headline type, "PARTNERS" in the thin
-// wide readout type), and right under it, flush left, a logo wall that grows: the partners who have
-// signed on first, then open slots drawn as lab-notebook frames ("+" in the middle, viewfinder
-// corners). Under the wall, "Build it with us." with the buttons.
+// Home, "Partners": a black band, like the "Conservation partners" band on Colossal's Home page.
+// The title in the thin wide readout type, then right under it, flush left, the partners' logos in a
+// row that grows as more sign on (white logos, no frames). Under the logos, "Build it with us." with
+// the buttons.
 // Everything is in src/data/home.ts (`partners`); logos are in public/images/partners/.
 import { partners } from '../data/home';
 import { url } from '../lib/url';
@@ -14,7 +13,6 @@ interface Props {
 
 const { number } = Astro.props;
 const pad = (n: number) => String(n).padStart(2, '0');
-const memberCount = partners.members.length;
 ---
 
 <div class="band partners-band">
@@ -24,42 +22,27 @@ const memberCount = partners.members.length;
   <section class="container section partners" aria-labelledby="partners-title">
     <header class="partners-head" data-reveal>
       <p class="label partners-num">Section {pad(number)}</p>
-      <h2 class="partners-title" id="partners-title">
-        <span class="partners-title-bold">{partners.titleBold}</span>
-        <span class="readout partners-title-thin">{partners.titleThin}</span>
-      </h2>
+      <h2 class="readout partners-title" id="partners-title">{partners.title}</h2>
     </header>
 
-    <!-- The wall: partners first, then the open slots -->
+    <!-- The logos, flush left, in the order the partners joined -->
     <ul class="wall" data-reveal-group>
-      {partners.members.map((member, i) => {
-        const Tag = member.href ? 'a' : 'div';
-        return (
-          <li>
-            <Tag class="tile tile--partner" href={member.href || undefined} target={member.href ? '_blank' : undefined} rel={member.href ? 'noopener noreferrer' : undefined}>
-              <span class="tile-corner tile-corner--tl"></span>
-              <span class="tile-corner tile-corner--br"></span>
-              <span class="label tile-num">Partner {pad(i + 1)}</span>
-              <img class="tile-logo" src={url(`/images/partners/${member.logo}`)} alt={member.name} loading="lazy" decoding="async" />
-            </Tag>
-          </li>
-        );
-      })}
-      {partners.slots.map((slot, i) => (
+      {partners.members.map((member) => (
         <li>
-          <a class="tile tile--open" href={url(slot.href)}>
-            <span class="tile-corner tile-corner--tl"></span>
-            <span class="tile-corner tile-corner--br"></span>
-            <span class="label tile-num">Slot {pad(memberCount + i + 1)} · Open</span>
-            <span class="tile-plus" aria-hidden="true"></span>
-            <span class="tile-kind">{slot.kind}</span>
-            <span class="tile-text">{slot.text}</span>
-          </a>
+          {member.href ? (
+            <a class="logo" href={member.href} target="_blank" rel="noopener noreferrer">
+              <img src={url(`/images/partners/${member.logo}`)} alt={member.name} loading="lazy" decoding="async" />
+            </a>
+          ) : (
+            <span class="logo">
+              <img src={url(`/images/partners/${member.logo}`)} alt={member.name} loading="lazy" decoding="async" />
+            </span>
+          )}
         </li>
       ))}
     </ul>
 
-    <!-- Under the wall: the invitation and the buttons -->
+    <!-- Under the logos: the invitation and the buttons -->
     <div class="partners-invite" data-reveal>
       <p class="readout partners-lead">{partners.lead}</p>
       <div>
@@ -87,7 +70,7 @@ const memberCount = partners.members.length;
     padding-top: var(--space-2xl);
   }
 
-  /* ---------- The title: FOUNDING (bold) over PARTNERS (thin, wide) ---------- */
+  /* ---------- The title ---------- */
 
   .partners-head {
     padding-top: var(--space-sm);
@@ -100,142 +83,38 @@ const memberCount = partners.members.length;
   }
 
   .partners-title {
-    display: flex;
-    flex-direction: column;
     margin: 0;
-    line-height: 0.92;
-  }
-
-  .partners-title-bold {
     font-size: var(--display-2);
   }
 
-  .partners-title-thin {
-    font-size: clamp(2.6rem, 0.5rem + 8.6vw, 9.5rem);
-    line-height: 1;
-    letter-spacing: -0.02em;
-  }
-
-  /* ---------- The wall ---------- */
+  /* ---------- The logos: a row from the left that wraps as it grows ---------- */
 
   .wall {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: var(--space-sm);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-lg) clamp(2.5rem, 5vw, 5rem);
     margin: var(--space-lg) 0 0;
     padding: 0;
     list-style: none;
   }
 
-  .wall > li {
-    display: flex;
+  .logo {
+    display: block;
+    transition: opacity var(--duration) var(--ease);
   }
 
-  .tile {
-    position: relative;
-    display: grid;
-    grid-template-rows: auto 1fr auto auto;
-    justify-items: start;
-    gap: 0.35rem;
-    width: 100%;
-    min-height: 15rem;
-    padding: var(--space-md);
-    border: 1px dashed color-mix(in srgb, var(--color-muted) 45%, transparent);
-    color: inherit;
-    text-decoration: none;
-    transition:
-      border-color var(--duration) var(--ease),
-      background var(--duration) var(--ease);
+  .logo img {
+    display: block;
+    width: auto;
+    height: clamp(4.5rem, 3rem + 3vw, 6.5rem);
   }
 
-  a.tile:hover {
-    border-color: var(--color-accent);
-    background: var(--color-surface);
+  a.logo:hover {
+    opacity: 0.75;
   }
 
-  /* a partner: a solid frame with the logo in the middle */
-  .tile--partner {
-    grid-template-rows: auto 1fr;
-    border-style: solid;
-    border-color: color-mix(in srgb, var(--color-text) 35%, transparent);
-  }
-
-  /* viewfinder corners: "a picture (a logo) goes here" */
-  .tile-corner {
-    position: absolute;
-    width: 0.9rem;
-    height: 0.9rem;
-    border: 0 solid var(--color-text);
-  }
-
-  .tile-corner--tl {
-    top: -1px;
-    left: -1px;
-    border-top-width: 1px;
-    border-left-width: 1px;
-  }
-
-  .tile-corner--br {
-    right: -1px;
-    bottom: -1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-  }
-
-  .tile-num {
-    color: var(--color-muted);
-  }
-
-  .tile-logo {
-    align-self: center;
-    justify-self: center;
-    width: 100%;
-    max-width: 15rem;
-    height: auto;
-  }
-
-  .tile-plus {
-    position: relative;
-    align-self: center;
-    justify-self: center;
-    width: 2.4rem;
-    height: 2.4rem;
-    transition: transform 400ms var(--ease);
-  }
-
-  .tile-plus::before,
-  .tile-plus::after {
-    content: '';
-    position: absolute;
-    inset: 50% 0 auto;
-    height: 1px;
-    background: var(--color-accent);
-  }
-
-  .tile-plus::after {
-    transform: rotate(90deg);
-  }
-
-  .tile:hover .tile-plus {
-    transform: rotate(90deg);
-  }
-
-  .tile-kind {
-    font-family: var(--font-display);
-    font-stretch: var(--display-width);
-    word-spacing: 0.1em;
-    font-weight: 800;
-    font-size: var(--display-5);
-    line-height: 1;
-    text-transform: uppercase;
-  }
-
-  .tile-text {
-    color: var(--color-muted);
-    font-size: var(--text-sm);
-  }
-
-  /* ---------- Under the wall: Build it with us ---------- */
+  /* ---------- Under the logos: Build it with us ---------- */
 
   .partners-invite {
     display: grid;
@@ -266,12 +145,6 @@ const memberCount = partners.members.length;
 
   /* ---------- Smaller screens ---------- */
 
-  @media (max-width: 1199px) {
-    .wall {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-
   @media (max-width: 900px) {
     .partners-invite {
       grid-template-columns: 1fr;
@@ -279,28 +152,10 @@ const memberCount = partners.members.length;
     }
   }
 
-  /* phones: the partner across the full width, the open slots two by two under it */
   @media (max-width: 600px) {
-    .wall {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.6rem;
-    }
-
-    .wall > li:first-child {
-      grid-column: 1 / -1;
-    }
-
-    .tile {
-      min-height: 12rem;
-      padding: var(--space-sm);
-    }
-
-    .tile--partner {
-      min-height: 10rem;
-    }
-
-    .tile-logo {
-      max-width: 14rem;
+    .logo img {
+      height: auto;
+      max-width: min(17rem, 100%);
     }
 
     /* the "+" margin marks would land on the text on a narrow screen */
