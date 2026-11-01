@@ -229,7 +229,8 @@ export const fgbStats = [
 // Who lives here: four animals from the poster, each with a NOAA photo (public/images/sections/fgb-*.jpg)
 // Section 06, Who lives here: a sample of the animals NOAA records at Flower Garden Banks, sorted by
 // where they live (too many to show them all). Names with a `photo` light up the viewer beside the list
-// when you point at or tap them; photos are NOAA's, in public/images/sections/ (natural colour).
+// when you point at or tap them; photos are NOAA's, in public/images/sections/ (natural colour). A name
+// whose photo file isn't there yet is listed without one until the file is added.
 //   Open water: the 2023 poster ("Reef fish, manta rays, sea turtles and sharks live across the sanctuary")
 //   Coral cap: NOAA's coral cap fish list (0-40 m)
 //   Deeper reefs: NOAA's page on the sanctuary's deeper habitats (40-221 m), including the marbled grouper,
@@ -249,7 +250,7 @@ export const fgbLife = {
       species: [
         { name: 'Manta ray', photo: { image: 'fgb-manta-ray.jpg', credit: 'G.P. Schmahl · NOAA', text: 'A common sight in the sanctuary. Each one can be told apart by the markings on its belly.' } },
         { name: 'Whale shark', photo: { image: 'fgb-whale-shark.jpg', credit: 'NOAA', text: 'The biggest fish in the sea. One sometimes passes over the banks.' } },
-        { name: 'Sea turtles' },
+        { name: 'Sea turtles', photo: { image: 'fgb-sea-turtle.jpg', credit: 'FGBNMS · NOAA', text: 'Loggerhead and hawksbill turtles both visit the banks.' } },
       ],
     },
     {
@@ -258,10 +259,10 @@ export const fgbLife = {
       source: sources.fgbFish,
       species: [
         { name: 'Golden smooth trunkfish', photo: { image: 'fgb-trunkfish.jpg', credit: 'Emma Hickerson · NOAA', text: 'One of the only places in the world to find the golden form of this fish.' } },
-        { name: 'Bluehead wrasse' },
-        { name: 'Creole wrasse' },
-        { name: 'Creolefish' },
-        { name: 'Spotfin butterflyfish' },
+        { name: 'Bluehead wrasse', photo: { image: 'fgb-bluehead-wrasse.jpg', credit: 'FGBNMS · NOAA', text: 'A small, busy reef fish. Only the biggest males have the blue head.' } },
+        { name: 'Creole wrasse', photo: { image: 'fgb-creole-wrasse.jpg', credit: 'FGBNMS · NOAA', text: 'Gathers in big schools in the water above the coral.' } },
+        { name: 'Creolefish', photo: { image: 'fgb-creolefish.jpg', credit: 'FGBNMS · NOAA', text: 'Seen in schools over the reef.' } },
+        { name: 'Spotfin butterflyfish', photo: { image: 'fgb-spotfin-butterflyfish.jpg', credit: 'FGBNMS · NOAA', text: 'Lives on the coral cap, and turns up deeper too, sheltering in black coral.' } },
       ],
     },
     {
@@ -271,11 +272,11 @@ export const fgbLife = {
       species: [
         { name: 'Black coral', photo: { image: 'fgb-black-coral.jpg', credit: 'NOAA / UNCW-UVP', text: 'Lives on the deeper reefs. New species turn up during deep-sea exploration; this one was first described in 2017.' } },
         { name: 'Marbled grouper', photo: { image: 'fgb-marbled-grouper.jpg', credit: 'G.P. Schmahl · NOAA', text: 'A shy fish that prefers deeper reefs, so divers rarely see one.' } },
-        { name: 'Sea fans' },
-        { name: 'Blushing star coral' },
-        { name: 'Basket stars' },
+        { name: 'Octocorals', photo: { image: 'fgb-octocoral.jpg', credit: 'FGBNMS / UNCW-UVP', text: 'Soft corals, sea fans among them. Each polyp has eight branching tentacles.' } },
+        { name: 'Blushing star coral', photo: { image: 'fgb-blushing-star-coral.jpg', credit: 'FGBNMS / UNCW-UVP', text: 'Covers the reefs of McGrail Bank, about 44 m down.' } },
+        { name: 'Basket stars', photo: { image: 'fgb-basket-stars.jpg', credit: 'FGBNMS / UNCW-UVP', text: 'They curl up in the branches of octocorals, waiting to feed higher in the water.' } },
         { name: 'Squat lobsters' },
-        { name: 'Trumpetfish' },
+        { name: 'Trumpetfish', photo: { image: 'fgb-trumpetfish.jpg', credit: 'FGBNMS / UNCW-UVP', text: 'Hides in black coral on the deeper banks, here with a spotfin butterflyfish.' } },
       ],
     },
   ],
