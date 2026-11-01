@@ -217,20 +217,18 @@ export const whyItMatters = {
   ],
 };
 
-// ---------------------------------------------------------------- Section 08: Founding partners
-// New copy (not from the Content doc). Like the "Conservation partners" band on Colossal's Home page,
-// but honest for a new team: open slots, drawn as frames. When a partner signs on, add `logo:` with a
-// file in public/images/partners/ (a one-colour SVG works best) and `name:` to that slot.
+// ---------------------------------------------------------------- Section 09: Partners
+// New copy (not from the Content doc). A row of partner logos that grows: the partners who have signed
+// on, in the order they joined. To add one, put its logo in public/images/partners/ (white on a
+// transparent background, PNG or SVG) and add it to `members`; `href` is its website (leave it empty
+// for no link).
 export const partners = {
-  title: 'Founding partners',
+  title: 'Partners',
   lead: 'Build it with us.',
-  text: "Talosaur is new, so this wall is empty on purpose. We're looking for the first labs, sanctuaries, companies and makers to help build an affordable way into the twilight zone.",
+  text: "Talosaur is new, so this wall is only just starting. We're looking for more labs, sanctuaries, companies and makers to help build an affordable way into the twilight zone.",
   cta: { label: 'Become a partner', href: '/work-with-us' },
   secondary: { label: 'Or support the build', href: '/donate' },
-  slots: [
-    { kind: 'Research lab', text: 'Bring a question we can film.', href: '/work-with-us', name: '', logo: '' },
-    { kind: 'Sanctuary', text: 'Help us choose where to look.', href: '/work-with-us', name: '', logo: '' },
-    { kind: 'Industry', text: 'Offshore teams and engineering firms.', href: '/work-with-us', name: '', logo: '' },
-    { kind: 'In kind', text: 'Parts, tools, pool time or a boat.', href: '/donate', name: '', logo: '' },
+  members: [
+    { name: 'Sustainable Building Initiative', logo: 'sbi.png', href: '' },
   ],
 };

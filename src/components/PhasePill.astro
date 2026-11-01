@@ -1,0 +1,296 @@
+---
+// News, "Where we are": our overall phase as one pill, split into a slice per phase, each slice a
+// photo of that phase. The phase we're in is lit up at full brightness inside a slow spectral aura
+// (violet, cyan and lime light drifting round its edge); the other slices are dimmed and greyed.
+// Pointing at a dimmed slice lights it up, to preview it. On phones the pill stands upright down the left, with the text beside
+// each slice.
+//
+// The phases, their photos and which one we're in are set where the component is used
+// (src/pages/news.astro):
+//   <PhasePill current={1} phases={[{ title: 'Build', text: '...', image: 'sections/phase-build.jpg', alt: '...' }, ...]} />
+// Photos live in public/images/sections/ (1200 x 900; each slice crops the middle). Replace a file
+// with one of the same name to swap it. A missing photo leaves a plain navy slice.
+import { imageExists, imageUrl } from '../lib/images';
+
+interface Phase {
+  title: string;
+  text: string;
+  image: string; // inside public/images/
+  alt: string; // what the photo shows
+}
+
+interface Props {
+  current: number; // 1 = the first phase
+  phases: Phase[];
+}
+
+const { current, phases } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+const stateOf = (i: number) => (i + 1 < current ? 'done' : i + 1 === current ? 'now' : 'next');
+---
+
+<div class="pill-wrap" style={`--count: ${phases.length}; --current: ${current}`}>
+  <ol class="pill" data-reveal>
+    {phases.map((phase, i) => (
+      <li class:list={['seg', `seg--${stateOf(i)}`]}>
+        {stateOf(i) === 'now' && <span class="seg-aura" aria-hidden="true"></span>}
+        <div class="seg-media">
+          {imageExists(phase.image) && (
+            <img src={imageUrl(phase.image)} alt={phase.alt} width="1200" height="900" loading="lazy" decoding="async" />
+          )}
+        </div>
+        <div class="seg-head">
+          <span class="label seg-num">Phase {pad(i + 1)}</span>
+          <h3 class="seg-title">{phase.title}</h3>
+          {stateOf(i) === 'now' && <span class="visually-hidden">(the phase we are in now)</span>}
+        </div>
+        <p class="seg-text">{phase.text}</p>
+      </li>
+    ))}
+  </ol>
+</div>
+
+<style>
+  .pill-wrap {
+    --pill-h: clamp(11rem, 15vw, 15rem); /* how tall the pill is */
+    --gap: 4px; /* the thin foam lines between slices */
+    --pad-end: clamp(2.5rem, 4vw, 4rem); /* keeps text clear of the round ends */
+    position: relative;
+    margin: var(--space-lg) 0 var(--space-xl);
+  }
+
+  .pill {
+    display: grid;
+    grid-template-columns: repeat(var(--count), minmax(0, 1fr));
+    column-gap: var(--gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* each slice: the photo, with the phase number and title over its lower part, and the text under it */
+  .seg {
+    display: grid;
+    grid-template-rows: var(--pill-h) auto;
+    min-width: 0;
+  }
+
+  .seg-aura,
+  .seg-media,
+  .seg-head {
+    grid-area: 1 / 1;
+  }
+
+  .seg-media {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+
+  /* ---------- The spectral aura around the current phase ----------
+     A ring of violet, cyan and lime light, blurred, a little bigger than the slice and behind it,
+     slowly turning so the colours drift round the edge. The current slice sits above its neighbours
+     so the glow spills over them softly. */
+  @property --aura-turn {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+  }
+
+  .seg--now {
+    position: relative;
+    z-index: 1;
+  }
+
+  .seg-aura {
+    margin: -14px;
+    border-radius: 2rem;
+    background: conic-gradient(
+      from var(--aura-turn),
+      var(--color-violet),
+      var(--color-accent),
+      var(--color-lime),
+      #8a5bff,
+      var(--color-accent),
+      var(--color-violet)
+    );
+    filter: blur(20px) saturate(1.3);
+    opacity: 1;
+    animation: aura-turn 9s linear infinite;
+    pointer-events: none;
+  }
+
+  .seg:first-child .seg-aura {
+    border-radius: 999px 2rem 2rem 999px;
+  }
+
+  .seg:last-child .seg-aura {
+    border-radius: 2rem 999px 999px 2rem;
+  }
+
+  @keyframes aura-turn {
+    to {
+      --aura-turn: 360deg;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .seg-aura {
+      animation: none;
+    }
+  }
+
+  .seg:first-child .seg-media {
+    border-radius: 999px 0 0 999px;
+  }
+
+  .seg:last-child .seg-media {
+    border-radius: 0 999px 999px 0;
+  }
+
+  .seg-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .seg:hover .seg-media img {
+    transform: scale(1.04);
+  }
+
+  /* a navy shade along the bottom, so the white title reads on any photo */
+  .seg-media::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(to top, rgb(6 18 31 / 0.78) 0%, rgb(6 18 31 / 0.25) 45%, transparent 70%);
+  }
+
+  /* every phase but the current one is dimmed and greyed; the current one is lit up a little brighter */
+  .seg-media img {
+    filter: grayscale(0.6) brightness(0.62);
+    transition:
+      transform 900ms var(--ease),
+      filter 400ms var(--ease);
+  }
+
+  .seg--now .seg-media img {
+    filter: brightness(1.12) saturate(1.15);
+  }
+
+  /* pointing at a dimmed phase lights it up, to preview it */
+  .seg:hover .seg-media img {
+    filter: brightness(1.05) saturate(1.1);
+  }
+
+  .seg-head {
+    position: relative;
+    z-index: 2;
+    align-self: end;
+    padding: 0 0.9rem 1rem;
+    color: #ffffff;
+  }
+
+  .seg:first-child .seg-head {
+    padding-left: var(--pad-end);
+  }
+
+  .seg-num {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: rgb(255 255 255 / 0.9);
+  }
+
+  .seg-title {
+    margin: 0;
+    font-size: var(--display-4);
+    color: inherit;
+  }
+
+  .seg-text {
+    margin: var(--space-sm) 0 0;
+    padding-right: var(--space-md);
+    color: var(--color-muted);
+  }
+
+  .seg:first-child .seg-text {
+    padding-left: var(--pad-end);
+  }
+
+  /* ---------- Phones: the pill stands upright down the left, text beside each slice ---------- */
+
+  @media (max-width: 759px) {
+    .pill-wrap {
+      --seg-h: 8.5rem; /* each slice's height */
+      --pill-w: 6.5rem; /* the pill's width */
+      margin-top: var(--space-md);
+    }
+
+    .pill {
+      grid-template-columns: 1fr;
+      row-gap: var(--gap);
+    }
+
+    .seg {
+      grid-template-columns: var(--pill-w) minmax(0, 1fr);
+      grid-template-rows: auto 1fr;
+      column-gap: var(--space-md);
+      height: var(--seg-h);
+    }
+
+    .seg-aura,
+    .seg-media {
+      grid-area: 1 / 1 / 3 / 2;
+    }
+
+    .seg-aura {
+      margin: -8px;
+    }
+
+    .seg:first-child .seg-aura {
+      border-radius: 999px 999px 1.5rem 1.5rem;
+    }
+
+    .seg:last-child .seg-aura {
+      border-radius: 1.5rem 1.5rem 999px 999px;
+    }
+
+    .seg:first-child .seg-media {
+      border-radius: 999px 999px 0 0;
+    }
+
+    .seg:last-child .seg-media {
+      border-radius: 0 0 999px 999px;
+    }
+
+    .seg-media::before {
+      display: none;
+    }
+
+    .seg-head,
+    .seg:first-child .seg-head {
+      grid-area: 1 / 2;
+      align-self: start;
+      padding: 0.4rem 0 0;
+      color: var(--color-text);
+    }
+
+    .seg-num {
+      color: var(--color-muted);
+    }
+
+    .seg-title {
+      font-size: var(--display-5);
+    }
+
+    .seg-text,
+    .seg:first-child .seg-text {
+      grid-area: 2 / 2;
+      margin-top: 0.3rem;
+      padding: 0;
+      font-size: var(--text-sm);
+    }
+  }
+</style>
