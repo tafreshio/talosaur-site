@@ -221,7 +221,7 @@ The logo files are in `public/brand/` and come from the Talosaur brand pack (str
 | File | Where it shows |
 |---|---|
 | `talosaur-lockup-reverse.svg` | Top menu (light stripes for the dark background) |
-| `talosaur-lockup-white.svg` | Giant logo over the Home video (inverted against the video, so keep it pure white) and the faint full-width logo in the footer |
+| `talosaur-lockup-white.svg` | Giant logo over the Home video (inverted against the video, so keep it pure white) and the logo at the left of the footer, beside the link columns |
 | `talosaur-mark-reverse.svg` | The disc on its own, for anywhere a small mark is needed |
 
 The browser-tab icons are `public/favicon.svg`, `public/favicon.png` (64 × 64) and `public/apple-touch-icon.png` (180 × 180, used when someone saves the site to a phone home screen): the disc on a navy rounded square. To update the logo, replace these files and keep the names.
