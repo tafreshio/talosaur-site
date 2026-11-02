@@ -1,0 +1,446 @@
+---
+// The Problem, "Who lives here": a species index in the spirit of the one on Colossal's Species page.
+// There are far too many animals at Flower Garden Banks to show them all, so this is a sample, sorted
+// by where they live (open water, the coral cap, the deeper reefs). Names with a photo carry a "→" and
+// light up the viewer beside the list when you point at them, tab to them or tap them; the others are
+// listed for scale. On phones the viewer sits above the list and stays in view while you scroll it.
+//
+// The names, groups and photos are `fgbLife` in src/data/problem.ts.
+import { imageExists, imageUrl } from '../lib/images';
+
+interface Photo {
+  image: string;
+  credit: string;
+  text: string;
+  position?: string; // which part stays in view in the wider phone crop, e.g. '50% 100%' keeps the bottom
+}
+interface Group {
+  title: string;
+  where: string;
+  source: { label: string; href: string };
+  species: { name: string; photo?: Photo }[];
+}
+interface Props {
+  count?: { value: string; text: string; source: { label: string; href: string } };
+  groups: Group[];
+  more: { label: string; href: string };
+}
+
+const { count, groups, more } = Astro.props;
+
+// every species with a photo, in list order, so each gets a slide in the viewer
+const withPhotos = groups
+  .flatMap((group) => group.species)
+  .filter((s) => s.photo && imageExists(`sections/${s.photo.image}`)) as { name: string; photo: Photo }[];
+const slideOf = (name: string) => withPhotos.findIndex((s) => s.name === name);
+---
+
+<div class="life" data-life>
+  <!-- The big number: how many there are (above the list on laptops, above the photo on phones) -->
+  {count && (
+    <div class="life-count">
+      <p class="readout life-count-value">{count.value}</p>
+      <p class="life-count-text">
+      {count.text}{' '}
+        <a class="label life-source" href={count.source.href} target="_blank" rel="noopener noreferrer">[ Source: {count.source.label} ]</a>
+      </p>
+    </div>
+  )}
+
+  <!-- The viewer: one slide per photo, the first one showing until another name is chosen. Only the
+       first photo loads with the page; the others load once someone starts using the list. -->
+  <div class="life-viewer">
+    {withPhotos.map((s, i) => (
+      <figure class:list={['life-slide', { 'is-active': i === 0 }]} data-slide={i} aria-hidden={i === 0 ? undefined : 'true'}>
+        <div class="life-frame">
+          {i === 0 ? (
+            <img src={imageUrl(`sections/${s.photo.image}`)} alt={s.name} width="1200" height="900" loading="lazy" decoding="async" style={s.photo.position && `object-position: ${s.photo.position}`} />
+          ) : (
+            <img data-src={imageUrl(`sections/${s.photo.image}`)} alt={s.name} width="1200" height="900" decoding="async" style={s.photo.position && `object-position: ${s.photo.position}`} />
+          )}
+          <span class="life-corner life-corner--tl"></span>
+          <span class="life-corner life-corner--br"></span>
+          <span class="tag tag--glass life-credit">{s.photo.credit}</span>
+        </div>
+        <figcaption>
+          <span class="life-name">{s.name}</span>
+          <span class="life-text">{s.photo.text}</span>
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+
+  <!-- The index: a few of them, by where they live -->
+  <div class="life-index">
+    {groups.map((group) => (
+      <section class="life-group">
+        <h3 class="life-group-head">
+          <span class="label life-group-title">{group.title}</span>
+          <span class="label life-group-where">{group.where}</span>
+        </h3>
+        <ul class="life-list">
+          {group.species.map((s) => {
+            const slide = slideOf(s.name);
+            return (
+              <li>
+                {slide >= 0 ? (
+                  <button type="button" class:list={['life-item', 'life-item--photo', { 'is-active': slide === 0 }]} data-show={slide} aria-pressed={slide === 0 ? 'true' : 'false'}>
+                    <span class="slashes" aria-hidden="true"></span>
+                    <span class="life-item-name">{s.name}</span>
+                    <span class="life-item-arrow" aria-hidden="true">→</span>
+                  </button>
+                ) : (
+                  <span class="life-item">
+                    <span class="slashes" aria-hidden="true"></span>
+                    <span class="life-item-name">{s.name}</span>
+                  </span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+        <a class="label life-source" href={group.source.href} target="_blank" rel="noopener noreferrer">[ Source: {group.source.label} ]</a>
+      </section>
+    ))}
+    <a class="label life-more" href={more.href} target="_blank" rel="noopener noreferrer">{more.label} <span aria-hidden="true">↗</span></a>
+  </div>
+</div>
+
+<script>
+  // Pointing at, tabbing to or tapping a name with a photo shows that photo in the viewer.
+  // Only the first photo loads with the page; the rest load the first time someone points at, taps or
+  // tabs into the list, so visitors who scroll past don't download all of them.
+  document.querySelectorAll<HTMLElement>('[data-life]').forEach((root) => {
+    const slides = [...root.querySelectorAll<HTMLElement>('.life-slide')];
+    const items = [...root.querySelectorAll<HTMLButtonElement>('.life-item--photo')];
+    let loaded = false;
+    const loadAll = () => {
+      if (loaded) return;
+      loaded = true;
+      root.querySelectorAll<HTMLImageElement>('img[data-src]').forEach((img) => {
+        img.src = img.dataset.src!;
+        img.removeAttribute('data-src');
+      });
+    };
+    root.addEventListener('pointerenter', loadAll, { once: true });
+    root.addEventListener('touchstart', loadAll, { once: true, passive: true });
+    root.addEventListener('focusin', loadAll, { once: true });
+    const show = (n: number) => {
+      loadAll();
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('is-active', i === n);
+        if (i === n) slide.removeAttribute('aria-hidden');
+        else slide.setAttribute('aria-hidden', 'true');
+      });
+      items.forEach((item) => {
+        const on = Number(item.dataset.show) === n;
+        item.classList.toggle('is-active', on);
+        item.setAttribute('aria-pressed', String(on));
+      });
+    };
+    items.forEach((item) => {
+      const n = Number(item.dataset.show);
+      item.addEventListener('mouseenter', () => show(n));
+      item.addEventListener('focus', () => show(n));
+      item.addEventListener('click', () => show(n));
+    });
+  });
+</script>
+
+<style>
+  /* laptops: the number and the list on the left, the viewer on the right beside both */
+  .life {
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    grid-template-areas:
+      'count viewer'
+      'index viewer';
+    grid-template-rows: auto 1fr;
+    column-gap: clamp(2rem, 5vw, 5rem);
+    align-items: start;
+  }
+
+  .life-count {
+    grid-area: count;
+  }
+
+  /* ---------- The viewer (right on laptops, staying in view while the list scrolls) ---------- */
+
+  .life-viewer {
+    grid-area: viewer;
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-md));
+    display: grid;
+  }
+
+  .life-slide {
+    grid-area: 1 / 1;
+    margin: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 350ms var(--ease),
+      visibility 0s linear 350ms;
+  }
+
+  .life-slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 350ms var(--ease);
+  }
+
+  .life-frame {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--color-surface);
+  }
+
+  .life-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* viewfinder corners: "this is a picture" */
+  .life-corner {
+    position: absolute;
+    width: 0.9rem;
+    height: 0.9rem;
+    border: 0 solid rgb(255 255 255 / 0.8);
+  }
+
+  .life-corner--tl { top: 0.6rem; left: 0.6rem; border-top-width: 1px; border-left-width: 1px; }
+  .life-corner--br { right: 0.6rem; bottom: 0.6rem; border-right-width: 1px; border-bottom-width: 1px; }
+
+  .life-credit {
+    position: absolute;
+    top: 0.9rem;
+    left: 1.9rem;
+  }
+
+  .life-slide figcaption {
+    display: grid;
+    gap: 0.3rem;
+    margin-top: var(--space-sm);
+  }
+
+  .life-name {
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    font-weight: 800;
+    font-size: var(--display-4);
+    line-height: 1;
+    word-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .life-text {
+    max-width: 32rem;
+    color: var(--color-muted);
+  }
+
+  /* ---------- The index (left) ---------- */
+
+  .life-index {
+    grid-area: index;
+  }
+
+  .life-group + .life-group {
+    margin-top: var(--space-lg);
+  }
+
+  /* ---------- The big number ---------- */
+
+  .life-count {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-sm) var(--space-md);
+    margin-bottom: var(--space-lg);
+  }
+
+  .life-count-value {
+    margin: 0;
+    font-size: var(--readout-1);
+    line-height: 0.9;
+  }
+
+  .life-count-text {
+    max-width: 24rem;
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  .life-count-text .life-source {
+    margin-top: 0.2rem;
+  }
+
+  .life-group-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.2rem var(--space-md);
+    margin: 0;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--color-text);
+  }
+
+  .life-group-title {
+    color: var(--color-text);
+  }
+
+  .life-group-where {
+    color: var(--color-muted);
+  }
+
+  .life-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .life-item {
+    display: grid;
+    grid-template-columns: 3.2rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-sm);
+    width: 100%;
+    padding: 0.55rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--color-line);
+    background: none;
+    color: var(--color-muted);
+    font: inherit;
+    text-align: left;
+  }
+
+  .life-item .slashes {
+    height: 0.8rem;
+    background-color: var(--color-line);
+  }
+
+  .life-item-name {
+    font-family: var(--font-display);
+    font-stretch: var(--display-width);
+    font-weight: 800;
+    font-size: var(--display-5);
+    line-height: 1.05;
+    word-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* names with a photo: dark, with a cyan arrow (something you can click) */
+  .life-item--photo {
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  .life-item--photo .slashes {
+    background-color: var(--color-muted);
+  }
+
+  .life-item-arrow {
+    color: var(--color-accent);
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .life-item--photo:hover .life-item-arrow,
+  .life-item--photo:focus-visible .life-item-arrow {
+    transform: translateX(4px);
+  }
+
+  /* the one in the viewer: its name in a violet highlight block */
+  .life-item--photo.is-active .life-item-name {
+    justify-self: start;
+    padding: 0 0.15em;
+    background: var(--color-violet);
+    color: #ffffff;
+  }
+
+  .life-item--photo.is-active .slashes {
+    background-color: var(--color-violet);
+  }
+
+  .life-source {
+    display: inline-block;
+    margin-top: 0.4rem;
+    padding-block: 0.3rem;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .life-source:hover,
+  .life-more:hover {
+    text-decoration: underline;
+  }
+
+  .life-more {
+    display: inline-block;
+    margin-top: var(--space-lg);
+    padding-block: 0.4rem;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  /* ---------- Phones and tablets: the viewer above the list, staying in view ---------- */
+
+  @media (max-width: 899px) {
+    .life {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        'count'
+        'viewer'
+        'index';
+      grid-template-rows: auto;
+      row-gap: var(--space-lg);
+    }
+
+    .life-count {
+      margin-bottom: 0;
+    }
+
+    .life-viewer {
+      z-index: 2;
+      top: var(--header-height);
+      margin-inline: calc(-1 * var(--gutter));
+      padding: var(--space-sm) var(--gutter);
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-line);
+    }
+
+    .life-frame {
+      aspect-ratio: 16 / 9;
+    }
+
+    .life-slide figcaption {
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: baseline;
+      gap: 0.2rem var(--space-sm);
+      margin-top: 0.6rem;
+    }
+
+    .life-name {
+      font-size: var(--display-5);
+    }
+
+    .life-text {
+      font-size: var(--text-sm);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .life-slide figcaption {
+      grid-template-columns: 1fr;
+    }
+
+    .life-count {
+      grid-template-columns: 1fr;
+    }
+
+    .life-item {
+      grid-template-columns: 2rem minmax(0, 1fr) auto;
+    }
+  }
+</style>

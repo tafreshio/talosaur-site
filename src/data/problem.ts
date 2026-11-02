@@ -7,6 +7,12 @@ export const sources = {
   ship: { label: 'Dialogue Earth', href: 'https://dialogue.earth/en/ocean/scientists-are-becoming-ocean-hitchhikers-to-fill-data-gaps/' },
   diving: { label: 'Scuba Diving', href: 'https://www.scubadiving.com/why-is-130-feet-depth-limit-for-recreational-scuba-diving' },
   fgb: { label: 'NOAA', href: 'https://flowergarden.noaa.gov/about/mesophotic.html' },
+  // NOAA's list of bony fishes "found within the coral cap region of the sanctuary (0-130 ft, 0-40m
+  // deep)", in three pages (this is the first; the sanctuary's species lists link to the rest)
+  fgbFish: { label: 'NOAA', href: 'https://flowergarden.noaa.gov/about/fishlist.html' },
+  // NOAA's 2008 condition report for the sanctuary: "At least 280 species of fish have been documented
+  // within the sanctuary" and "Approximately 20 species of sharks and rays have been documented"
+  fgbCount: { label: 'NOAA', href: 'https://sanctuaries.noaa.gov/science/condition/fgbnms/2008/history.html' },
   light: { label: 'NOAA', href: 'https://oceanservice.noaa.gov/facts/light_travel.html' },
   pressure: { label: 'NOAA', href: 'https://oceanservice.noaa.gov/facts/pressure.html' },
   // NOAA's 2023 Flower Garden Banks National Marine Sanctuary poster (also the source of its photos)
@@ -221,12 +227,61 @@ export const fgbStats = [
 ];
 
 // Who lives here: four animals from the poster, each with a NOAA photo (public/images/sections/fgb-*.jpg)
-export const fgbSpecies = [
-  { image: 'fgb-black-coral.jpg', tag: 'NOAA / UNCW-UVP', title: 'Black coral', text: 'Lives on the deeper reefs. New species turn up during deep-sea exploration; this one was first described in 2017.' },
-  { image: 'fgb-marbled-grouper.jpg', tag: 'G.P. Schmahl · NOAA', title: 'Marbled grouper', text: 'A shy fish that prefers deeper reefs, so divers rarely see one.' },
-  { image: 'fgb-manta-ray.jpg', tag: 'G.P. Schmahl · NOAA', title: 'Manta ray', text: 'A common sight in the sanctuary. Each one can be told apart by the markings on its belly.' },
-  { image: 'fgb-trunkfish.jpg', tag: 'Emma Hickerson · NOAA', title: 'Golden smooth trunkfish', text: 'One of the only places in the world to find the golden form of this fish.' },
-];
+// Section 06, Who lives here: a sample of the animals NOAA records at Flower Garden Banks, sorted by
+// where they live (too many to show them all). Names with a `photo` light up the viewer beside the list
+// when you point at or tap them; photos are NOAA's, in public/images/sections/ (natural colour). A name
+// whose photo file isn't there yet is listed without one until the file is added.
+//   Open water: the 2023 poster ("Reef fish, manta rays, sea turtles and sharks live across the sanctuary")
+//   Coral cap: NOAA's coral cap fish list (0-40 m)
+//   Deeper reefs: NOAA's page on the sanctuary's deeper habitats (40-221 m), including the marbled grouper,
+//   which the poster says prefers the deeper reefs
+export const fgbLife = {
+  // the big number at the top of the list
+  count: {
+    value: '280+',
+    text: 'species of fish documented in the sanctuary, about 20 of them sharks and rays, before you count the corals, sponges and other animals. Here are a few, by where they live.',
+    source: sources.fgbCount,
+  },
+  groups: [
+    {
+      title: 'Open water',
+      where: 'Across the sanctuary',
+      source: sources.poster,
+      species: [
+        { name: 'Manta ray', photo: { image: 'fgb-manta-ray.jpg', credit: 'G.P. Schmahl · NOAA', text: 'A common sight in the sanctuary. Each one can be told apart by the markings on its belly.' } },
+        { name: 'Whale shark', photo: { image: 'fgb-whale-shark.jpg', credit: 'NOAA', text: 'The biggest fish in the sea. One sometimes passes over the banks.' } },
+        { name: 'Sea turtles', photo: { image: 'fgb-sea-turtle.jpg', credit: 'FGBNMS · NOAA', text: 'Loggerhead turtles, like this one, and hawksbills both visit the banks.' } },
+      ],
+    },
+    {
+      title: 'Coral cap',
+      where: 'The reef tops, to 40\u00a0m',
+      source: sources.fgbFish,
+      species: [
+        { name: 'Golden smooth trunkfish', photo: { image: 'fgb-trunkfish.jpg', credit: 'Emma Hickerson · NOAA', text: 'One of the only places in the world to find the golden form of this fish.' } },
+        { name: 'Bluehead wrasse', photo: { image: 'fgb-bluehead-wrasse.jpg', credit: 'FGBNMS · NOAA', text: 'A small, busy reef fish. Only the biggest males have the blue head; the yellow ones are younger.' } },
+        { name: 'Creole wrasse', photo: { image: 'fgb-creole-wrasse.jpg', credit: 'FGBNMS · NOAA', text: 'Gathers in big schools in the water above the coral.' } },
+        { name: 'Creolefish', photo: { image: 'fgb-creolefish.jpg', credit: 'FGBNMS · NOAA', text: 'Seen in schools over the reef.' } },
+        { name: 'Spotfin butterflyfish', photo: { image: 'fgb-spotfin-butterflyfish.jpg', credit: 'FGBNMS · NOAA', text: 'Lives on the coral cap, and turns up deeper too, sheltering in black coral.' } },
+      ],
+    },
+    {
+      title: 'Deeper reefs',
+      where: '40–221\u00a0m, into the twilight zone',
+      source: sources.fgb,
+      species: [
+        { name: 'Black coral', photo: { image: 'fgb-black-coral.jpg', credit: 'NOAA / UNCW-UVP', text: 'Lives on the deeper reefs. New species turn up during deep-sea exploration; this one was first described in 2017.' } },
+        { name: 'Marbled grouper', photo: { image: 'fgb-marbled-grouper.jpg', credit: 'G.P. Schmahl · NOAA', text: 'A shy fish that prefers deeper reefs, so divers rarely see one.' } },
+        { name: 'Octocorals', photo: { image: 'fgb-octocoral.jpg', credit: 'FGBNMS / UNCW-UVP', text: 'Soft corals, sea fans among them. Each polyp has eight branching tentacles.' } },
+        { name: 'Blushing star coral', photo: { image: 'fgb-blushing-star-coral.jpg', credit: 'FGBNMS / UNCW-UVP', text: 'Covers the reefs of McGrail Bank, about 44\u00a0m down. A sea urchin sits on this one.' } },
+        { name: 'Basket stars', photo: { image: 'fgb-basket-stars.jpg', credit: 'FGBNMS / UNCW-UVP', text: 'They curl up in the branches of octocorals, waiting to feed higher in the water.' } },
+        { name: 'Squat lobsters' },
+        { name: 'Trumpetfish', photo: { image: 'fgb-trumpetfish.jpg', credit: 'FGBNMS / UNCW-UVP', text: 'Hides in black coral on the deeper banks, here with a spotfin butterflyfish.', position: '50% 100%' } },
+      ],
+    },
+  ],
+  more: { label: "Many more on NOAA's species lists", href: 'https://flowergarden.noaa.gov/about/fishlist.html' },
+};
 
 // ---------------------------------------------------------------- Section 03: At a glance
 // The twilight zone as a fact sheet (Colossal's mammoth page style).
