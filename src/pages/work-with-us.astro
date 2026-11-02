@@ -17,13 +17,13 @@ const intro =
 
 // Who we work with: the four groups from the intro, each with a photo of what it names, all in
 // natural colour so the row reads as one set (public/images/sections/). "needs" says what a missing
-// photo should show: until aud-offshore.jpg exists, that card shows a "photo to come" panel.
+// photo should show: a card whose photo is missing shows a "photo to come" panel instead.
 // Text in [brackets] is a placeholder to fill in later.
 const audiences = [
   { image: 'aud-research.jpg', tag: 'Research vehicle · NOAA', title: 'Research', text: 'Footage and eDNA samples from 50–300 m, at a cost that could let a study go back to the same reef again and again.' },
   { image: 'aud-conservation.jpg', tag: 'Reef', title: 'Conservation', text: 'Regular footage of deep reefs in places like Flower Garden Banks, to spot change early and back up decisions about protecting them.' },
   { image: 'aud-fisheries.jpg', tag: 'Fish school', title: 'Fisheries', text: 'Counts and footage of fish on deep reefs and banks, where divers and most surveys never reach.' },
-  { image: 'aud-offshore.jpg', needs: 'an offshore platform in the Gulf', title: 'Offshore energy', text: 'A low-cost look at the seafloor and the life around platforms, pipelines and cables in the Gulf.' },
+  { image: 'aud-offshore.jpg', tag: 'Offshore platform', title: 'Offshore energy', text: 'A low-cost look at the seafloor and the life around platforms, pipelines and cables in the Gulf.' },
 ];
 
 // "What we bring back" and "How a project works": new copy (not from the Content doc), edit freely.

@@ -29,7 +29,6 @@ section explains sizes.
 | A team portrait | Home, "Meet the team" card | `home-meet-the-team.jpg` | 16:9 |
 | Team portraits (initials show until then) | Who we are | `team/` (names in `src/data/team.ts`) | Fernando 4:5, Sam 3:4, Kabir 1:1, Nicholas 4:5, Omeed 4:3, Dominick 3:4, Alvin 1:1 |
 | A pool test, Lake Bryan, Lake Travis, Galveston (the Offshore stop has a NOAA reef photo) | News, "Where we test" (small photo beside each stop) | `sections/test-pool.jpg`, `test-lake-bryan.jpg`, `test-lake-travis.jpg`, `test-galveston.jpg` | 4:3 |
-| An offshore platform in the Gulf | Work with us, Offshore energy card | `sections/aud-offshore.jpg` | 4:5 |
 | The team at a build day | Positions, "Life on the team" | `sections/team-build.jpg` | 16:10 |
 | Hands on a part (optional: adds the small framed photo) | Positions, "Life on the team" | `sections/team-lab.jpg` | 1:1 |
 | Turtle in the pool | Donate, "Where it goes" Testing card | `sections/support-testing.jpg` | 4:3 |
@@ -37,7 +36,8 @@ section explains sizes.
 
 ## To confirm
 
-- **Who lives here (The Problem).** The names come from NOAA's sanctuary pages (the 2023 poster, the coral cap fish list and the page on the deeper reefs) and are only a sample; add or swap any in `fgbLife` in `src/data/problem.ts`. The whale shark line ("One sometimes passes over the banks") is new: check it reads right to the team. The whale shark photo is from the same NOAA poster, but the poster doesn't name its photographer.
+- **Who lives here (The Problem).** The names come from NOAA's sanctuary pages (the 2023 poster, the coral cap fish list and the page on the deeper reefs) and are only a sample; add or swap any in `fgbLife` in `src/data/problem.ts`. The whale shark line ("One sometimes passes over the banks") is new: check it reads right to the team. The whale shark photo is from the same NOAA poster, but the poster doesn't name its photographer. Of the nine photos the team added: octocorals, blushing star coral, basket stars and trumpetfish are credited FGBNMS/UNCW-UVP on NOAA's deeper-reefs page; the sea turtle, bluehead wrasse, creole wrasse and creolefish match NOAA's own species pages, which print no credit, so they're labelled FGBNMS · NOAA; confirm the same for the spotfin butterflyfish, which may be from elsewhere. The bluehead wrasse, creole wrasse and creolefish exist only at 360 px wide and look softer than the others; bigger versions would help.
+- **The offshore platform photo** (Work with us, Offshore energy card, `public/images/sections/aud-offshore.jpg`, made by `stills_site/make_offshore.py`). Supplied by the team. It shows the Lunskoye-A platform off Sakhalin, Russia, not the Gulf, so its tag just says "Offshore platform". Note where the photo came from and its licence for Image credits; a public-domain Gulf platform photo (BSEE, BOEM or NOAA) would fit the card better if one turns up.
 
 - **Sustainable Building Initiative logo** (Home, Partners, `public/images/partners/sbi.png`). Made white on a transparent background from the logo the team sent, so it reads on the black band. Check SBI is happy with that version on the site, and add their website as `href` in `src/data/home.ts` (`partners.members`) if the tile should link to it.
 

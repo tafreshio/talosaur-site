@@ -12,6 +12,7 @@ interface Photo {
   image: string;
   credit: string;
   text: string;
+  position?: string; // which part stays in view in the wider phone crop, e.g. '50% 100%' keeps the bottom
 }
 interface Group {
   title: string;
@@ -46,12 +47,17 @@ const slideOf = (name: string) => withPhotos.findIndex((s) => s.name === name);
     </div>
   )}
 
-  <!-- The viewer: one slide per photo, the first one showing until another name is chosen -->
+  <!-- The viewer: one slide per photo, the first one showing until another name is chosen. Only the
+       first photo loads with the page; the others load once someone starts using the list. -->
   <div class="life-viewer">
     {withPhotos.map((s, i) => (
       <figure class:list={['life-slide', { 'is-active': i === 0 }]} data-slide={i} aria-hidden={i === 0 ? undefined : 'true'}>
         <div class="life-frame">
-          <img src={imageUrl(`sections/${s.photo.image}`)} alt={s.name} width="1200" height="900" loading="lazy" decoding="async" />
+          {i === 0 ? (
+            <img src={imageUrl(`sections/${s.photo.image}`)} alt={s.name} width="1200" height="900" loading="lazy" decoding="async" style={s.photo.position && `object-position: ${s.photo.position}`} />
+          ) : (
+            <img data-src={imageUrl(`sections/${s.photo.image}`)} alt={s.name} width="1200" height="900" decoding="async" style={s.photo.position && `object-position: ${s.photo.position}`} />
+          )}
           <span class="life-corner life-corner--tl"></span>
           <span class="life-corner life-corner--br"></span>
           <span class="tag tag--glass life-credit">{s.photo.credit}</span>
@@ -101,11 +107,26 @@ const slideOf = (name: string) => withPhotos.findIndex((s) => s.name === name);
 </div>
 
 <script>
-  // Pointing at, tabbing to or tapping a name with a photo shows that photo in the viewer
+  // Pointing at, tabbing to or tapping a name with a photo shows that photo in the viewer.
+  // Only the first photo loads with the page; the rest load the first time someone points at, taps or
+  // tabs into the list, so visitors who scroll past don't download all of them.
   document.querySelectorAll<HTMLElement>('[data-life]').forEach((root) => {
     const slides = [...root.querySelectorAll<HTMLElement>('.life-slide')];
     const items = [...root.querySelectorAll<HTMLButtonElement>('.life-item--photo')];
+    let loaded = false;
+    const loadAll = () => {
+      if (loaded) return;
+      loaded = true;
+      root.querySelectorAll<HTMLImageElement>('img[data-src]').forEach((img) => {
+        img.src = img.dataset.src!;
+        img.removeAttribute('data-src');
+      });
+    };
+    root.addEventListener('pointerenter', loadAll, { once: true });
+    root.addEventListener('touchstart', loadAll, { once: true, passive: true });
+    root.addEventListener('focusin', loadAll, { once: true });
     const show = (n: number) => {
+      loadAll();
       slides.forEach((slide, i) => {
         slide.classList.toggle('is-active', i === n);
         if (i === n) slide.removeAttribute('aria-hidden');
